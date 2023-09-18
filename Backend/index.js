@@ -1,38 +1,26 @@
-const PORT=8000
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const userRoutes = require("./routes/userRoutes");
+
 const app = express();
+require("dotenv").config();
 
-var Pusher = require("pusher");
+app.use(cors());
+app.use(express.json());
 
-var pusher = new Pusher({
-  appId: "APP_ID",
-  key: "APP_KEY",
-  secret: "APP_SECRET",
-  cluster: "APP_CLUSTER",
-});
+app.use("/api/auth", userRoutes)
 
-
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,content-type,content");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  next();
+mongoose.connect(process.env.DATABASE_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log("DB Connection Successfull");
+}).catch((error) => {
+    console.log(error.message);
 })
-app.use(cors(),function(req, res, next) {
-    res.header("Access-Control-Allow-Origin,Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,content-type,content",
-    "http://localhost:4200"
-  );
-  });
-  app.use('/', routes);
 
-app.listen(PORT, ()=>{console.log(`Serveur lancé sur localhost:${PORT}`)});
+const server = app.listen(process.env.PORT, () => {
+    console.log(`Server Started on Port ${process.env.PORT}`);
+})
 
-
-// app.post(path:'/api/messages',handlers:async (req:Request <P,ResBody,ReqBody, ReqQuery, Locals>, res:Response<ResBody,Locals>) => {
-//      await pusher.trigger("my-channel", "chat", {
-//     username: req.body.username,
-//.    message: req.body.message. });
-//  return  res.json(body:[]);
-
-// })
