@@ -12,10 +12,12 @@ export class AuthService {
     try {
       await signInWithEmailAndPassword(this.auth, email, password);
       // Connexion réussie, redirigez l'utilisateur ou effectuez d'autres actions.
+     
     } catch (error) {
       console.error('Erreur de connexion :', error);
       // Gérez les erreurs d'authentification ici.
     }
+    
   }
   
   async signOut() {

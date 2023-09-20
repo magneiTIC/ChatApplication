@@ -4,7 +4,7 @@ import { HomeComponent } from './components/home/home.component';
 import { TestComponent } from './components/test/test.component';
 import { LandingComponent } from './components/landing/landing.component';
 import { LoginComponent } from './views/auth/login/login.component';
-import { SignupComponent } from './views/auth/signup/signup.component';
+import { DashboardComponent } from './views/admin/dashboard/dashboard.component';
 
 const routes: Routes = [
 
@@ -12,7 +12,8 @@ const routes: Routes = [
   {path:'home', component:HomeComponent},
   {path:'test', component:TestComponent},
   {path:'login', component:LoginComponent},
-  {path:'sign-up', component:SignupComponent},
+  {path:'dashboard', component:DashboardComponent},
+
  
 
 

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormControl,FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from 'src/app/services/auth/auth.service';
 import {  Router } from '@angular/router';
 
 
@@ -8,30 +9,49 @@ import {  Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
-  loginForm= new FormGroup({
-    email: new FormControl('',[ Validators.required,Validators.email]),
-    mdp: new FormControl('',Validators.required)
-    
-  })
-  constructor(    
-    private router:Router,
-   ){}
+export class LoginComponent implements OnInit {
 
-  ngOnInit(): void {}
+  loginForm!: FormGroup;
+
+  constructor(
+    private formBuilder:FormBuilder,
+    private router:Router,
+    private AuthService:AuthService
+    ){}
+
+  ngOnInit(): void {
+
+    this.loginForm = this.formBuilder.group({
+      email:['',[Validators.required, Validators.email]],
+      password:['',[Validators.required]]     
+    })
+  }
+
   onSubmit(){
     console.log('coucou')
-    console.log(this.loginForm.value.email,this.loginForm.value.mdp)
+    console.log(this.loginForm.value.email,this.loginForm.value.password)
     if(this.loginForm.invalid){
       return console.log('invalid') ;
     }else{
-      
-            this.router.navigate(['/login']);
+      console.log('bonjr')
+      this.AuthService.signIn(this.loginForm.value.email, this.loginForm.value.password).then(       
+        result=>{
+          console.log("HELLO")
+          console.log(result)
+          this.router.navigate(['/dashboard'])
 
-          
+          // if(result.user.status=='admin'){
+          //   this.router.navigate(['/admin/dashboard'])
+          // }
+          // else{
+          //   this.router.navigate(['/dashboard']);
+
+          // }
         }
-      
+      )
     }
 
   }
+
+}
 

@@ -18,7 +18,6 @@ import { LoginComponent } from './views/auth/login/login.component';
 import { SignupComponent } from './views/auth/signup/signup.component'
 import { environment } from 'src/environments/environment';
 import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
-import { environment } from '../environments/environment';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 @NgModule({
   declarations: [
@@ -42,7 +41,7 @@ import { provideAuth,getAuth } from '@angular/fire/auth';
     BrowserAnimationsModule,
     MatToolbarModule,
     MatIconModule,
-    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),
   ],
   exports:[
