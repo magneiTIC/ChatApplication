@@ -143,11 +143,18 @@ button{
         <h3>Connectez-vous </h3>
 
         <label for="Email">Email</label>
-        <input type="text" placeholder="Email " formControlName="email" id="Email">
+        <input type="text" placeholder="Email " formControlName="email" id="Email" required (focus)="resetError()">
 
         <label for="password">Mot de passe</label>
-        <input type="password" placeholder="Mot de passe" formControlName="password" id="Mot de passe">
+        <input type="password" placeholder="Mot de passe" formControlName="password" id="Mot de passe"  required (focus)="resetError()">
 
+        <div *ngIf="validationError" class="error-label">
+            Le formulaire est invalide. Veuillez remplir tous les champs correctement s'il vous plait.
+          </div>
+
+          <div *ngIf="connexionError" class="error-label">
+            Verifiez les informations de connexion.
+          </div>  
         <button type="submit">Se Connecter </button>
        
     </form>
