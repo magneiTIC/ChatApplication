@@ -1,12 +1,26 @@
 import { Injectable } from '@angular/core';
-import { Auth, signInWithEmailAndPassword } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@angular/fire/auth';
 import { User } from '../user/user.interface';
+import { Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  constructor(private auth: Auth, private router: Router) { }
 
-  constructor(private auth: Auth) { }
+  // Méthode pour inscrire l'administrateur
+  registerAdmin(email: string, password: string) {
+    createUserWithEmailAndPassword(this.auth, email, password)
+      .then((userCredential) => {
+        // L'administrateur a été inscrit avec succès
+        const user = userCredential.user;
+        console.log('Compte administrateur créé avec l\'ID :', user.uid);
+        // Vous pouvez ajouter des privilèges spéciaux ici, par exemple, stocker un rôle d'administrateur dans Firestore.
+      })
+      .catch((error) => {
+        console.error('Erreur lors de la création du compte administrateur :', error);
+      });
+  }
 
   // Méthode de connexion par e-mail/mot de passe
   // async signIn(email: string, password: string): Promise<User | null>{
@@ -47,4 +61,6 @@ export class AuthService {
       // Gérez les erreurs de déconnexion ici.
     }
   }
+
+
 }
