@@ -14,7 +14,7 @@ router.post('/create-user', checkAuth, (req, res) => {
     }
 });
 
-router.post("/login", userCtrl.login);
+router.post("/create-user", adminCtrl.register);
 
 
 

@@ -1,66 +1,55 @@
 import { Injectable } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from '@angular/fire/auth';
+import { HttpClient } from '@angular/common/http';
 import { User } from '../user/user.interface';
-import { Router } from '@angular/router';
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private auth: Auth, private router: Router) { }
 
-  // Méthode pour inscrire l'administrateur
-  registerAdmin(email: string, password: string) {
-    createUserWithEmailAndPassword(this.auth, email, password)
-      .then((userCredential) => {
-        // L'administrateur a été inscrit avec succès
-        const user = userCredential.user;
-        console.log('Compte administrateur créé avec l\'ID :', user.uid);
-        // Vous pouvez ajouter des privilèges spéciaux ici, par exemple, stocker un rôle d'administrateur dans Firestore.
-      })
-      .catch((error) => {
-        console.error('Erreur lors de la création du compte administrateur :', error);
-      });
+  apiUrl = 'http://localhost:3000'
+
+  constructor(private auth: Auth, private http: HttpClient) { }
+
+  signUp(email: string, password: string) {
+    return createUserWithEmailAndPassword(this.auth, email, password);
   }
 
-  // Méthode de connexion par e-mail/mot de passe
-  // async signIn(email: string, password: string): Promise<User | null>{
-  //   try {
-  //    const userCredential=  await signInWithEmailAndPassword(this.auth, email, password);
-  //    const user = userCredential.user;
-  //     return user
-  //     // Connexion réussie, redirigez l'utilisateur ou effectuez d'autres actions.
-     
-  //   } catch (error) {
-  //     console.error('Erreur de connexion :', error); 
-  //     // Gérez les erreurs d'authentification ici.
-  //   }
-    
-  // }
   async signIn(email: string, password: string): Promise<User | null> {
-    try {
-      const userCredential = await signInWithEmailAndPassword(this.auth, email, password)
-
-      const user = userCredential.user;
-      
-      return user; 
-    } catch (error) {
-      console.error('Erreur de connexion :', error);
-      
-      return null; 
-    }
-    
+    return new Promise<User | null>(async (resolve, reject) => {
+      try {
+        // Validez les données dans la partie backend en envoyant une requête HTTP POST.
+        this.http.post(this.apiUrl + '/users/login', { email, password }).subscribe(async (response: any) => {
+          console.log(response);
+          if (response) {
+            // Les données sont valides, utilisez Firebase pour authentifier l'utilisateur.
+            const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+            console.log("Connexion réussie");
+            resolve(userCredential.user);
+          } else {
+            // Les données ne sont pas valides, gérez l'erreur ici.
+            console.error('Données non valides');
+            resolve(null);
+          }
+        });
+  
+      } catch (error) {
+        // Gérez les erreurs d'authentification ici.
+        console.error('Erreur d\'authentification', error);
+        reject(error);
+      }
+    });
   }
   
-  
-  async signOut() {
-    try {
-      await this.auth.signOut();
-      // Déconnexion réussie, redirigez l'utilisateur ou effectuez d'autres actions.
-    } catch (error) {
-      console.error('Erreur de déconnexion :', error);
-      // Gérez les erreurs de déconnexion ici.
-    }
+
+
+  signOut() {
+    return signOut(this.auth);
   }
 
+  resetPassword(email: string) {
+    return sendPasswordResetEmail(this.auth, email);
+  }
 
 }

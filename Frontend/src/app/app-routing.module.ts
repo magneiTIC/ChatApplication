@@ -8,14 +8,11 @@ import { DashboardComponent } from './views/admin/dashboard/dashboard.component'
 
 const routes: Routes = [
 
-  {path:'', pathMatch :'full',component:LoginComponent },
-  {path:'home', component:HomeComponent},
-  {path:'test', component:TestComponent},
-  {path:'login', component:LoginComponent},
-  {path:'dashboard', component:DashboardComponent},
-
- 
-
+  { path: '', pathMatch: 'full', component: LoginComponent },
+  { path: 'home', component: HomeComponent },
+  { path: 'test', component: TestComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'dashboard', component: DashboardComponent },
 
 ];
 
@@ -23,4 +20,6 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
+
+
 export class AppRoutingModule { }

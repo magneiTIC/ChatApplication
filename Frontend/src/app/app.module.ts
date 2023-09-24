@@ -15,10 +15,11 @@ import { MatToolbarModule} from '@angular/material/toolbar'
 import{ MatIconModule } from '@angular/material/icon';
 import { LandingComponent } from './components/landing/landing.component';
 import { LoginComponent } from './views/auth/login/login.component';
-import { SignupComponent } from './views/auth/signup/signup.component'
+import { RegisterComponent } from './views/auth/register/register.component'
 import { environment } from 'src/environments/environment';
 import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
 import { provideAuth,getAuth } from '@angular/fire/auth';
+import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
@@ -27,7 +28,7 @@ import { provideAuth,getAuth } from '@angular/fire/auth';
     HeaderComponent,
     LandingComponent,
     LoginComponent,
-    SignupComponent,
+    RegisterComponent,
   ],
   imports: [
     BrowserModule,
@@ -41,6 +42,7 @@ import { provideAuth,getAuth } from '@angular/fire/auth';
     BrowserAnimationsModule,
     MatToolbarModule,
     MatIconModule,
+    HttpClientModule,
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),
   ],
