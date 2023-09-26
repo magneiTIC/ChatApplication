@@ -5,6 +5,7 @@ import { TestComponent } from './components/test/test.component';
 import { LandingComponent } from './components/landing/landing.component';
 import { LoginComponent } from './views/auth/login/login.component';
 import { DashboardComponent } from './views/admin/dashboard/dashboard.component';
+import { SettingComponent } from './views/admin/setting/setting.component';
 
 const routes: Routes = [
 
@@ -13,6 +14,8 @@ const routes: Routes = [
   { path: 'test', component: TestComponent },
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent },
+  { path: 'admin/setting', component: SettingComponent },
+
 
 ];
 

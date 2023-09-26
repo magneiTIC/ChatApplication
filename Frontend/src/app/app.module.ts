@@ -8,10 +8,12 @@ import { HomeComponent } from './components/home/home.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { TestComponent } from './components/test/test.component';
-import { HeaderComponent } from './components/fixed/header/header.component'
+import { HeaderComponent } from './views/admin/components/header/header.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { MatToolbarModule} from '@angular/material/toolbar'
+import{MatListModule} from '@angular/material/list'
+import{ } from '@angular/material/'
 import{ MatIconModule } from '@angular/material/icon';
 import { LandingComponent } from './components/landing/landing.component';
 import { LoginComponent } from './views/auth/login/login.component';
@@ -20,6 +22,8 @@ import { environment } from 'src/environments/environment';
 import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 import { HttpClientModule } from '@angular/common/http';
+import { SidebarComponent } from './views/admin/sidebar/sidebar.component';
+import { SettingComponent } from './views/admin/setting/setting.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -29,6 +33,8 @@ import { HttpClientModule } from '@angular/common/http';
     LandingComponent,
     LoginComponent,
     RegisterComponent,
+    SidebarComponent,
+    SettingComponent,
   ],
   imports: [
     BrowserModule,
@@ -42,9 +48,11 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserAnimationsModule,
     MatToolbarModule,
     MatIconModule,
+    MatListModule,
     HttpClientModule,
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
-    provideAuth(() => getAuth()),
+    provideAuth(() => getAuth()),    
+
   ],
   exports:[
     MatFormFieldModule,
@@ -53,7 +61,8 @@ import { HttpClientModule } from '@angular/common/http';
 
 
   ],
-  providers: [],
+  providers: [
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

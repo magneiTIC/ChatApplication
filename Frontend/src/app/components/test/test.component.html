@@ -1,161 +1,164 @@
-<script>
-    // Video tutorial/codealong here: https://youtu.be/fCpw5i_2IYU
-//Github: https://github.com/FilipRastovic/whatsapp-chat-app-ui
-$( '.friend-drawer--onhover' ).on( 'click',  function() {
-  
-  $( '.chat-bubble' ).hide('slow').show('slow');
-  
-});
+<div class="chat-app">
+	<div class="side">
+		<div class="d-flex flex-column flex-shrink-0 bg-body-tertiary" style="width: 4.5rem;">
+			<div class="dropdown border-top">
+				<a href="#"
+					class="d-flex align-items-center justify-content-center p-3 link-body-emphasis text-decoration-none dropdown-toggle"
+					data-bs-toggle="dropdown" aria-expanded="false">
+					<img src="https://github.com/mdo.png" alt="mdo" width="24" height="24" class="rounded-circle">
+				</a>
+				<ul class="dropdown-menu text-small shadow" style="">
+					<li><a class="dropdown-item" href="#">
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">Nouveau projet...</font>
+							</font>
+						</a></li>
+					<li><a class="dropdown-item" href="#">
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">Paramètres</font>
+							</font>
+						</a></li>
+					<li><a class="dropdown-item" href="#">
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">Profil</font>
+							</font>
+						</a></li>
+					<li>
+						<hr class="dropdown-divider">
+					</li>
+					<li><a class="dropdown-item" href="#">
+							<font style="vertical-align: inherit;">
+								<font style="vertical-align: inherit;">se déconnecter</font>
+							</font>
+						</a></li>
+				</ul>
+			</div>
+			<ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+				<li class="nav-item">
+					<a href="#" class="icon nav-link   rounded-0" aria-current="page"
+						>
+						<mat-icon matSuffix>settings</mat-icon>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a href="#" class="icon nav-link  py-3 border-bottom rounded-0" aria-current="page"
+						data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Maison"
+						data-bs-original-title="Home">
+						<mat-icon>exit_to_app</mat-icon>			
+					</a>
+				</li>
 
-// Video tutorial/codealong here: https://youtu.be/fCpw5i_2IYU
-</script>
-<div class="container">
-	<div class="row no-gutters">
-	  <div class="col-md-4 border-right">
-		<div class="settings-tray">
-		  <img class="profile-image" src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/filip.jpg" alt="Profile img">
-		  <span class="settings-tray--right">
-			<i class="material-icons">cached</i>
-			<i class="material-icons">message</i>
-			<i class="material-icons">menu</i>
-		  </span>
+			</ul>
 		</div>
-		<div class="search-box">
-		  <div class="input-wrapper">
-			<i class="material-icons">search</i>
-			<input placeholder="Search here" type="text">
-		  </div>
-		</div>
-		<div class="friend-drawer friend-drawer--onhover">
-		  <img class="profile-image" src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/robocop.jpg" alt="">
-		  <div class="text">
-			<h6>Robo Cop</h6>
-			<p class="text-muted">Hey, you're arrested!</p>
-		  </div>
-		  <span class="time text-muted small">13:21</span>
-		</div>
-		<hr>
-		<div class="friend-drawer friend-drawer--onhover">
-		  <img class="profile-image" src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/optimus-prime.jpeg" alt="">
-		  <div class="text">
-			<h6>Optimus</h6>
-			<p class="text-muted">Wanna grab a beer?</p>
-		  </div>
-		  <span class="time text-muted small">00:32</span>
-		</div>
-		<hr>
-		<div class="friend-drawer friend-drawer--onhover ">
-		  <img class="profile-image" src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/real-terminator.png" alt="">
-		  <div class="text">
-			<h6>Skynet</h6>
-			<p class="text-muted">Seen that canned piece of s?</p>
-		  </div>
-		  <span class="time text-muted small">13:21</span>
-		</div>
-		<hr>
-		<div class="friend-drawer friend-drawer--onhover">
-		  <img class="profile-image" src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/termy.jpg" alt="">
-		  <div class="text">
-			<h6>Termy</h6>
-			<p class="text-muted">Im studying spanish...</p>
-		  </div>
-		  <span class="time text-muted small">13:21</span>
-		</div>
-		<hr>
-		<div class="friend-drawer friend-drawer--onhover">
-		  <img class="profile-image" src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/rick.jpg" alt="">
-		  <div class="text">
-			<h6>Richard</h6>
-			<p class="text-muted">I'm not sure...</p>
-		  </div>
-		  <span class="time text-muted small">13:21</span>
-		</div>
-		<hr>
-		<div class="friend-drawer friend-drawer--onhover">
-		  <img class="profile-image" src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/rachel.jpeg" alt="">
-		  <div class="text">
-			<h6>XXXXX</h6>
-			<p class="text-muted">Hi, wanna see something?</p>
-		  </div>
-		  <span class="time text-muted small">13:21</span>
-		</div>
-	  </div>
-	  <div class="col-md-8">
-		<div class="settings-tray">
-			<div class="friend-drawer no-gutters friend-drawer--grey">
-			<img class="profile-image" src="https://www.clarity-enhanced.net/wp-content/uploads/2020/06/robocop.jpg" alt="">
-			<div class="text">
-			  <h6>Robo Cop</h6>
-			  <p class="text-muted">Layin' down the law since like before Christ...</p>
-			</div>
-			<span class="settings-tray--right">
-			  <i class="material-icons">cached</i>
-			  <i class="material-icons">message</i>
-			  <i class="material-icons">menu</i>
-			</span>
-		  </div>
-		</div>
-		<div class="chat-panel">
-		  <div class="row no-gutters">
-			<div class="col-md-3">
-			  <div class="chat-bubble chat-bubble--left">
-				Hello dude!
-			  </div>
-			</div>
-		  </div>
-		  <div class="row no-gutters">
-			<div class="col-md-3 offset-md-9">
-			  <div class="chat-bubble chat-bubble--right">
-				Hello dude!
-			  </div>
-			</div>
-		  </div>
-		  <div class="row no-gutters">
-			<div class="col-md-3 offset-md-9">
-			  <div class="chat-bubble chat-bubble--right">
-				Hello dude!
-			  </div>
-			</div>
-		  </div>
-		  <div class="row no-gutters">
-			<div class="col-md-3">
-			  <div class="chat-bubble chat-bubble--left">
-				Hello dude!
-			  </div>
-			</div>
-		  </div>
-		  <div class="row no-gutters">
-			<div class="col-md-3">
-			  <div class="chat-bubble chat-bubble--left">
-				Hello dude!
-			  </div>
-			</div>
-		  </div>
-		  <div class="row no-gutters">
-			<div class="col-md-3">
-			  <div class="chat-bubble chat-bubble--left">
-				Hello dude!
-			  </div>
-			</div>
-		  </div>
-		  <div class="row no-gutters">
-			<div class="col-md-3 offset-md-9">
-			  <div class="chat-bubble chat-bubble--right">
-				Hello dude!
-			  </div>
-			</div>
-		  </div>
-		  <div class="row">
-			<div class="col-12">
-			  <div class="chat-box-tray">
-				<i class="material-icons">sentiment_very_satisfied</i>
-				<input type="text" placeholder="Type your message here...">
-				<i class="material-icons">mic</i>
-				<i class="material-icons">send</i>
-			  </div>
-			</div>
-		  </div>
-		</div>
-	  </div>
 	</div>
-  </div>
+	<div class="sidebar">
+		<!-- Barre latérale avec la liste des contacts -->
+		<div class="sidebar-header">
+			<div class="search-input">
+				<input type="text" class="form-control" placeholder="Rechercher  ...">
+				<!-- <mat-form-field>
+				
+				<input
+					matInput
+					images-placeholder="Rechercher"
+					[matAutocomplete]="users"
+				>
+
+			</mat-form-field>     -->
+				<mat-autocomplete #users="matAutocomplete">
+					<!-- <mat-option 
+					*ngFor="let user of users$ |async"
+					(click)="createChat(user)"
+					>
+					{{ user?.displayName}}
+				</mat-option> -->
+				</mat-autocomplete>
+			</div>
+		</div>
+		<ul class="contact-list">
+			<li class="contact-item">
+				<img [src]="'assets/images/images-placeholder.png'" alt="Contact 1" class="contact-avatar" />
+				<div class="contact-details">
+					<p mat-line class="chat-title">
+						<span class="chat-name">
+							Awa Ndiaye
+						</span>
+						<span class="chat-date">
+							20/09/2023
+						</span>
+					</p>
+					<p mat-line>
+						Coucou
+					</p>
+				</div>
+			</li>
+
+			<li class="contact-item">
+				<img [src]="'assets/images/images-placeholder.png'" alt="Contact 1" class="contact-avatar" />
+				<div class="contact-details">
+					<p mat-line class="chat-title">
+						<span class="chat-name">
+							Habiba Dramé
+						</span>
+						<span class="chat-date">
+							20/09/2023
+						</span>
+					</p>
+					<p mat-line>
+						maleu raw si lo nk
+					</p>
+				</div>
+			</li>
+			<!-- Ajoutez d'autres contacts ici -->
+		</ul>
+	</div>
+	<div class="chat-container ">
+		<!-- Interface de chat avec une conversation -->
+		<div class="chat-header">
+			<img [src]="'assets/images/images-placeholder.png'" alt="">
+			<h2>Habiba Dramé</h2>
+		</div>
+		<ng-template #noMessage>
+
+		</ng-template>
+		<mat-divider></mat-divider>
+		<div class="chat-messages">
+			<ng-container>
+				<div class="message-bubble-container" [ngClass]="{'sender':message}">
+					<!-- [ngClass]="{'sender' : message.senderID === currentUser.uid}" -->
+
+					<div class="message-bubble">
+						salut namenala
+						<span class="chat-date">
+							27/09/2023
+						</span>
+					</div>
+				</div>
+				<div hidden #endOfChat>
+
+				</div>
+			</ng-container>
+			<div class="message-bubble-container">
+				<div class="message-bubble">
+					maleu raw si lo nk
+					<span class="chat-date">
+						27/09/2023
+					</span>
+				</div>
+			</div>
+			<!-- Afficher les messages ici -->
+		</div>
+		<div class="chat-input">
+			<mat-form-field appearance="outline">
+				<input matInput [formControl]="messageControl" placeholder="Écrivez votre message..."
+					(keydown.enter)="sendMessage()" />
+				<mat-icon matSuffix class="icon"> attach_file</mat-icon>
+				<mat-icon matSuffix class="icon">send</mat-icon>
+
+				<!-- <button mat-icon-button matSuffix (click)="sendMessage()">
+				<mat-icon>send</mat-icon>
+			</button> -->
+			</mat-form-field>
+		</div>
+	</div>
+</div>

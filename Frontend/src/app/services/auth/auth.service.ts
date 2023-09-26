@@ -7,6 +7,7 @@ import { User } from '../user/user.interface';
   providedIn: 'root'
 })
 export class AuthService {
+  currentUser$: any;
 
   apiUrl = 'http://localhost:3000'
 
