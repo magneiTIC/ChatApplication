@@ -8,31 +8,42 @@ module.exports = {
         try {
             // Récupérez les données du formulaire d'inscription
             const { email, username } = req.body;
-
+    
             // Générez un mot de passe par défaut (par exemple, une chaîne aléatoire)
             const defaultPassword = generateRandomPassword();
-            console.log("defaultPassword",defaultPassword);
+            console.log("defaultPassword: ",defaultPassword);
 
+    
             // Hachez le mot de passe
             const hashedPassword = await bcrypt.hash(defaultPassword, 10);
-            console.log("hashedPassword",hashedPassword);
-
-            // Créer un compte utilisateur avec Firebase Authentication
-            await admin.auth().createUser({
-                email, username, hashedPassword
+            console.log("hashedPassword: ",hashedPassword);
+    
+            // Créez l'utilisateur dans Firebase Authentication
+            const userRecord = await admin.auth().createUser({
+                email,
+                username,
+                password: defaultPassword, // Utilisez le mot de passe par défaut ici si nécessaire
             });
-
-            // Enregistrez le nouvel utilisateur dans la base de données MongoDB
-            // await User.create(newUser);
-            
-
-            res.status(201).json({ message: 'Compte utilisateur créé avec succès', defaultPassword });
-
+    
+            // Récupérez l'UID généré par Firebase
+            const uid = userRecord.uid;
+    
+            // Enregistrez l'utilisateur dans MongoDB avec l'UID de Firebase
+            await User.create({
+                email,
+                username,
+                uid, 
+                password: userRecord.passwordHash
+            });
+    
+            // Répondez avec succès
+            res.status(201).json({ message: 'Utilisateur enregistré avec succès' });
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Une erreur est survenue lors de la création du compte utilisateur' });
+            console.error("Erreur lors de l'inscription :", error);
+            res.status(500).json({ error: "Une erreur s'est produite lors de l'inscription" });
         }
     }
+    
 
 }
 // Fonction pour générer un mot de passe aléatoire

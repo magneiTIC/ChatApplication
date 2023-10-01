@@ -20,6 +20,7 @@ module.exports = {
       console.log('uid:', userRecord.uid);
       console.log('role', role);
 
+      
       // Génération du token Firebase
       const token = await admin.auth().createCustomToken(userRecord.uid);
 
@@ -34,6 +35,10 @@ module.exports = {
       });
     } catch (error) {
       console.error(error);
+      if (error.code === 'auth/wrong-password') {
+        return res.status(401).json({ message: "Mot de passe incorrect" });
+      }
+
       return res.status(500).json({ message: "Erreur d'authentification." });
     }
   },

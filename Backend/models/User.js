@@ -15,6 +15,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    uid:{
+        type:String,
+        required:true,
+        unique: true,
+    },
 }, { collection: "Users" });
 
 module.exports = mongoose.model("Users", userSchema);

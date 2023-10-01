@@ -64,6 +64,7 @@ const server = app.listen(3000, () => {
 const io = socketIo(server,{
     cors:{
         origin:"*",
+        methods: ["GET", "POST"]
     }
 });
  require('./config/socket.config')(io);

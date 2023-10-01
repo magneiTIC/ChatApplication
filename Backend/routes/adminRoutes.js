@@ -6,13 +6,13 @@ const userCtrl = require("../controllers/userCtrl");
 
 
 // Route pour créer un nouveau compte utilisateur par l'administrateur
-router.post('/create-user', checkAuth, (req, res) => {
-    if(req.isAdmin){
-        adminCtrl.createUser;
-    } else {
-        res.status(403).json({ message: 'Accès interdit' });
-    }
-});
+// router.post('/create-user', checkAuth, (req, res) => {
+//     if(req.isAdmin){
+//         adminCtrl.createUser;
+//     } else {
+//         res.status(403).json({ message: 'Accès interdit' });
+//     }
+// });
 
 router.post("/create-user", adminCtrl.register);
 
