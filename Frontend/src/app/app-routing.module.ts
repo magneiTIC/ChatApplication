@@ -6,6 +6,7 @@ import { LandingComponent } from './components/landing/landing.component';
 import { LoginComponent } from './views/auth/login/login.component';
 import { DashboardComponent } from './views/admin/dashboard/dashboard.component';
 import { SettingComponent } from './views/admin/setting/setting.component';
+import { AddUserComponent } from './views/admin/add-user/add-user.component';
 
 const routes: Routes = [
 
@@ -15,6 +16,8 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'admin/setting', component: SettingComponent },
+  { path: 'add-user', component: AddUserComponent },
+
 
 
 ];

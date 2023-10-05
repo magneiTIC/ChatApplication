@@ -20,7 +20,9 @@
   padding-bottom:0;
   text-align: center;
 }
-
+.sidebar-header > h2{
+  text-align: left;
+}
 .contact-list {
   list-style: none;
   padding: 0;
@@ -77,6 +79,9 @@
   object-fit: cover;
   margin-right: 16px;
   height: 35px;
+}
+.chat-header > .icon{
+  justify-content: end;
 }
 
 .chat-messages {
@@ -204,4 +209,5 @@ button:hover {
 }
 .icon{
   color: #7ca6c7;
+  padding-bottom: 40px;
 }

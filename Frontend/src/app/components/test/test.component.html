@@ -37,13 +37,30 @@
 				<li class="nav-item">
 					<a href="#" class="icon nav-link   rounded-0" aria-current="page"
 						>
+						<mat-icon matSuffix>chat</mat-icon>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a href="#" class="icon nav-link   rounded-0" aria-current="page"
+						>
+						<mat-icon matSuffix>list</mat-icon>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a href="#" class="icon nav-link   rounded-0" aria-current="page"
+						>
+						<mat-icon matSuffix>group</mat-icon>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a href="#" class="icon nav-link   rounded-0" aria-current="page"
+						>
 						<mat-icon matSuffix>settings</mat-icon>
 					</a>
 				</li>
 				<li class="nav-item">
 					<a href="#" class="icon nav-link  py-3 border-bottom rounded-0" aria-current="page"
-						data-bs-toggle="tooltip" data-bs-placement="right" aria-label="Maison"
-						data-bs-original-title="Home">
+						>
 						<mat-icon>exit_to_app</mat-icon>			
 					</a>
 				</li>
@@ -54,6 +71,7 @@
 	<div class="sidebar">
 		<!-- Barre latérale avec la liste des contacts -->
 		<div class="sidebar-header">
+			<h2>Discussions </h2>
 			<div class="search-input">
 				<input type="text" class="form-control" placeholder="Rechercher  ...">
 				<!-- <mat-form-field>
@@ -117,6 +135,7 @@
 		<div class="chat-header">
 			<img [src]="'assets/images/images-placeholder.png'" alt="">
 			<h2>Habiba Dramé</h2>
+			
 		</div>
 		<ng-template #noMessage>
 
@@ -159,6 +178,8 @@
 				<mat-icon>send</mat-icon>
 			</button> -->
 			</mat-form-field>
+			
+
 		</div>
 	</div>
 </div>
