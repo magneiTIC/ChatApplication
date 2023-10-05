@@ -24,6 +24,9 @@ import { provideAuth,getAuth } from '@angular/fire/auth';
 import { HttpClientModule } from '@angular/common/http';
 import { SidebarComponent } from './views/admin/sidebar/sidebar.component';
 import { SettingComponent } from './views/admin/setting/setting.component';
+import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
+
+const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
 @NgModule({
   declarations: [
     AppComponent,
@@ -52,6 +55,7 @@ import { SettingComponent } from './views/admin/setting/setting.component';
     HttpClientModule,
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),    
+    SocketIoModule.forRoot(config),
 
   ],
   exports:[

@@ -1,21 +1,37 @@
+const Message = require('../models/message');
+const User = require('../models/user')
 module.exports={
-    sendMessage(req, res) {
-        const { user, text } = req.body;
-      
-        if (!user || !text) {
-          return res.status(400).json({ error: 'Les champs utilisateur et texte sont requis.' });
-        }
-      
-        const message = new Message({ user, text });
-      
-        message.save((err, savedMessage) => {
-          if (err) {
-            console.error('Erreur lors de l\'enregistrement du message dans la base de données :', err);
-            return res.status(500).json({ error: 'Erreur lors de l\'enregistrement du message dans la base de données.' });
-          }
-      
-          res.status(201).json(savedMessage);
-        });
-    },
-    
+  //Création d'un nouveau message
+  async createMessage(req,res){
+    try {
+      const { user, content, chatId } = req.body;
+      const newMessage = new Message({
+        user,
+        content,
+        chat: chatId,
+      });
+  
+      await newMessage.save();
+  
+      res.status(201).json(newMessage);
+
+    } 
+    catch (error) {
+      console.log("erreur lors de la création d'un message", error );
+      res.status(501).json({ error: 'Erreur lors de la création du message' });
+    }
+  },
+
+  //Liste des messages d'une conversation 
+  async getMessagesByChat(req,res){
+    try {
+      const chatId=req.params.chatId
+      const messages= await Message({chat:chatId})
+      //.populate('user','username')
+      .sort({ sentAt: 'asc' })
+      res.json(200).json(messages)
+    } catch (error) {
+      res.status(501).json("Erreur lors de l'affichage de l'historique d'une conversations")
+    }
+  }
 }

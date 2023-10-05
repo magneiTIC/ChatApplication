@@ -11,15 +11,19 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
-    password: {
-        type: String,
-        required: true,
-    },
     uid:{
         type:String,
         required:true,
         unique: true,
     },
-}, { collection: "Users" });
+    division:
+    {
+        type: String,
+        required: true,
+        enum: ['Sécurité Publique', 'Police Judiciaire', 'Surveillance du territoire']
+    }
+}, 
+
+{ collection: "Users" });
 
 module.exports = mongoose.model("Users", userSchema);

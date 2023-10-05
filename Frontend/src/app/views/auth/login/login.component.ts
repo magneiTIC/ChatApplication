@@ -35,23 +35,24 @@ export class LoginComponent implements OnInit {
         alert('Le formulaire est invalide. Veuillez remplir tous les champs correctement.');
         return;
       }
-
+  
       const email = this.loginForm.value.email;
       const password = this.loginForm.value.password;
-
+  
       const result = await this.authService.signIn(email, password);
-      console.log("Result", result);
+      console.log("Resultat ", result);
       if (result) {
-        this.router.navigate(['home']);
-      }
-      else {
-        this.connexionError = true
+        this.router.navigate(['/test']);
+      } else {
+        
+        this.connexionError = true;
       }
     } catch (error) {
       console.error('Erreur lors de la connexion :', error);
       alert('Une erreur s\'est produite lors de la connexion. Veuillez réessayer plus tard.');
     }
   }
+  
   resetError() {
     this.validationError = false;
     this.connexionError = false;

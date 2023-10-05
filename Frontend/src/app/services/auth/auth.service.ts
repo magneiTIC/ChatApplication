@@ -28,21 +28,25 @@ export class AuthService {
             const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
             console.log("Connexion réussie");
             resolve(userCredential.user);
+
           } else {
             // Les données ne sont pas valides, gérez l'erreur ici.
             console.error('Données non valides');
+            
             resolve(null);
           }
         });
-  
+
       } catch (error) {
         // Gérez les erreurs d'authentification ici.
         console.error('Erreur d\'authentification', error);
+        
         reject(error);
+        
       }
     });
   }
-  
+
 
 
   signOut() {
