@@ -1,16 +1,12 @@
 <div class="container">
     <div class="chat-list mat-elevation-z5">
         <div>
-             <div class="search-input">
+            <div class="search-input">
                 <mat-form-field>
-                    <input
-                        matInput
-                        images-placeholder="Rechercher"
-                        [formControl]="searchControl"
-                        [matAutocomplete]="users"
-                    >
- 
-                </mat-form-field>    
+                    <input matInput images-placeholder="Rechercher" [formControl]="searchControl"
+                        [matAutocomplete]="users">
+
+                </mat-form-field>
                 <mat-autocomplete #users="matAutocomplete">
                     <!-- <mat-option 
                         *ngFor="let user of users$ |async"
@@ -19,39 +15,39 @@
                         {{ user?.displayName}}
                     </mat-option> -->
                 </mat-autocomplete>
-            </div>         
+            </div>
 
             <mat-selection-list [multiple]="false">
                 <mat-divider></mat-divider>
-                <mat-list-option  >
-                    <img matListItemAvatar [src]="'assets/images/images-placeholder.png' " alt=""> 
+                <mat-list-option>
+                    <img matListItemAvatar [src]="'assets/images/images-placeholder.png' " alt="">
                     <p mat-line class="chat-title">
-                         <span class="chat-name">
+                        <span class="chat-name">
                             Habiba Dramé
-                         </span>
-                         <span class="chat-date">
-                             20/09/2023
-                         </span>
+                        </span>
+                        <span class="chat-date">
+                            20/09/2023
+                        </span>
                     </p>
                     <p mat-line>
-                    Bonjour
+                        Bonjour
                     </p>
-                 </mat-list-option>
-                 <mat-divider></mat-divider>
-                 <mat-list-option  >
-                    <img matListItemAvatar [src]="'assets/images/images-placeholder.png' " alt=""> 
+                </mat-list-option>
+                <mat-divider></mat-divider>
+                <mat-list-option>
+                    <img matListItemAvatar [src]="'assets/images/images-placeholder.png' " alt="">
                     <p mat-line class="chat-title">
-                         <span class="chat-name">
+                        <span class="chat-name">
                             Habiba Dramé
-                         </span>
-                         <span class="chat-date">
-                             20/09/2023
-                         </span>
+                        </span>
+                        <span class="chat-date">
+                            20/09/2023
+                        </span>
                     </p>
                     <p mat-line>
-                    Bonjour
+                        Bonjour
                     </p>
-                 </mat-list-option>
+                </mat-list-option>
             </mat-selection-list>
 
         </div>

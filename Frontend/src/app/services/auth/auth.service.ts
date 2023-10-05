@@ -1,60 +1,77 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from '@angular/fire/auth';
-import { HttpClient } from '@angular/common/http';
-import { User } from '../user/user.interface';
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  currentUser$: any;
 
   apiUrl = 'http://localhost:3000'
 
   constructor(private auth: Auth, private http: HttpClient) { }
 
-  signUp(email: string, password: string) {
-    return createUserWithEmailAndPassword(this.auth, email, password);
-  }
+  // Connexion d'un utilisateur avec email et mot de passe
+  async signIn(email: string, password: string) {
+    try {
+      const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
 
-  async signIn(email: string, password: string): Promise<User | null> {
-    return new Promise<User | null>(async (resolve, reject) => {
-      try {
-        // Validez les données dans la partie backend en envoyant une requête HTTP POST.
-        this.http.post(this.apiUrl + '/users/login', { email, password }).subscribe(async (response: any) => {
-          console.log(response);
-          if (response) {
-            // Les données sont valides, utilisez Firebase pour authentifier l'utilisateur.
-            const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
-            console.log("Connexion réussie");
-            resolve(userCredential.user);
+      // Connexion réussie
+      const user = userCredential.user;
+      console.log('Utilisateur connecté :', user);
 
-          } else {
-            // Les données ne sont pas valides, gérez l'erreur ici.
-            console.error('Données non valides');
-            
-            resolve(null);
-          }
-        });
+      // Vérifiez si l'utilisateur a déjà réinitialisé son mot de passe
+      if (user.metadata.creationTime === user.metadata.lastSignInTime) {
+        console.log('L\'utilisateur doit réinitialiser son mot de passe à la première connexion.');
+   
+        // Stockez cette information dans le stockage local du navigateur
+        localStorage.setItem('mustResetPassword', 'true');
 
-      } catch (error) {
-        // Gérez les erreurs d'authentification ici.
-        console.error('Erreur d\'authentification', error);
-        
-        reject(error);
-        
+        // Garder la session 
+        sessionStorage.setItem('uid', user.uid);
+
+      } else {
+        // Stockez le jeton d'identification de l'utilisateur pour les requêtes ultérieures à Express
+        const idToken = await user.getIdToken();
+        console.log('Jeton d\'identification :', idToken);
+
+        // Envoie le jeton d'identification à votre serveur Express
+        this.sendTokenToExpress(idToken);
       }
+
+      return userCredential;
+    } catch (error) {
+      // Gérer les erreurs de connexion
+      console.error('Erreur de connexion :', error);
+      throw error; // Rejeter l'erreur pour que le code appelant puisse la gérer si nécessaire
+    }
+  }
+
+  // Enregistrement d'un nouvel utilisateur avec email et mot de passe
+  // Inscription avec e-mail et mot de passe
+  async signUp(email: string, password: string): Promise<void> {
+    try {
+      await createUserWithEmailAndPassword(this.auth, email, password);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Envoie le jeton d'identification à Express
+  private sendTokenToExpress(idToken: string) {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${idToken}`
     });
-  }
 
-
-
-  signOut() {
-    return signOut(this.auth);
-  }
-
-  resetPassword(email: string) {
-    return sendPasswordResetEmail(this.auth, email);
+    this.http.post(`${this.apiUrl}/admin/create-user`, null, { headers })
+      .subscribe(
+        () => {
+          console.log('Jeton d\'identification envoyé à Express avec succès.');
+        },
+        (error) => {
+          console.error('Erreur lors de l\'envoi du jeton d\'identification à Express :', error);
+        }
+      );
   }
 
 }

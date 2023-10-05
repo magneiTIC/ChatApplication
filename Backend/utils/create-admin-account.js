@@ -9,7 +9,7 @@ admin.initializeApp({
 const adminInfo = {
   email: 'adn@admin.test',
   password: 's3cure',
-  displayName: 'Administrateur',
+  displayName: 'ADMIN',
 };
 
 async function createAdmin() {

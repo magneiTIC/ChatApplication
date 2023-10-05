@@ -18,7 +18,10 @@ module.exports = io => {
             };
             console.log("Message reçu : ", messageWithSocketID.message, "de l'utilisateur avec ID : ", messageWithSocketID.socketID);
             // Diffuser le message à tous les clients connectés
-            socket.broadcast.emit('chat-message', messageWithSocketID);
+            // socket.broadcast.to(socket.id).emit('chat-message', message);
+            socket.broadcast.emit('chat-message', message);
+            console.log("Message : ", message, "de l'utilisateur avec id:", socket.id )
+
         });
 
         socket.on('close', (code, reason) => {

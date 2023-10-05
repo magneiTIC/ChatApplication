@@ -2,8 +2,7 @@ import { LowerCasePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { combineLatest, map, startWith } from 'rxjs';
-import { ChatService } from 'src/app/services/chat/chat.service';
-import { UserService } from 'src/app/services/user/user.service';
+// import { ChatService } from 'src/app/services/chat/chat.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -11,8 +10,8 @@ import { UserService } from 'src/app/services/user/user.service';
 })
 export class HomeComponent {
   constructor(
-    private usersService : UserService,
-    private chatService: ChatService
+    
+    
   ) { }
 
   searchControl=new FormControl();

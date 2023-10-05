@@ -1,45 +1,37 @@
 const admin = require('firebase-admin');
+const jwt = require('jsonwebtoken');
+require("dotenv").config();
+const secretKey = process.env.SECRET_KEY;
 
 module.exports = {
   async login(req, res) {
     try {
-      const { email, password } = req.body;
+      const email = req.body.email;
+      const user = await admin.auth().getUserByEmail(email);
 
-      // Utilisez Firebase Authentication pour vérifier les informations d'identification
-       const userRecord = await admin.auth().getUserByEmail(email);
-      // Utilisez Firebase Authentication pour vérifier les informations d'identification
-      //const userCredential = await admin.auth().signInWithEmailAndPassword(email, password);
+      if (!user) {
+        return res.status(404).json({ message: "Utilisateur introuvable." });
+      }
 
+      const profil = user.displayName ? user.displayName : 'USER';
 
-      if (!userRecord)
-        return res.status(400).json({ message: "L'utilisateur n'existe pas." });
+      // Créez le payload pour le jeton JWT
+      const payload = {
+        uid: user.uid,
+        email: user.email,
+        profil: profil
+      };
 
-      // Vérification du rôle de l'utilisateur
-      const role = userRecord.displayName;
+      // Signez le jeton JWT
+      const token = jwt.sign(payload, secretKey, { expiresIn: '1h' }); 
 
-      console.log('uid:', userRecord.uid);
-      console.log('role', role);
-
-      
-      // Génération du token Firebase
-      const token = await admin.auth().createCustomToken(userRecord.uid);
-
-      console.log('Token généré avec succès:', token);
-
-      return res.status(200).json({
-        message:
-          role === 'Administrateur'
-            ? "Connexion en tant qu'administrateur réussie."
-            : "Connexion en tant qu'utilisateur simple réussie.",
+      return res.json({
         token: token,
+        message: `Connexion en tant que ${profil} réussie.`
       });
     } catch (error) {
       console.error(error);
-      if (error.code === 'auth/wrong-password') {
-        return res.status(401).json({ message: "Mot de passe incorrect" });
-      }
-
       return res.status(500).json({ message: "Erreur d'authentification." });
     }
-  },
+  }
 };
