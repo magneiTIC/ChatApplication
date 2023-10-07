@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { Router } from '@angular/router';
+import { LoginResponse } from './login-response.interface'
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,7 @@ export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   validationError: boolean = false;
   connexionError: boolean = false;
-  profil: any;
+  errorMessage: any;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -33,25 +34,32 @@ export class LoginComponent implements OnInit {
       this.validationError = true;
       return;
     }
-
-    const email = this.loginForm.value.email;
-    const password = this.loginForm.value.password;
-    try {
-      // Utilisez le service AuthService pour gérer la connexion de l'utilisateur
-      const userCredential = await this.authService.signIn(email, password);
-
-      // Connexion réussie
-      const user = userCredential.user;
-      console.log('Utilisateur connecté :', user);
-
-      // Redirigez l'utilisateur vers une autre page (par exemple, le profil)
-      this.router.navigate(['/home']);
-    } catch (error) {
-      // Gérez les erreurs de connexion
-      console.error('Erreur de connexion :', error);
-      this.connexionError = true;
-    }
-
+    const email = this.loginForm.value;
+    const password = this.loginForm.value;
+    this.authService.isProfileConfigured(email).subscribe(
+      (response) => {
+        // Utilisez une assertion de type ici
+        const loginResponse = response as LoginResponse; // Assertion de type
+        // Gestion de la réponse de l'API
+        console.log('Réponse de l\'API :', response);
+        if (loginResponse.isConfigured === false) {
+          // Rediriger vers la page d'inscription si l'inscription n'est pas terminée
+          console.log('L\'utilisateur doit terminer son inscription.');
+          sessionStorage.setItem('email', email);
+          this.router.navigate(['/register']);
+        } else {
+          this.authService.login(email, password)
+          // Rediriger vers la page de chat si l'inscription est terminée
+          console.log('L\'utilisateur est connecté et peut accéder à la page de chat.');
+          this.router.navigate(['/test']);
+        }
+      },
+      (error) => {
+        // Gestion des erreurs
+        console.error('Erreur de connexion :', error);
+        this.errorMessage = 'Adresse e-mail ou mot de passe incorrect.';
+      }
+    )
   }
 
   resetError() {

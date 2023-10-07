@@ -1,7 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@angular/fire/auth';
-
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, user } from '@angular/fire/auth';
+import * as CryptoJS from 'crypto-js';
+import { SECRET_KEY } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
@@ -11,67 +12,34 @@ export class AuthService {
 
   constructor(private auth: Auth, private http: HttpClient) { }
 
-  // Connexion d'un utilisateur avec email et mot de passe
-  async signIn(email: string, password: string) {
-    try {
-      const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
-
-      // Connexion réussie
-      const user = userCredential.user;
-      console.log('Utilisateur connecté :', user);
-
-      // Vérifiez si l'utilisateur a déjà réinitialisé son mot de passe
-      if (user.metadata.creationTime === user.metadata.lastSignInTime) {
-        console.log('L\'utilisateur doit réinitialiser son mot de passe à la première connexion.');
-   
-        // Stockez cette information dans le stockage local du navigateur
-        localStorage.setItem('mustResetPassword', 'true');
-
-        // Garder la session 
-        sessionStorage.setItem('uid', user.uid);
-
-      } else {
-        // Stockez le jeton d'identification de l'utilisateur pour les requêtes ultérieures à Express
-        const idToken = await user.getIdToken();
-        console.log('Jeton d\'identification :', idToken);
-
-        // Envoie le jeton d'identification à votre serveur Express
-        this.sendTokenToExpress(idToken);
-      }
-
-      return userCredential;
-    } catch (error) {
-      // Gérer les erreurs de connexion
-      console.error('Erreur de connexion :', error);
-      throw error; // Rejeter l'erreur pour que le code appelant puisse la gérer si nécessaire
-    }
+  createUser(userData: any) {
+    return this.http.post(`${this.apiUrl}/admin/create-user`, userData);
   }
 
-  // Enregistrement d'un nouvel utilisateur avec email et mot de passe
-  // Inscription avec e-mail et mot de passe
-  async signUp(email: string, password: string): Promise<void> {
-    try {
-      await createUserWithEmailAndPassword(this.auth, email, password);
-    } catch (error) {
-      throw error;
-    }
+  isProfileConfigured(email: string) {
+    return this.http.post(`${this.apiUrl}/users/isProfileConfigured`, email);
   }
 
-  // Envoie le jeton d'identification à Express
-  private sendTokenToExpress(idToken: string) {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${idToken}`
-    });
+  async login(email: string, password: string) {
+    const userCredentials = await signInWithEmailAndPassword(this.auth, email, password);
+    const user = userCredentials.user;
+    // Stockez cette information dans la session du navigateur
+    sessionStorage.setItem('uid', user.uid);
+    // Vérifiez si l'email n'est pas null avant de le stocker
+    if (user.email !== null) {
+      sessionStorage.setItem('email', user.email);
+    }
+    return userCredentials.user;
+  }
 
-    this.http.post(`${this.apiUrl}/admin/create-user`, null, { headers })
-      .subscribe(
-        () => {
-          console.log('Jeton d\'identification envoyé à Express avec succès.');
-        },
-        (error) => {
-          console.error('Erreur lors de l\'envoi du jeton d\'identification à Express :', error);
-        }
-      );
+  async createUserWithFirebase(username: string, password: string, email: string) {
+    const userCredentials = await createUserWithEmailAndPassword(this.auth, email, password);
+    const userUpdated = {
+      'uid': userCredentials.user.uid,
+      'username': username,
+      'email': userCredentials.user.email
+    }
+    return this.http.post(`${this.apiUrl}/users/register`, userUpdated);
   }
 
 }

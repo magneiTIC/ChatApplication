@@ -24,13 +24,10 @@ import { provideAuth,getAuth } from '@angular/fire/auth';
 import { HttpClientModule } from '@angular/common/http';
 import { SidebarComponent } from './views/admin/sidebar/sidebar.component';
 import { SettingComponent } from './views/admin/setting/setting.component';
-<<<<<<< Updated upstream
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
+import { AddUserComponent } from './views/admin/add-user/add-user.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
-=======
-import { AddUserComponent } from './views/admin/add-user/add-user.component';
->>>>>>> Stashed changes
 @NgModule({
   declarations: [
     AppComponent,
