@@ -7,4 +7,4 @@ export interface ProfileUser {
     lastName?: string;
     phone?: string;
     address?: string;
-  }
+}

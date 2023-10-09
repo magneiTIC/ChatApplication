@@ -8,12 +8,12 @@ const userSchema = new mongoose.Schema({
     },
     username: {
         type: String,
-        required: true,
+        // required: true,
         unique: true,
     },
-    uid:{
-        type:String,
-        required:true,
+    uid: {
+        type: String,
+        // required: true,
         unique: true,
     },
     division:
@@ -21,9 +21,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         enum: ['Sécurité Publique', 'Police Judiciaire', 'Surveillance du territoire']
-    }
-}, 
+    },
+   
+},
 
-{ collection: "Users" });
+    { collection: "Users" });
 
 module.exports = mongoose.model("Users", userSchema);

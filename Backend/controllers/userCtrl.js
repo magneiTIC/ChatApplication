@@ -1,45 +1,56 @@
 const admin = require('firebase-admin');
+const UserModel = require("../models/user");
+const CryptoJS = require('crypto-js');
+const jwt = require('jsonwebtoken');
+
+
+require("dotenv").config();
+const secretKey = process.env.SECRET_KEY;
+const tokenKey = process.env.TOKEN_KEY;
+const iv = "IV_VALUE"; // Remplacez par la valeur de l'IV réelle
+
 
 module.exports = {
-  async login(req, res) {
+
+  async isProfileConfigured(req, res) {
     try {
-      const { email, password } = req.body;
-
-      // Utilisez Firebase Authentication pour vérifier les informations d'identification
-       const userRecord = await admin.auth().getUserByEmail(email);
-      // Utilisez Firebase Authentication pour vérifier les informations d'identification
-      //const userCredential = await admin.auth().signInWithEmailAndPassword(email, password);
-
-
-      if (!userRecord)
-        return res.status(400).json({ message: "L'utilisateur n'existe pas." });
-
-      // Vérification du rôle de l'utilisateur
-      const role = userRecord.displayName;
-
-      console.log('uid:', userRecord.uid);
-      console.log('role', role);
-
-      
-      // Génération du token Firebase
-      const token = await admin.auth().createCustomToken(userRecord.uid);
-
-      console.log('Token généré avec succès:', token);
-
-      return res.status(200).json({
-        message:
-          role === 'Administrateur'
-            ? "Connexion en tant qu'administrateur réussie."
-            : "Connexion en tant qu'utilisateur simple réussie.",
-        token: token,
-      });
-    } catch (error) {
-      console.error(error);
-      if (error.code === 'auth/wrong-password') {
-        return res.status(401).json({ message: "Mot de passe incorrect" });
+      const email = req.body.email;
+      const username = req.body.username || '';
+      const user = UserModel.findOne({ email: email });
+      const checkUsername = UserModel.findOne({ username: username });
+      if (!user) {
+        return res.status(404).json({ message: "Utilisateur introuvable." });
       }
+      if (!checkUsername) {
+        res.json({ message: "Le profil n'est pas encore configuré", isProfileConfigured: false });
+      } else {
+        res.status(200).json({ message: "Profil déjà configuré"});
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification du profil :', error);
+      res.status(500).json({ message: 'Erreur lors de la vérification du profil' });
+    }
+  },
 
-      return res.status(500).json({ message: "Erreur d'authentification." });
+  async register(req, res) {
+    const { username, uid, email } = req.body;
+    try {      
+      // Mettez à jour le profil de l'utilisateur dans MongoDB
+      await UserModel.findOneAndUpdate(
+        { email: email }, { username: username, uid: uid }
+      );
+      // Réponse de succès
+      res.status(200).json({ message: 'Inscription terminée avec succès' });
+    } catch (error) {
+      console.error('Erreur lors de la tentative de terminer l\'inscription :', error);
+      // Gérez les erreurs ici
+      res.status(500).json({ message: 'Erreur lors de la tentative de terminer l\'inscription' });
     }
   },
 };
+
+// const generateToken = (userId) => {
+//   const token = jwt.sign({ userId }, tokenKey, { expiresIn: '1h' }); // Vous pouvez définir une durée d'expiration appropriée
+//   return token;
+// };
+

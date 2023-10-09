@@ -1,59 +1,27 @@
 const bcrypt = require('bcrypt'); // Pour hasher les mots de passe
-const User = require('../models/user'); // Modèle MongoDB pour les utilisateurs
-const admin = require('firebase-admin')
+const UserModel = require('../models/user'); // Modèle MongoDB pour les utilisateurs
+const admin = require('firebase-admin');
+const jwt = require('jsonwebtoken');
+
 
 module.exports = {
-
-    async register(req, res) {
+    async createUser(req, res) {
+        const { email, division } = req.body;
+        const motDePasseParDefaut = 'passer';
         try {
-            // Récupérez les données du formulaire d'inscription
-            const { email, username } = req.body;
-    
-            // Générez un mot de passe par défaut (par exemple, une chaîne aléatoire)
-            const defaultPassword = generateRandomPassword();
-            console.log("defaultPassword: ",defaultPassword);
-
-    
-            // Hachez le mot de passe
-            const hashedPassword = await bcrypt.hash(defaultPassword, 10);
-            console.log("hashedPassword: ",hashedPassword);
-    
-            // Créez l'utilisateur dans Firebase Authentication
-            const userRecord = await admin.auth().createUser({
-                email,
-                username,
-                password: defaultPassword, // Utilisez le mot de passe par défaut ici si nécessaire
-            });
-    
-            // Récupérez l'UID généré par Firebase
-            const uid = userRecord.uid;
-    
-            // Enregistrez l'utilisateur dans MongoDB avec l'UID de Firebase
-            await User.create({
-                email,
-                username,
-                uid, 
-                password: userRecord.passwordHash
-            });
-    
-            // Répondez avec succès
-            res.status(201).json({ message: 'Utilisateur enregistré avec succès' });
+            // Créez un profil utilisateur dans la base de données MongoDB avec les données nécessaires
+            const user = new UserModel({ email, division, password: motDePasseParDefaut, isConfigured: false });
+            // Enregistrez l'utilisateur dans la base de données MongoDB
+            await user.save();
+            // Réponse de succès
+            res.status(201).json({ message: 'Inscription de l\'utilisateur commencée avec succès' });
         } catch (error) {
-            console.error("Erreur lors de l'inscription :", error);
-            res.status(500).json({ error: "Une erreur s'est produite lors de l'inscription" });
+            console.error('Erreur lors de la tentative de début d\'inscription :', error);
+            // Gérez les erreurs ici
+            res.status(500).json({ message: 'Erreur lors de la tentative de début d\'inscription' });
         }
-    }
-    
+    },
 
+   
 }
-// Fonction pour générer un mot de passe aléatoire
-function generateRandomPassword() {
-    // Générez un mot de passe aléatoire de 8 caractères (vous pouvez ajuster la longueur selon vos besoins)
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let password = '';
-    for (let i = 0; i < 8; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        password += characters.charAt(randomIndex);
-    }
-    return password;
-}
+

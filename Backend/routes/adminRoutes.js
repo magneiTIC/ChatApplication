@@ -14,7 +14,7 @@ const userCtrl = require("../controllers/userCtrl");
 //     }
 // });
 
-router.post("/create-user", adminCtrl.register);
+router.post("/create-user", adminCtrl.createUser);
 
 
 

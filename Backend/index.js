@@ -1,18 +1,13 @@
 const express = require("express");
 const app = express();
-
 const cors = require("cors");
 const bodyParser = require("body-parser");
-
 const admin = require("firebase-admin");
 const serviceAccount = require('./config/serviceAccountKey.json');
-
-const mongoose=require('mongoose')
-const dbConfig=require("./config/db.conf")
-
+const mongoose = require('mongoose')
+const dbConfig = require("./config/db.conf")
 const socketIo = require("socket.io")
        
-
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
@@ -26,14 +21,13 @@ app.use(bodyParser.json());
 app.use(cors()); // Configure CORS
 
 // Appliquez le middleware de vérification du token JWT aux routes nécessitant une authentification
-// app.get('/admin/create-user', checkAuth, (req, res) => {
-//     // Vous pouvez accéder aux informations de l'utilisateur via req.user
-//     const userId = req.user.uid;
-//     res.send(`Route protégée pour l'utilisateur avec l'ID : ${userId}`);
-// });
+const checkAuth = require('./middleware/middleware')
+app.get('/admin/create-user', checkAuth, (req, res) => {
+      // La route est protégée et l'utilisateur est authentifié
+  res.json({ message: 'Vous avez accès à cette ressource protégée.' });
+});
 
 // Appel des routes
-
 const adminRoutes = require('./routes/adminRoutes');
 app.use('/admin', adminRoutes);
 
@@ -52,12 +46,10 @@ mongoose.connect(dbConfig.mongoURI, dbConfig.mongoOptions)
 
 
 //lancement de l'application
-// const server = app.listen(process.env.PORT, () => {
-//     console.log(`Server Started on Port ${process.env.PORT}`);
-// });
-const server = app.listen(3000, () => {
-    console.log(`Server Started on Port 3000`);
+const server = app.listen(process.env.PORT, () => {
+    console.log(`Server Started on Port ${process.env.PORT}`);
 });
+
 
 
 //lancement socket

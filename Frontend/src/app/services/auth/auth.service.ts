@@ -1,60 +1,45 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from '@angular/fire/auth';
-import { HttpClient } from '@angular/common/http';
-import { User } from '../user/user.interface';
-
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, user } from '@angular/fire/auth';
+import * as CryptoJS from 'crypto-js';
+import { SECRET_KEY } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  currentUser$: any;
 
   apiUrl = 'http://localhost:3000'
 
   constructor(private auth: Auth, private http: HttpClient) { }
 
-  signUp(email: string, password: string) {
-    return createUserWithEmailAndPassword(this.auth, email, password);
+  createUser(userData: any) {
+    return this.http.post(`${this.apiUrl}/admin/create-user`, userData);
   }
 
-  async signIn(email: string, password: string): Promise<User | null> {
-    return new Promise<User | null>(async (resolve, reject) => {
-      try {
-        // Validez les données dans la partie backend en envoyant une requête HTTP POST.
-        this.http.post(this.apiUrl + '/users/login', { email, password }).subscribe(async (response: any) => {
-          console.log(response);
-          if (response) {
-            // Les données sont valides, utilisez Firebase pour authentifier l'utilisateur.
-            const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
-            console.log("Connexion réussie");
-            resolve(userCredential.user);
-
-          } else {
-            // Les données ne sont pas valides, gérez l'erreur ici.
-            console.error('Données non valides');
-            
-            resolve(null);
-          }
-        });
-
-      } catch (error) {
-        // Gérez les erreurs d'authentification ici.
-        console.error('Erreur d\'authentification', error);
-        
-        reject(error);
-        
-      }
-    });
+  isProfileConfigured(email: string) {
+    return this.http.post(`${this.apiUrl}/users/isProfileConfigured`, email);
   }
 
-
-
-  signOut() {
-    return signOut(this.auth);
+  async login(email: string, password: string) {
+    const userCredentials = await signInWithEmailAndPassword(this.auth, email, password);
+    const user = userCredentials.user;
+    // Stockez cette information dans la session du navigateur
+    sessionStorage.setItem('uid', user.uid);
+    // Vérifiez si l'email n'est pas null avant de le stocker
+    if (user.email !== null) {
+      sessionStorage.setItem('email', user.email);
+    }
+    return userCredentials.user;
   }
 
-  resetPassword(email: string) {
-    return sendPasswordResetEmail(this.auth, email);
+  async createUserWithFirebase(username: string, password: string, email: string) {
+    const userCredentials = await createUserWithEmailAndPassword(this.auth, email, password);
+    const userUpdated = {
+      'uid': userCredentials.user.uid,
+      'username': username,
+      'email': userCredentials.user.email
+    }
+    return this.http.post(`${this.apiUrl}/users/register`, userUpdated);
   }
 
 }
