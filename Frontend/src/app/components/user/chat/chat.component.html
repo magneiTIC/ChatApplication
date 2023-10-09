@@ -1,0 +1,55 @@
+<div class="chat-app">
+
+    <div class="chat-container ">
+        <!-- Interface de chat avec une conversation -->
+        <div class="chat-header">
+            <img [src]="'assets/images/images-placeholder.png'" alt="">
+            <h2>Habiba Dramé</h2>
+            
+        </div>
+        <ng-template #noMessage>
+
+        </ng-template>
+        <mat-divider></mat-divider>
+        <div class="chat-messages">
+            <ng-container>
+                <div class="message-bubble-container" [ngClass]="{'sender':message}">
+                    <!-- [ngClass]="{'sender' : message.senderID === currentUser.uid}" -->
+
+                    <div class="message-bubble">
+                        salut namenala
+                        <span class="chat-date">
+                            27/09/2023
+                        </span>
+                    </div>
+                </div>
+                <div hidden #endOfChat>
+
+                </div>
+            </ng-container>
+            <div class="message-bubble-container">
+                <div class="message-bubble">
+                    maleu raw si lo nk
+                    <span class="chat-date">
+                        27/09/2023
+                    </span>
+                </div>
+            </div>
+            <!-- Afficher les messages ici -->
+        </div>
+        <div class="chat-input">
+            <mat-form-field appearance="outline">
+                <input matInput [formControl]="messageControl" placeholder="Écrivez votre message..."
+                    (keydown.enter)="sendMessage()" />
+                <mat-icon matSuffix class="icon"> attach_file</mat-icon>
+                <mat-icon matSuffix class="icon">send</mat-icon>
+
+                <!-- <button mat-icon-button matSuffix (click)="sendMessage()">
+                <mat-icon>send</mat-icon>
+            </button> -->
+            </mat-form-field>
+            
+
+        </div>
+    </div>
+</div>

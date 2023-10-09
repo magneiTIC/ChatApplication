@@ -1,5 +1,8 @@
 <div class="chat-app">
-	<div class="side">
+	<app-side></app-side>
+	<app-contact></app-contact>
+	<app-chat></app-chat>
+	<!-- <div class="side">
 		<div class="d-flex flex-column flex-shrink-0 bg-body-tertiary" style="width: 4.5rem;">
 			<div class="dropdown border-top">
 				<a href="#"
@@ -67,29 +70,15 @@
 
 			</ul>
 		</div>
-	</div>
-	<div class="sidebar">
-		<!-- Barre latérale avec la liste des contacts -->
+	</div> -->
+	<!-- <div class="sidebar">
 		<div class="sidebar-header">
 			<h2>Discussions </h2>
 			<div class="search-input">
 				<input type="text" class="form-control" placeholder="Rechercher  ...">
-				<!-- <mat-form-field>
-				
-				<input
-					matInput
-					images-placeholder="Rechercher"
-					[matAutocomplete]="users"
-				>
-
-			</mat-form-field>     -->
+			
 				<mat-autocomplete #users="matAutocomplete">
-					<!-- <mat-option 
-					*ngFor="let user of users$ |async"
-					(click)="createChat(user)"
-					>
-					{{ user?.displayName}}
-				</mat-option> -->
+				
 				</mat-autocomplete>
 			</div>
 		</div>
@@ -127,11 +116,9 @@
 					</p>
 				</div>
 			</li>
-			<!-- Ajoutez d'autres contacts ici -->
 		</ul>
-	</div>
-	<div class="chat-container ">
-		<!-- Interface de chat avec une conversation -->
+	</div> -->
+	<!-- <div class="chat-container ">
 		<div class="chat-header">
 			<img [src]="'assets/images/images-placeholder.png'" alt="">
 			<h2>Habiba Dramé</h2>
@@ -144,7 +131,6 @@
 		<div class="chat-messages">
 			<ng-container>
 				<div class="message-bubble-container" [ngClass]="{'sender':message}">
-					<!-- [ngClass]="{'sender' : message.senderID === currentUser.uid}" -->
 
 					<div class="message-bubble">
 						salut namenala
@@ -165,7 +151,6 @@
 					</span>
 				</div>
 			</div>
-			<!-- Afficher les messages ici -->
 		</div>
 		<div class="chat-input">
 			<mat-form-field appearance="outline">
@@ -174,12 +159,10 @@
 				<mat-icon matSuffix class="icon"> attach_file</mat-icon>
 				<mat-icon matSuffix class="icon">send</mat-icon>
 
-				<!-- <button mat-icon-button matSuffix (click)="sendMessage()">
-				<mat-icon>send</mat-icon>
-			</button> -->
+			
 			</mat-form-field>
 			
 
 		</div>
-	</div>
+	</div> -->
 </div>

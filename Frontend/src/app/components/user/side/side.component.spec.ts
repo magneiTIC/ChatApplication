@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LandingComponent } from './landing.component';
+import { SideComponent } from './side.component';
 
-describe('LandingComponent', () => {
-  let component: LandingComponent;
-  let fixture: ComponentFixture<LandingComponent>;
+describe('SideComponent', () => {
+  let component: SideComponent;
+  let fixture: ComponentFixture<SideComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [LandingComponent]
+      declarations: [SideComponent]
     });
-    fixture = TestBed.createComponent(LandingComponent);
+    fixture = TestBed.createComponent(SideComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

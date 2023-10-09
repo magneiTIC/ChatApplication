@@ -4,18 +4,15 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HomeComponent } from './components/home/home.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { TestComponent } from './components/test/test.component';
-import { HeaderComponent } from './views/admin/components/header/header.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { MatToolbarModule} from '@angular/material/toolbar'
 import{MatListModule} from '@angular/material/list'
 import{ } from '@angular/material/'
 import{ MatIconModule } from '@angular/material/icon';
-import { LandingComponent } from './components/landing/landing.component';
 import { LoginComponent } from './views/auth/login/login.component';
 import { RegisterComponent } from './views/auth/register/register.component'
 import { environment } from 'src/environments/environment';
@@ -24,25 +21,31 @@ import { provideAuth,getAuth } from '@angular/fire/auth';
 import { HttpClientModule } from '@angular/common/http';
 import { SidebarComponent } from './views/admin/sidebar/sidebar.component';
 import { SettingComponent } from './views/admin/setting/setting.component';
-<<<<<<< Updated upstream
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
+import { AddUserComponent } from './views/admin/add-user/add-user.component';
+import { ChatComponent } from './components/user/chat/chat.component';
+import { ContactComponent } from './components/user/contact/contact.component';
+import { SideComponent } from './components/user/side/side.component';
+import { SuperAdminComponent } from './views/super-admin/super-admin.component';
+import { UserSettingComponent } from './views/user/user-setting/user-setting.component';
+import { HomeComponent } from './views/user/home/home.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
-=======
-import { AddUserComponent } from './views/admin/add-user/add-user.component';
->>>>>>> Stashed changes
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     TestComponent,
-    HeaderComponent,
-    LandingComponent,
     LoginComponent,
     RegisterComponent,
     SidebarComponent,
     SettingComponent,
     AddUserComponent,
+    ChatComponent,
+    ContactComponent,
+    SideComponent,
+    SuperAdminComponent,
+    UserSettingComponent,
   ],
   imports: [
     BrowserModule,

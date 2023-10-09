@@ -1,0 +1,25 @@
+.chat-app {
+    display: flex;
+    height: 100vh;
+  }
+  
+.side{
+    width: 5%;
+    color: white;
+
+  }
+  .chat-app {
+    display: flex;
+    height: 100vh;
+  }
+  .icon{
+    color: #7ca6c7;
+    padding-bottom: 40px;
+  }
+  .dropdown{
+    top: 2em !important;
+  }
+  .nav{
+    position: absolute;
+    bottom: 0;
+  }
