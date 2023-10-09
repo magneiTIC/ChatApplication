@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormBuilder, FormGroup, Validators,ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { Router } from '@angular/router';
-import { LoginResponse } from './login-response.interface'
+import { LoginResponse } from './login-response.interface';
+import { SocketService } from 'src/app/services/sockets/sockets.service';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private socketService: SocketService
   ) { }
 
   ngOnInit(): void {
@@ -47,9 +49,10 @@ export class LoginComponent implements OnInit {
           console.log('L\'utilisateur doit terminer son inscription.');
           sessionStorage.setItem('email', email);
           this.router.navigate(['/register']);
-        } else {
+        } 
+        else {
           this.authService.login(email, password)
-          // Rediriger vers la page de chat si l'inscription est terminée
+         // Rediriger vers la page de chat si l'inscription est terminée
           console.log('L\'utilisateur est connecté et peut accéder à la page de chat.');
           this.router.navigate(['/test']);
         }

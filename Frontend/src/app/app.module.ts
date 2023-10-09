@@ -30,6 +30,7 @@ import { SuperAdminComponent } from './views/super-admin/super-admin.component';
 import { UserSettingComponent } from './views/user/user-setting/user-setting.component';
 import { HomeComponent } from './views/user/home/home.component';
 
+
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
 @NgModule({
   declarations: [

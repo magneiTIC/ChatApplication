@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, user } from '@angular/fire/auth';
 import * as CryptoJS from 'crypto-js';
-import { SECRET_KEY } from '../../../environments/environment';
+//import { SECRET_KEY } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
