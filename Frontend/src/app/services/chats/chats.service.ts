@@ -1,18 +1,45 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { ProfileUser } from 'src/app/models/user-profile';
+import { Observable, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatsService {
-  private apiUrl = 'http://localhost:3000/api/users'; // Assurez-vous de mettre à jour l'URL appropriée
+  private apiUrl = 'http://localhost:3000/'; // Assurez-vous de mettre à jour l'URL appropriée
 
   constructor(private http: HttpClient) {}
 
-  getAllUsers(): Observable<ProfileUser[]> {
-    return this.http.get<ProfileUser[]>(this.apiUrl);
+  getAllUsers(){
+    return this.http
+    .get<any>(this.apiUrl+'users')
+    .pipe(
+      map((userData: any )=>{
+       return userData
+      })
+
+     )
   }
  
+  createChat(){
+    return this.http
+      .post<any>(this.apiUrl+'',{})
+      .pipe(
+        map((userData: any )=>{
+         return userData
+        })
+       )
+  }
+
+  getChatsByUser(){
+    return this.http
+    .get<any>(this.apiUrl+'')
+    .pipe(
+      map((userData: any )=>{
+       return userData
+      })
+
+     )
+
+  }
 }

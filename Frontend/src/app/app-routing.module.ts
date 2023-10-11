@@ -7,6 +7,7 @@ import { SettingComponent } from './views/admin/setting/setting.component';
 import { AddUserComponent } from './views/admin/add-user/add-user.component';
 import { UserSettingComponent } from './views/user/user-setting/user-setting.component';
 import { HomeComponent } from './views/user/home/home.component';
+import { SidebarComponent } from './components/admin/sidebar/sidebar.component';
 
 const routes: Routes = [
 
@@ -20,6 +21,8 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'admin/setting', component: SettingComponent },
   { path: 'add-user', component: AddUserComponent },
+  { path: 'sidebar', component: SidebarComponent },
+
 
   { path: 'user/setting', component: UserSettingComponent },
   { path: 'home', component: HomeComponent },

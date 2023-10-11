@@ -31,6 +31,10 @@ export class AuthService {
     }
     return userCredentials.user;
   }
+  isLoggedIn(){
+    let user= sessionStorage.getItem('username');
+    return!(user === null);
+  }
 
   async createUserWithFirebase(username: string, password: string, email: string) {
     const userCredentials = await createUserWithEmailAndPassword(this.auth, email, password);

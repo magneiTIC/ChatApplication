@@ -19,7 +19,6 @@ import { environment } from 'src/environments/environment';
 import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 import { HttpClientModule } from '@angular/common/http';
-import { SidebarComponent } from './views/admin/sidebar/sidebar.component';
 import { SettingComponent } from './views/admin/setting/setting.component';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { AddUserComponent } from './views/admin/add-user/add-user.component';
@@ -29,6 +28,7 @@ import { SideComponent } from './components/user/side/side.component';
 import { SuperAdminComponent } from './views/super-admin/super-admin.component';
 import { UserSettingComponent } from './views/user/user-setting/user-setting.component';
 import { HomeComponent } from './views/user/home/home.component';
+import { SidebarComponent } from './components/admin/sidebar/sidebar.component';
 
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
@@ -39,12 +39,12 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     TestComponent,
     LoginComponent,
     RegisterComponent,
-    SidebarComponent,
     SettingComponent,
     AddUserComponent,
     ChatComponent,
     ContactComponent,
     SideComponent,
+    SidebarComponent,
     SuperAdminComponent,
     UserSettingComponent,
   ],

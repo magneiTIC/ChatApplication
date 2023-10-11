@@ -4,6 +4,7 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 import { Router } from '@angular/router';
 import { LoginResponse } from './login-response.interface';
 import { SocketService } from 'src/app/services/sockets/sockets.service';
+import { HotToastService } from '@ngneat/hot-toast';
 
 @Component({
   selector: 'app-login',
@@ -16,13 +17,17 @@ export class LoginComponent implements OnInit {
   validationError: boolean = false;
   connexionError: boolean = false;
   errorMessage: any;
+email: any;
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private authService: AuthService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private toast: HotToastService
+
   ) { }
+
 
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
@@ -30,6 +35,7 @@ export class LoginComponent implements OnInit {
       password: ['', [Validators.required]]
     });
   }
+
 
   async onSubmit() {
     if (this.loginForm.invalid) {
@@ -50,7 +56,7 @@ export class LoginComponent implements OnInit {
           sessionStorage.setItem('email', email);
           this.router.navigate(['/register']);
         } 
-        else {
+        else {  
           this.authService.login(email, password)
          // Rediriger vers la page de chat si l'inscription est terminée
           console.log('L\'utilisateur est connecté et peut accéder à la page de chat.');
