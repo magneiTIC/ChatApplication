@@ -8,4 +8,6 @@ router.post("/isProfileConfigured", userCtrl.isProfileConfigured);
 // Route pour mettre à jour le compte de l'utilisateur
 router.post("/register", userCtrl.register);
 
+router.get("/",userCtrl.getAllUsers)
+
 module.exports = router;

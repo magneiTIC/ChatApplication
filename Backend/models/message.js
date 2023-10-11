@@ -19,8 +19,10 @@ const messageSchema = new mongoose.Schema({
       type: Date, 
       default: Date.now, 
     },
-  });
+    
+  },
+  { collection: "Messages" });
   
-  const Message = mongoose.model('Message', messageSchema);
+
   
-  module.exports = Message;
+  module.exports = mongoose.model('Messages', messageSchema);

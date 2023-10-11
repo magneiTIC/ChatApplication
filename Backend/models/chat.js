@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+
 const chatSchema = new mongoose.Schema({
   users: [
     {
@@ -18,11 +19,12 @@ const chatSchema = new mongoose.Schema({
   },
   autorised:
   {
-    type: Boolean
+    type: Boolean,
+    default:true
   }
 },
-  { timestamps: true }
+  //{ timestamps: true },
+  { collection: "Chats" }
 );
 
-const Chat = mongoose.model('Chat', chatSchema);
-module.exports = Chat;
+module.exports = mongoose.model('Chats', chatSchema);

@@ -6,7 +6,7 @@ module.exports = {
         try {
             const { users } = req.body
             const newChat = new Chat({ users })
-            await newConversation.save(newChat);
+            await newChat.save();
             console.log("conversation créée avec succès");
             return res.status(200).json({ message: "conversation créée avec succès" })
 
@@ -30,8 +30,22 @@ module.exports = {
             console.log("Erreur d'affichage des conversations d'un user",error)
             res.status(500).json({error:"Erreur lors de l'affichage des conversations d'un user"})
         }
-    }
+    },
 
     //peupler une conversation
-
+    async addMessageToChat(req, res){
+        try {
+          const { chatId, sender, text } = req.body;
+          const chat = await Chat.findById(chatId);
+          if (!chat) {
+            return res.status(404).json({ error: 'Conversation non trouvée' });
+          }
+      
+          chat.messages.push({ sender, text });
+          await conversation.save();
+          res.status(200).json(chat);
+        } catch (error) {
+          res.status(500).json({ error: 'Erreur lors de l\'ajout du message à la conversation' });
+        }
+      }
 }

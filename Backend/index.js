@@ -34,6 +34,11 @@ app.use('/admin', adminRoutes);
 const userRoutes = require("./routes/userRoutes");
 app.use('/users', userRoutes);
 
+const chatRoutes=require("./routes/chatRoutes")
+app.use('/chat',chatRoutes)
+
+const messageRoutes=require("./routes/messagesRoutes")
+app.use('/message',messageRoutes)
 //connexion à mongodb
 mongoose.connect(dbConfig.mongoURI, dbConfig.mongoOptions)
   .then(() => {
