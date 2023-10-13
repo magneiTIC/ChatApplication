@@ -20,7 +20,7 @@ export class RegisterComponent implements OnInit {
       password: ['', Validators.required],
     });
   }
-  onSubmit() {
+  async onSubmit() {
     if (this.registerForm.invalid) {
       this.validationError = true;
       return;

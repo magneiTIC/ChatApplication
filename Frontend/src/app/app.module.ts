@@ -31,6 +31,7 @@ import { HomeComponent } from './views/user/home/home.component';
 import { SidebarComponent } from './components/admin/sidebar/sidebar.component';
 
 
+
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
 @NgModule({
   declarations: [

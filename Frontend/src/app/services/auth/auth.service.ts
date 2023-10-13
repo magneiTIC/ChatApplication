@@ -1,8 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, user } from '@angular/fire/auth';
-import * as CryptoJS from 'crypto-js';
-//import { SECRET_KEY } from '../../../environments/environment';
+import { Auth, signInWithEmailAndPassword } from '@angular/fire/auth';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,34 +15,39 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/admin/create-user`, userData);
   }
 
-  isProfileConfigured(email: string) {
+  async isProfileConfigured(email: string) {
     return this.http.post(`${this.apiUrl}/users/isProfileConfigured`, email);
   }
 
   async login(email: string, password: string) {
-    const userCredentials = await signInWithEmailAndPassword(this.auth, email, password);
-    const user = userCredentials.user;
-    // Stockez cette information dans la session du navigateur
-    sessionStorage.setItem('uid', user.uid);
-    // Vérifiez si l'email n'est pas null avant de le stocker
-    if (user.email !== null) {
-      sessionStorage.setItem('email', user.email);
+    if (!email || !password) {
+        console.error('L\'email et le mot de passe sont requis.');
+        return null;
     }
-    return userCredentials.user;
-  }
-  isLoggedIn(){
-    let user= sessionStorage.getItem('username');
-    return!(user === null);
-  }
+    try {
+        const userCredentials = await signInWithEmailAndPassword(this.auth, email, password);
+        const user = userCredentials.user;
+        sessionStorage.setItem('uid', user.uid);
+        console.log("UID USER Sesion: ", sessionStorage.getItem('uid'));
+        return user;
+    } catch (error) {
+        console.error('Erreur de connexion :', error);
+        return null;
+    }
+}
 
-  async createUserWithFirebase(username: string, password: string, email: string) {
-    const userCredentials = await createUserWithEmailAndPassword(this.auth, email, password);
+
+
+  async createUserWithFirebase(username: string, hashedPassword: string, email: string) {
     const userUpdated = {
-      'uid': userCredentials.user.uid,
       'username': username,
-      'email': userCredentials.user.email
+      'email': email,
+      'password': hashedPassword
     }
+    console.log("HashedPassword", userUpdated.password);
     return this.http.post(`${this.apiUrl}/users/register`, userUpdated);
   }
+
+
 
 }
