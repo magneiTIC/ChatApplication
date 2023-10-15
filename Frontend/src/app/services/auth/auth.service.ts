@@ -1,6 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+<<<<<<< Updated upstream
 import { Auth, signInWithEmailAndPassword } from '@angular/fire/auth';
+=======
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, user } from '@angular/fire/auth';
+import * as CryptoJS from 'crypto-js';
+>>>>>>> Stashed changes
 
 @Injectable({
   providedIn: 'root'

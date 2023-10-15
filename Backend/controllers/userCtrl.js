@@ -9,6 +9,7 @@ module.exports = {
 
   async isProfileConfigured(req, res) {
     try {
+<<<<<<< Updated upstream
       const email = req.body.email;
       const user = await UserModel.findOne({ email: email });
       if (!user) {
@@ -21,11 +22,32 @@ module.exports = {
           res.status(200).json({ message: "Profil déjà configuré" });
         }
       }
+=======
+        const email = req.body.email;
+        console.log("email", email);
+        const username = req.body.username;
+        const user = await UserModel.findOne({ email: email }); // Utilisez "await" pour attendre la résolution de la promesse
+        const checkUsername = await UserModel.findOne({ username: username }); // Utilisez "await" pour attendre la résolution de la promesse
+        
+        // if (!user) {
+        //     return res.status(404).json({ message: "Utilisateur introuvable." });
+        // }
+
+        if (!user || !checkUsername) {
+          
+            res.json({ message: "Le profil n'est pas encore configuré", isProfileConfigured: false });
+        } else {
+          console.log("email 2",user.email)
+          console.log("username",checkUsername.username)
+            res.status(200).json({ message: "Profil déjà configuré" });
+        }
+>>>>>>> Stashed changes
     } catch (error) {
-      console.error('Erreur lors de la vérification du profil :', error);
-      res.status(500).json({ message: 'Erreur lors de la vérification du profil' });
+        console.error('Erreur lors de la vérification du profil :', error);
+        res.status(500).json({ message: 'Erreur lors de la vérification du profil' });
     }
-  },
+},
+
 
   async register(req, res) {
     const { username, email, password } = req.body;

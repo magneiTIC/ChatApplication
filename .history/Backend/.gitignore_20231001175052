@@ -1,0 +1,8 @@
+/node_modules
+/*log
+<<<<<<< Updated upstream
+=======
+.history
+>>>>>>> Stashed changes
+
+# databaseURL: 'https://chat-app-project-b3fdf.firebaseio.com'
