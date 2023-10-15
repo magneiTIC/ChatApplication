@@ -7,7 +7,7 @@ const router = express.Router();
 router.post("/isProfileConfigured", userCtrl.isProfileConfigured);
 // Route pour mettre à jour le compte de l'utilisateur
 router.post("/register", userCtrl.register);
-
-router.get("/",userCtrl.getAllUsers)
+// Route pour récupérer les utilisateurs d'une division spécifique
+router.get("/:uid/same-division",userCtrl.getAllUsersInSameDivision)
 
 module.exports = router;

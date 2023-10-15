@@ -48,16 +48,29 @@ module.exports = {
       res.status(500).json({ message: 'Erreur lors de la tentative de terminer l\'inscription' });
     }
   },
-  async getAllUsers(req,res){
+  
+  async getAllUsersInSameDivision(req, res) {
     try {
-      const users = await UserModel.find(); // Récupérez tous les utilisateurs depuis la base de données
-      res.json(users); // Répondez avec la liste des utilisateurs au format JSON
-    } catch (error) {
+      const uid = req.params.uid;
+      // Recherchez l'utilisateur en fonction de son ID pour obtenir sa division
+      const user = await UserModel.findOne({ uid });
+      if (!user) {
+        return res.status(404).json({ message: "Utilisateur non trouvé." });
+      }
+      const division = user.division;
+      // Utilisez la méthode find() de Mongoose pour rechercher les utilisateurs de la même division
+      const users = await UserModel.find({ division, uid: { $ne: uid } });
+      if (users.length === 0) {
+        return res.status(404).json({ message: "Aucun utilisateur trouvé dans la même division." });
+      }
+      res.json(user);
+    }
+    catch (error) {
       console.error('Erreur lors de la récupération des utilisateurs :', error);
       res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
     }
-  }
-};
+  },
+}
 
 // const generateToken = (userId) => {
 //   const token = jwt.sign({ userId }, tokenKey, { expiresIn: '1h' }); // Vous pouvez définir une durée d'expiration appropriée
