@@ -39,7 +39,7 @@ export class MessagesService {
     }
 
     getLastMessage (chatId: string){
-      return this.http.get<any>(this.apiUrl+'lastMessage/'+chatId);
+      return this.http.get<any>(this.apiUrl+'message/lastMessage/'+chatId);
     }
 
 }

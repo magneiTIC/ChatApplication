@@ -34,18 +34,21 @@ export class ContactComponent implements OnInit {
     console.log(this.myChats)
     this.myChats.subscribe((valeur) => {
       console.log(valeur);
-      
+      const chatIds: string[] = valeur.map((chat: any) => chat._id);
+      console.log("chatIds",chatIds);
+
     });
   }
   
   messageControl = new FormControl('');
   searchControl = new FormControl('');
 
-  currentUserId=sessionStorage.getItem('uid')
+  currentUserId: string = sessionStorage.getItem('uid') || '';
+  
   // myChats=this.chatsService.getChatsByUser('this.currentUserId')
   myChats=this.chatsService.getChatsByUser(''+this.currentUserId);
-
-
+  
+  
 
   messages=this.messagesService.getLastMessage('6526c83d0c3649b5dd64e210')
   users=this.usersService.getAllUsersInSameDivision() ;
