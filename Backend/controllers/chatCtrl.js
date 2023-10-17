@@ -1,6 +1,28 @@
 const Chat = require("../models/chat")
 const Message=require("../models/message")
 const Users= require("../models/user")
+
+
+const formatSentAt = (sentAt) => {
+  const currentDate = new Date();
+  const lastMessageDate = new Date(sentAt);
+
+  if (currentDate.toDateString() === lastMessageDate.toDateString()) {
+    // Aujourd'hui : afficher l'heure uniquement
+    const hours = lastMessageDate.getHours();
+    const minutes = lastMessageDate.getMinutes();
+    return `${hours}:${minutes}`;
+  } else if (new Date(currentDate - 24 * 60 * 60 * 1000).toDateString() === lastMessageDate.toDateString()) {
+    // Hier : afficher "Hier"
+    return 'Hier';
+  } else {
+    // Date antérieure à hier : afficher la date sans l'heure
+    const day = lastMessageDate.getDate();
+    const month = lastMessageDate.getMonth() + 1;
+    const year = lastMessageDate.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+};
 module.exports = {
 
   // Création d'une nouvelle conversation
@@ -22,63 +44,50 @@ module.exports = {
 
   
   //Liste des conversations d'un user
-  // async getChatsByUser(req, res) {
-  //   try {
-  //     const userId = req.params.userId;
-  //     const chats = await Chat.find({ users: userId });
-  //     res.status(200).json(chats);
-  //   }
-
-  //   catch (error) {
-  //     console.log("Erreur d'affichage des conversations d'un user", error)
-  //     res.status(500).json({ error: "Erreur lors de l'affichage des conversations d'un user" })
-  //   }
-  // },
-
   async getChatsByUser(req, res) {
     try {
       const uid = req.params.uid;
       const user = await Users.findOne({ uid });
+  
       if (!user) {
         return res.status(404).json({ message: "Utilisateur introuvable." });
       }
   
       // Recherchez les chats où l'utilisateur est membre et utilisez populate pour obtenir le nom du destinataire.
-      const chats = await Chat.find({ users: user._id })
-        .populate({
-          path: 'users',
-          select: 'username',
-          match: { uid: { $ne: uid } }, // Exclure l'utilisateur actuel
-        });
+      const chats = await Chat.find({ users: user._id }).populate({
+        path: 'users',
+        select: 'username',
+        match: { uid: { $ne: uid } }, // Exclure l'utilisateur actuel
+      });
   
-      const filteredChats = chats.filter(chat => chat.users.length > 0); // Supprimer les chats vides
+      const filteredChats = chats.filter((chat) => chat.users.length > 0); // Supprimer les chats vides
   
-      res.status(200).json(filteredChats);
+      const chatsWithLastMessages = await Promise.all(
+        filteredChats.map(async (chat) => {
+          const lastMessage = await Message.findOne({ chat: chat._id })
+            .sort({ sentAt: -1 })
+            .exec();
+  
+          const lastMessageInfo = {
+            sentAt: lastMessage ? formatSentAt(lastMessage.sentAt) : null,
+            content: lastMessage ? lastMessage.content : null, // Utilisez le content du dernier message ou null s'il n'y en a pas
+          };
+  
+          return {
+            lastMessage: lastMessageInfo,
+            users: chat.users,
+          };
+        })
+      );
+  
+      res.status(200).json(chatsWithLastMessages);
     } catch (error) {
       console.log("Erreur d'affichage des conversations d'un user", error);
       res.status(500).json({ error: "Erreur lors de l'affichage des conversations d'un user" });
     }
   },
-  // async getChatsByUser(req, res) {
-  //   try {
-  //     const uid = req.params.uid;  
-  //     const user = await User.findOne({ uid });
-  //     if (!user) {
-  //       return res.status(404).json({ message: "Utilisateur introuvable." });
-  //     }
-
-  //     const chats = await Chat.find({ users: user._id });
   
-  //     res.status(200).json(chats);
-  //   } catch (error) {
-  //     console.log("Erreur d'affichage des conversations d'un user", error);
-  //     res.status(500).json({ error: "Erreur lors de l'affichage des conversations d'un user" });
-  //   }
-  // },
-
   //peupler une conversation
-
-
   async addMessageToChat(req, res) {
     try {
       const { chatId, user, content } = req.body;
