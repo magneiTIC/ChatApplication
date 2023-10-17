@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { ProfileUser } from 'src/app/models/user-profile';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MessagesService {
-  private apiUrl = 'http://localhost:3000/api/users'; // Assurez-vous de mettre à jour l'URL appropriée
+  private apiUrl = 'http://localhost:3000'; // Assurez-vous de mettre à jour l'URL appropriée
 
   constructor(private http: HttpClient) {}
 
@@ -27,7 +26,20 @@ export class MessagesService {
 
 
 
-    getMessagesByChat(){
-      return this.http.get<ProfileUser[]>(this.apiUrl);
+    getMessagesByChat(chatId:string){
+      return this.http
+      .get<any>(this.apiUrl+'/chat/'+chatId)
+      .pipe(
+        map((userData: any )=>{
+         return userData
+        })
+  
+       )
+  
     }
+
+    getLastMessage (chatId: string){
+      return this.http.get<any>(this.apiUrl+'lastMessage/'+chatId);
+    }
+
 }

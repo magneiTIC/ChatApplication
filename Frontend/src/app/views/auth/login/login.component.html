@@ -144,7 +144,9 @@ button{
         <h3>Connectez-vous </h3>
 
         <label for="Email">Email</label>
-        <mat-form-field>
+        <input type="text" placeholder="Email " formControlName="email" id="Email" required (focus)="resetError()">
+
+        <!-- <mat-form-field>
             <input type="text" placeholder="Email " formControlName="email" id="Email" required (focus)="resetError()">
             <mat-error *ngIf="email?.errors?.['required']">
                 Email is required
@@ -152,7 +154,7 @@ button{
             <mat-error *ngIf="email?.errors?.['email']">
                 Please enter a correct email format
             </mat-error>
-        </mat-form-field>
+        </mat-form-field> -->
 
         <label for="password">Mot de passe</label>
         <input type="password" placeholder="Mot de passe" formControlName="password" id="Mot de passe"  required (focus)="resetError()">

@@ -29,6 +29,7 @@ import { SuperAdminComponent } from './views/super-admin/super-admin.component';
 import { UserSettingComponent } from './views/user/user-setting/user-setting.component';
 import { HomeComponent } from './views/user/home/home.component';
 import { SidebarComponent } from './components/admin/sidebar/sidebar.component';
+import { DiscussionComponent } from './components/user/discussion/discussion.component';
 
 
 
@@ -48,6 +49,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     SidebarComponent,
     SuperAdminComponent,
     UserSettingComponent,
+    DiscussionComponent,
   ],
   imports: [
     BrowserModule,

@@ -7,7 +7,7 @@
     flex: 3;
     display: flex;
     flex-direction:column;
-    width: 925px;
+    width: 910px;
     
   }
   
@@ -92,6 +92,9 @@
   .chat-input > mat-form-field{
     width: 100%;
   }
+mat-form-field{
+  padding-left: 10px;
+}
   .chat-input {
     /* padding: 20px;
     display: flex;
@@ -118,4 +121,5 @@
   .icon{
     color: #7ca6c7;
     padding-bottom: 40px;
+    
   }

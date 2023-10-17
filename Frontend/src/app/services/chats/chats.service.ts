@@ -6,20 +6,11 @@ import { Observable, map } from 'rxjs';
   providedIn: 'root'
 })
 export class ChatsService {
-  private apiUrl = 'http://localhost:3000/'; // Assurez-vous de mettre à jour l'URL appropriée
+  private apiUrl = 'http://localhost:3000'; // Assurez-vous de mettre à jour l'URL appropriée
 
   constructor(private http: HttpClient) {}
 
-  getAllUsers(){
-    return this.http
-    .get<any>(this.apiUrl+'users')
-    .pipe(
-      map((userData: any )=>{
-       return userData
-      })
 
-     )
-  }
  
   createChat(){
     return this.http
@@ -31,9 +22,9 @@ export class ChatsService {
        )
   }
 
-  getChatsByUser(){
+  getChatsByUser(id:string){
     return this.http
-    .get<any>(this.apiUrl+'')
+    .get<any>(this.apiUrl+'/chat/'+id)
     .pipe(
       map((userData: any )=>{
        return userData
@@ -42,4 +33,17 @@ export class ChatsService {
      )
 
   }
+
+ 
+
+   addMessageToChat(chatId:string, user:string, content:string) {
+    return this.http
+      .post<any>(this.apiUrl+'/addMessage',{})
+      .pipe(
+        map((userData: any )=>{
+         return userData
+        })
+       )
+   }
+
 }

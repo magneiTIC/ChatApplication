@@ -1,24 +1,24 @@
 const Chat = require("../models/chat")
 const Message=require("../models/message")
-const User= require("../models/user")
+const Users= require("../models/user")
 module.exports = {
 
   // Création d'une nouvelle conversation
-  // async createChat(req, res) {
-  //     try {
-  //         const { users } = req.body
-  //         const newChat = new Chat({ users })
-  //         await newChat.save();
-  //         console.log("conversation créée avec succès");
-  //         return res.status(200).json({ message: "conversation créée avec succès" })
+  async createChat(req, res) {
+      try {
+          const { users } = req.body
+          const newChat = new Chat({ users })
+          await newChat.save();
+          console.log("conversation créée avec succès");
+          return res.status(200).json({ message: "conversation créée avec succès" })
 
-  //     }
-  //     catch (error) {
-  //         console.log("Erreur lors de creation d'une conversation",error)
-  //         res.status(500).json({ error: 'Erreur lors de la création de la conversation' });
-  //     }
+      }
+      catch (error) {
+          console.log("Erreur lors de creation d'une conversation",error)
+          res.status(500).json({ error: 'Erreur lors de la création de la conversation' });
+      }
 
-  // },
+  },
 
   
   //Liste des conversations d'un user
@@ -34,22 +34,47 @@ module.exports = {
   //     res.status(500).json({ error: "Erreur lors de l'affichage des conversations d'un user" })
   //   }
   // },
+
   async getChatsByUser(req, res) {
     try {
-      const uid = req.params.uid;  
-      const user = await User.findOne({ uid });
+      const uid = req.params.uid;
+      const user = await Users.findOne({ uid });
       if (!user) {
         return res.status(404).json({ message: "Utilisateur introuvable." });
       }
-
-      const chats = await Chat.find({ users: user._id });
   
-      res.status(200).json(chats);
+      // Recherchez les chats où l'utilisateur est membre et utilisez populate pour obtenir le nom du destinataire.
+      const chats = await Chat.find({ users: user._id })
+        .populate({
+          path: 'users',
+          select: 'username',
+          match: { uid: { $ne: uid } }, // Exclure l'utilisateur actuel
+        });
+  
+      const filteredChats = chats.filter(chat => chat.users.length > 0); // Supprimer les chats vides
+  
+      res.status(200).json(filteredChats);
     } catch (error) {
       console.log("Erreur d'affichage des conversations d'un user", error);
       res.status(500).json({ error: "Erreur lors de l'affichage des conversations d'un user" });
     }
   },
+  // async getChatsByUser(req, res) {
+  //   try {
+  //     const uid = req.params.uid;  
+  //     const user = await User.findOne({ uid });
+  //     if (!user) {
+  //       return res.status(404).json({ message: "Utilisateur introuvable." });
+  //     }
+
+  //     const chats = await Chat.find({ users: user._id });
+  
+  //     res.status(200).json(chats);
+  //   } catch (error) {
+  //     console.log("Erreur d'affichage des conversations d'un user", error);
+  //     res.status(500).json({ error: "Erreur lors de l'affichage des conversations d'un user" });
+  //   }
+  // },
 
   //peupler une conversation
 

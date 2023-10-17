@@ -5,28 +5,36 @@
         <div class="chat-header">
             <img [src]="'assets/images/images-placeholder.png'" alt="">
             <h2>Habiba Dramé</h2>
-            
+
         </div>
         <ng-template #noMessage>
 
         </ng-template>
         <mat-divider></mat-divider>
         <div class="chat-messages">
-            <ng-container>
-                <div class="message-bubble-container" [ngClass]="{'sender':message}">
-                    <!-- [ngClass]="{'sender' : message.senderID === currentUser.uid}" -->
+            <!-- <ng-container *ngIf="currentUserId | async as currentUser"> -->
+                <ng-container *ngIf="messages | async as messages">
+                    <!-- <div class="message-bubble-container" [ngClass]="{'sender':message}"> -->
+                        <div 
+                            class="message-bubble-container"
+                            [ngClass]="{'sender':message}"                         
+                            *ngFor="let message of messages"
 
-                    <div class="message-bubble">
-                        salut namenala
-                        <span class="chat-date">
-                            27/09/2023
-                        </span>
+                        >
+
+
+                        <div class="message-bubble">
+                            {{message.content}}
+                            <span class="chat-date">
+                                {{message.sentAt}} 
+                           </span>
+                        </div>
                     </div>
-                </div>
-                <div hidden #endOfChat>
+                    <div hidden #endOfChat>
 
-                </div>
-            </ng-container>
+                    </div>
+                </ng-container>
+            <!-- </ng-container> -->
             <div class="message-bubble-container">
                 <div class="message-bubble">
                     maleu raw si lo nk
@@ -41,14 +49,17 @@
             <mat-form-field appearance="outline">
                 <input matInput [formControl]="messageControl" placeholder="Écrivez votre message..."
                     (keydown.enter)="sendMessage()" />
-                <mat-icon matSuffix class="icon"> attach_file</mat-icon>
-                <mat-icon matSuffix class="icon">send</mat-icon>
-
-                <!-- <button mat-icon-button matSuffix (click)="sendMessage()">
-                <mat-icon>send</mat-icon>
-            </button> -->
+                <a matSuffix href="" (click)="sendMessage()">
+                    <mat-icon matSuffix class="icon"> attach_file</mat-icon>
+                </a>
+                &nbsp;
+                <a matSuffix href="" (click)="sendMessage()">
+                    <mat-icon matSuffix class="icon">send</mat-icon>
+                </a>
+                <div matSuffix> </div>
+                
             </mat-form-field>
-            
+
 
         </div>
     </div>
