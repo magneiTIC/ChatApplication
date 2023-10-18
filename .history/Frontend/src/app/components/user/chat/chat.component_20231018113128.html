@@ -1,0 +1,67 @@
+<div class="chat-app">
+
+    <div class="chat-container ">
+        <!-- Interface de chat avec une conversation -->
+        <div class="chat-header">
+            <img [src]="'assets/images/images-placeholder.png'" alt="">
+            <h2>Habiba Dramé</h2>
+
+        </div>
+        <ng-template #noMessage>
+
+        </ng-template>
+        <mat-divider></mat-divider>
+        <div class="chat-messages">
+            <!-- <ng-container *ngIf="messages | async as messages">
+                <div >
+                        <div 
+                            class="message-bubble-container"
+                            [ngClass]="{'sender': message.user.uid === currentUserId}"
+                            *ngFor="let message of messages"
+                            >
+                            <div class="message-bubble">
+                                {{message.content}}
+                                <span class="chat-date">
+                                    {{message.sentAt}}
+                                </span>
+                            </div>
+                    </div>
+                </div>
+                <div hidden #endOfChat>
+
+                </div>
+            </ng-container> -->
+            <!-- </ng-container> -->
+            <<ng-container *ngIf="messages | async as messages; let i = index">
+    <div>
+      <div class="message-bubble-container" [ngClass]="{'sender': message.user.uid === currentUserId}">
+        <div class="message-bubble">
+          {{ message.content }}
+          <span class="chat-time">{{ message.sentAt | date: 'HH:mm' }}</span>
+        </div>
+      </div>
+      <hr class="message-date-line" *ngIf="isNewDate(messages, i)" />
+    </div>
+    <div hidden #endOfChat></div>
+  </ng-container>
+            <!-- Afficher les messages ici -->
+        </div>
+        <div class="chat-input">
+            <mat-form-field appearance="outline">
+                <input matInput [formControl]="messageControl" placeholder="Écrivez votre message..."
+                    (keydown.enter)="sendMessage()" />
+                <a matSuffix href="" (click)="sendMessage()">
+                    <mat-icon matSuffix class="icon"> attach_file</mat-icon>
+                </a>
+                &nbsp;
+                <a matSuffix href="" (click)="sendMessage()">
+                    <mat-icon matSuffix class="icon">send</mat-icon>
+                </a>
+                <div matSuffix> </div>
+
+            </mat-form-field>
+
+
+        </div>
+    </div>
+</div>

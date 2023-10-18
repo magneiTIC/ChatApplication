@@ -1,4 +1,0 @@
-cont Message
-module.exports={
-  
-}

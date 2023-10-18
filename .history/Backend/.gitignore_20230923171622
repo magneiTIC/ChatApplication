@@ -1,6 +1,0 @@
-/node_modules
-/*log
-.env
-/config
-
-# databaseURL: 'https://chat-app-project-b3fdf.firebaseio.com'
