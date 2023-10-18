@@ -1,5 +1,6 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, of } from 'rxjs'; // Importez 'of' depuis RxJS
 import { ChatsService } from 'src/app/services/chats/chats.service';
 import { MessagesService } from 'src/app/services/messages/messages.service';
@@ -16,23 +17,35 @@ export class ChatComponent implements OnInit {
   constructor(
     private chatsService: ChatsService,
     private messagesService: MessagesService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private router:Router,
+    private route: ActivatedRoute,
+    private changeDetectorRef: ChangeDetectorRef // Injection de ChangeDetectorRef
+
   ) {}
 
   @ViewChild('messageContainer') messageContainer!: ElementRef;
   messageControl = new FormControl('');
   currentUserId = sessionStorage.getItem('uid');
-  chatId = this.chatsService.selectedChatId;
-  messages: Observable<any> = of(null); // Initialisez la propriété 'messages' avec 'of(null)'
+  // chatId = this.chatsService.selectedChatId;
+  // chatId:any;
+  // messages: Observable<any> = of(null);
   myChats = this.chatsService.getChatsByUser('' + this.currentUserId);
 
   ngOnInit(): void {
-    if (this.chatId) {
-      this.messages = this.messagesService.getMessagesByChat('' + this.chatId);
-    }
+    console.log('chat'+this.chatId)
+
+
   }
 
+
   @ViewChild('endOfChat') endOfChat!: ElementRef;
+  
+
+
+  chatId = this.route.snapshot.paramMap.get('idChat');
+  messages = this.messagesService.getMessagesByChat('' + this.chatId);
+    
 
   scrollToBottom() {
     setTimeout(() => {
@@ -87,6 +100,7 @@ export class ChatComponent implements OnInit {
     if (message) {
       this.socketService.sendMessage(message);
       this.messageControl.setValue('');
+      // Force la détection des modifications pour mettre à jour la vue
     }
   }
 }

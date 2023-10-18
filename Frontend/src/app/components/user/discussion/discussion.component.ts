@@ -1,5 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
+import { map } from 'rxjs';
 import { ChatsService } from 'src/app/services/chats/chats.service';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { UsersService } from 'src/app/services/users/users.service';
@@ -16,7 +18,9 @@ export class DiscussionComponent implements OnInit {
   constructor( 
     private chatsService: ChatsService,
     private usersService : UsersService,
-    private messagesService: MessagesService
+    private messagesService: MessagesService,
+    private router:Router,
+
     ){
 
   
@@ -25,6 +29,8 @@ export class DiscussionComponent implements OnInit {
     this.chatsService.setSelectedChatId(chatId);
     this.chatId = this.chatsService.selectedChatId; // Mettez à jour chatId
     console.log("Selected chat ID:", this.chatId); // Ajoutez cette ligne pour vérifier l'ID du chat
+    this.router.navigate(['/home',this.chatId]);
+
     // Reste du code...
   }
 
@@ -34,15 +40,15 @@ export class DiscussionComponent implements OnInit {
       console.log(valeur);
       const chatIds: string[] = valeur.map((chat: any) => chat._id);
       console.log("chatIds",chatIds);
-
     });
   }
   
   messageControl = new FormControl('');
   searchControl = new FormControl('');
+  chatListControl = new FormControl('');
 
   currentUserId: string = sessionStorage.getItem('uid') || '';
-  
+  selectedChat: any;   
   // myChats=this.chatsService.getChatsByUser('this.currentUserId')
   myChats=this.chatsService.getChatsByUser(''+this.currentUserId);
   
@@ -62,6 +68,8 @@ export class DiscussionComponent implements OnInit {
   //   })
   // );
   
+
+
 
   scrollToBottom(){
     setTimeout(() => {

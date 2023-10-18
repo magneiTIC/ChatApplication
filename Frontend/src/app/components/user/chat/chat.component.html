@@ -2,9 +2,9 @@
 
     <div class="chat-container ">
         <!-- Interface de chat avec une conversation -->
-        <div class="chat-header">
+        <div class="chat-header" *ngFor="let chat of myChats | async">
             <img [src]="'assets/images/images-placeholder.png'" alt="">
-            <h2>Habiba Dramé</h2>
+            <h2>{{chat.users[0].username}}</h2>
 
         </div>
         <ng-template #noMessage>
@@ -56,4 +56,3 @@
           </mat-form-field>
         </div>
     </div>
-</div>

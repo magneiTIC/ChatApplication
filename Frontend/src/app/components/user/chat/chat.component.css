@@ -1,13 +1,17 @@
 .chat-app {
     display: flex;
     height: 100vh;
+    width: 100%;
+    
   }  
 /* Styles pour le conteneur de chat */
 .chat-container {
-    flex: 3;
+    flex: 1;
     display: flex;
     flex-direction:column;
-    width: 910px;
+    width: 930px;
+    
+
     
   }
   
@@ -124,4 +128,59 @@ mat-form-field{
     color: #7ca6c7;
     padding-bottom: 40px;
     
+  }
+
+
+
+
+  .message-input {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #ccc;
+    padding: 10px 0;
+  }
+  
+  textarea {
+    flex: 1;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    
+   
+  font-size: 16px;
+    resize: none;
+  }
+  
+  .action-buttons {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+  }
+  
+  button.send-button {
+    background-color: #0099ff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .file-button {
+    
+   
+  cursor: pointer;
+  }
+  
+  /* Style de l'icône de la pièce jointe (vous pouvez utiliser Font Awesome) */
+  .file-button i {
+    font-size: 20px;
+    margin-right: 10px;
+  }
+  
+  /* Style pour le focus sur le textarea */
+  textarea:focus {
+    outline: none;
+    box-shadow: 0 0 5px #0099ff;
   }

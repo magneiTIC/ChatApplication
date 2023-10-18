@@ -38,6 +38,18 @@ module.exports={
       res.status(500).json("Erreur lors de l'affichage de l'historique d'une conversation");
     }
   },
+
+
+
+
+
+
+
+
+
+
+
+  
   // async getLastMessage(req, res) {
   //   try {
   //     const chatId = req.params.chatId;
