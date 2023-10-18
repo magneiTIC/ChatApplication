@@ -2,9 +2,9 @@
 
     <div class="chat-container ">
         <!-- Interface de chat avec une conversation -->
-        <div class="chat-header" *ngFor="let chat of myChats | async">
+        <div class="chat-header">
             <img [src]="'assets/images/images-placeholder.png'" alt="">
-            <h2>{{chat.users[0].username}}</h2>
+            <h2>Habiba Dramé</h2>
 
         </div>
         <ng-template #noMessage>
@@ -48,11 +48,12 @@
 
         </div> -->
         <div class="chat-input">
-          <mat-form-field appearance="outline">
+          <!-- <mat-form-field appearance="outline">
             <input matInput [formControl]="messageControl" placeholder="Écrivez votre message..." (keydown.enter)="sendMessage()" />
             <a matSuffix href="javascript:void(0);" (click)="sendMessage()">
               <mat-icon matSuffix class="icon">send</mat-icon>
             </a>
-          </mat-form-field>
+          </mat-form-field> -->
         </div>
     </div>
+</div>

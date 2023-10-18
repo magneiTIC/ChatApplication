@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Observable, of } from 'rxjs'; // Importez 'of' depuis RxJS
+import { Observable,of } from 'rxjs'; // Importez 'Observable' depuis RxJS
 import { ChatsService } from 'src/app/services/chats/chats.service';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { SocketService } from 'src/app/services/sockets/sockets.service';
@@ -13,46 +12,29 @@ import { SocketService } from 'src/app/services/sockets/sockets.service';
 })
 export class ChatComponent implements OnInit {
   showDate = true;
+  chatId: string | null = null;
 
   constructor(
     private chatsService: ChatsService,
     private messagesService: MessagesService,
     private socketService: SocketService,
-    private router:Router,
-    private route: ActivatedRoute,
-    private changeDetectorRef: ChangeDetectorRef // Injection de ChangeDetectorRef
+
 
   ) {}
 
   @ViewChild('messageContainer') messageContainer!: ElementRef;
   messageControl = new FormControl('');
   currentUserId = sessionStorage.getItem('uid');
-  // chatId = this.chatsService.selectedChatId;
-  // chatId:any;
-  // messages: Observable<any> = of(null);
-  myChats = this.chatsService.getChatsByUser('' + this.currentUserId);
+  messages: Observable<any[]> = of([])
 
   ngOnInit(): void {
-    console.log('chat'+this.chatId)
-
-
-  }
-
-
-  @ViewChild('endOfChat') endOfChat!: ElementRef;
-  
-
-
-  chatId = this.route.snapshot.paramMap.get('idChat');
-  messages = this.messagesService.getMessagesByChat('' + this.chatId);
-    
-
-  scrollToBottom() {
-    setTimeout(() => {
-      if (this.endOfChat) {
-        this.endOfChat.nativeElement.scrollIntoView({ behavior: 'smooth' });
+    this.chatsService.selectedChatId$.subscribe((chatId) => {
+      this.chatId = chatId;
+      console.log("chat id dans chat component: " + this.chatId);
+      if (this.chatId) {
+        this.messages = this.messagesService.getMessagesByChat('' + this.chatId);
       }
-    }, 100);
+    });
   }
 
   onScroll(event: Event): void {
@@ -64,43 +46,36 @@ export class ChatComponent implements OnInit {
     }
   }
 
+  scrollToBottom(): void {
+    if (this.messageContainer) {
+      const element = this.messageContainer.nativeElement as HTMLElement;
+      if (element.scrollTop === 0) {
+        this.showDate = true;
+      } else {
+        this.showDate = false;
+      }
+    }
+  }
+
   formatMessageTime(sentAt: string): string {
     const sentDate = new Date(sentAt);
-    return `${sentDate.getHours()}:${sentDate.getMinutes()}`;
+    return sentDate.toLocaleTimeString();
   }
 
   formatMessageDate(sentAt: string): string {
     const sentDate = new Date(sentAt);
-    const currentDate = new Date();
-
-    if (sentDate.toDateString() === currentDate.toDateString()) {
-      return '';
-    } else if (
-      sentDate.toDateString() ===
-      new Date(currentDate.getTime() - 24 * 60 * 60 * 1000).toDateString()
-    ) {
-      return 'Hier';
-    } else {
-      return `${sentDate.getDate()}/${sentDate.getMonth() + 1}/${sentDate.getFullYear()}`;
-    }
+    return sentDate.toLocaleDateString();
   }
+
+  // sendMessage() {
+  //   const message = this.messageControl.value;
+  //   this.socketService.sendMessage(message);
+  //   this.messageControl.setValue('');
+  // }
 
   areDatesEqual(date1: string, date2: string): boolean {
     const d1 = new Date(date1);
     const d2 = new Date(date2);
-    return (
-      d1.getFullYear() === d2.getFullYear() &&
-      d1.getMonth() === d2.getMonth() &&
-      d1.getDate() === d2.getDate()
-    );
-  }
-
-  sendMessage() {
-    const message = this.messageControl.value;
-    if (message) {
-      this.socketService.sendMessage(message);
-      this.messageControl.setValue('');
-      // Force la détection des modifications pour mettre à jour la vue
-    }
+    return d1.toDateString() === d2.toDateString();
   }
 }

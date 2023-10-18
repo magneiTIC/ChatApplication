@@ -27,19 +27,12 @@ export class DiscussionComponent implements OnInit {
   }
   selectChat(chatId: string) {
     this.chatsService.setSelectedChatId(chatId);
-    this.chatId = this.chatsService.selectedChatId; // Mettez à jour chatId
-    console.log("Selected chat ID:", this.chatId); // Ajoutez cette ligne pour vérifier l'ID du chat
-    this.router.navigate(['/home',this.chatId]);
-
-    // Reste du code...
   }
 
   ngOnInit(): void {
-    console.log(this.myChats)
-    this.myChats.subscribe((valeur) => {
-      console.log(valeur);
-      const chatIds: string[] = valeur.map((chat: any) => chat._id);
-      console.log("chatIds",chatIds);
+    this.chatsService.selectedChatId$.subscribe((chatId) => {
+      this.chatId = chatId;
+      console.log("Selected chat ID:", this.chatId);
     });
   }
   

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, map, BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -34,10 +34,11 @@ export class ChatsService {
 
   }
 
-  selectedChatId: string | null = null;
+  private selectedChatIdSubject = new BehaviorSubject<string | null>(null);
+  selectedChatId$ = this.selectedChatIdSubject.asObservable();
 
-  setSelectedChatId(chatId: string) {
-    this.selectedChatId = chatId;
+  setSelectedChatId(chatId: string | null) {
+    this.selectedChatIdSubject.next(chatId);
   }
  
 
