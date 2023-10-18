@@ -1,4 +1,47 @@
+.h1{
+    text-align: center;
+
+}
+.image{
+    top: 50%;
+    left: 25%;
+    padding: 20px;
+    margin: 0 auto;
+    position:static
+}
+
 .chat-app {
+    display: flex;
+    height: 100vh;
+  }
+  
+.side{
+    width: 5%;
+    color: white;
+
+  }
+  .chat-app {
+    display: flex;
+    height: 100vh;
+  }
+  .icon{
+    color: #7ca6c7;
+    padding-bottom: 40px;
+  
+  }
+  
+  .nav-item:hover .icon-text {
+    display: inline; /* Affichez le texte au survol */
+  }
+
+  .dropdown{
+    top: 2em !important;
+  }
+  .nav{
+    position: absolute;
+    bottom: 0;
+  }
+  .chat-app {
     display: flex;
     height: 100vh;
   }

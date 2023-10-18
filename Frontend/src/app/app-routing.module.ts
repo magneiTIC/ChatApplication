@@ -8,6 +8,9 @@ import { AddUserComponent } from './views/admin/add-user/add-user.component';
 import { UserSettingComponent } from './views/user/user-setting/user-setting.component';
 import { HomeComponent } from './views/user/home/home.component';
 import { SidebarComponent } from './components/admin/sidebar/sidebar.component';
+import { NotChatComponent } from './views/user/not-chat/not-chat.component';
+import { GroupComponent } from './views/user/group/group.component';
+import { ContactsComponent } from './views/user/contacts/contacts.component';
 
 const routes: Routes = [
 
@@ -25,6 +28,12 @@ const routes: Routes = [
 
 
   { path: 'user/setting', component: UserSettingComponent },
+  { path: 'conversation', component: NotChatComponent },
+  { path: 'groups', component: GroupComponent },
+  { path: 'contacts', component: ContactsComponent },
+
+
+
   { path: 'home', component: HomeComponent },
 
 

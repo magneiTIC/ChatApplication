@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.get("/:chatId",MessageCtrl.getMessagesByChat)
  
-router.get("/lastMessage/:chatId",MessageCtrl.getLastMessage)
+// router.get("/lastMessage/:chatId",MessageCtrl.getLastMessage)
 
 module.exports=router;

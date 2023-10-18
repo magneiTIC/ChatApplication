@@ -17,7 +17,6 @@ export class ChatComponent implements OnInit{
     
   }
   ngOnInit(): void {
-    console.log(this.messages)
     this.messages.subscribe((valeur) => {
       console.log(valeur);
       
@@ -28,7 +27,7 @@ export class ChatComponent implements OnInit{
 
   messageControl = new FormControl('');
   currentUserId=sessionStorage.getItem('uid')
-  messages=this.messagesService.getMessagesByChat('rQJtmZ3HUQb8RVo7T8XoqRlkWLG2')
+  messages=this.messagesService.getMessagesByChat('652e86a46597363ef477b4e7')
   myChats=this.chatsService.getChatsByUser(''+this.currentUserId)
 
 

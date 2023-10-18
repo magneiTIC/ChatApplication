@@ -28,11 +28,44 @@ module.exports={
     try {
       const chatId = req.params.chatId;
       console.log("chatid", chatId);
-      const messages = await Message.find({ chat: chatId })
+      const messages = await Message.find({ chat: chatId },)
         .sort({ sentAt: 'asc' })
+        .populate('user', 'uid')
         .exec();
   
-      res.status(200).json(messages);
+      // Formatage de la date sentAt pour chaque message
+      const formattedMessages = messages.map(message => {
+        const lastMessageDate = new Date(message.sentAt);
+        const currentDate = new Date();
+  
+        const isToday = currentDate.toDateString() === lastMessageDate.toDateString();
+        const isYesterday = new Date(currentDate - 24 * 60 * 60 * 1000).toDateString() === lastMessageDate.toDateString();
+  
+        let formattedDate;
+  
+        if (isToday) {
+          // Afficher l'heure uniquement
+          const hours = lastMessageDate.getHours();
+          const minutes = lastMessageDate.getMinutes();
+          formattedDate = `${hours}:${minutes}`;
+        } else if (isYesterday) {
+          formattedDate = 'Hier';
+        } else {
+          // Afficher la date sans l'heure
+          const day = lastMessageDate.getDate();
+          const month = lastMessageDate.getMonth() + 1;
+          const year = lastMessageDate.getFullYear();
+          formattedDate = `${day}/${month}/${year}`;
+        }
+  
+        // Retournez un objet avec la date formatée
+        return {
+          ...message._doc, // Copie les autres propriétés du message
+          sentAt: formattedDate, // Remplace la date formatée
+        };
+      });
+  
+      res.status(200).json(formattedMessages);
     } catch (error) {
       console.error(error); // Affichez l'erreur dans la console pour le débogage.
       res.status(500).json("Erreur lors de l'affichage de l'historique d'une conversation");

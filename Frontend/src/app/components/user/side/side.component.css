@@ -15,7 +15,13 @@
   .icon{
     color: #7ca6c7;
     padding-bottom: 40px;
+  
   }
+  
+  .nav-item:hover .icon-text {
+    display: inline; /* Affichez le texte au survol */
+  }
+
   .dropdown{
     top: 2em !important;
   }

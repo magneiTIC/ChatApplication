@@ -28,7 +28,7 @@ export class MessagesService {
 
     getMessagesByChat(chatId:string){
       return this.http
-      .get<any>(this.apiUrl+'/chat/'+chatId)
+      .get<any>(this.apiUrl+'/message/'+chatId)
       .pipe(
         map((userData: any )=>{
          return userData
