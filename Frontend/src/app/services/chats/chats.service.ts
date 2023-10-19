@@ -34,11 +34,11 @@ export class ChatsService {
 
   }
 
-  private selectedChatIdSubject = new BehaviorSubject<string | null>(null);
-  selectedChatId$ = this.selectedChatIdSubject.asObservable();
+  private selectedChatSubject = new BehaviorSubject<{ chatId: string | null, username: string | null }>({ chatId: null, username: null });
+  selectedChat$ = this.selectedChatSubject.asObservable();
 
-  setSelectedChatId(chatId: string | null) {
-    this.selectedChatIdSubject.next(chatId);
+  selectedChat(chatId: string | null, username: string | null) {
+    this.selectedChatSubject.next({ chatId, username });
   }
  
 

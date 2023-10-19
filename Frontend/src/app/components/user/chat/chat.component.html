@@ -3,9 +3,8 @@
     <div class="chat-container ">
         <!-- Interface de chat avec une conversation -->
         <div class="chat-header">
-            <img [src]="'assets/images/images-placeholder.png'" alt="">
-            <h2>Habiba Dramé</h2>
-
+          <img [src]="'assets/images/images-placeholder.png'" alt="">
+          <h2 *ngIf="chat.username">{{ chat.username }}</h2>
         </div>
         <ng-template #noMessage>
 

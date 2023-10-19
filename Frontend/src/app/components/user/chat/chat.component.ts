@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable,of } from 'rxjs'; // Importez 'Observable' depuis RxJS
 import { ChatsService } from 'src/app/services/chats/chats.service';
@@ -12,14 +12,13 @@ import { SocketService } from 'src/app/services/sockets/sockets.service';
 })
 export class ChatComponent implements OnInit {
   showDate = true;
+  chat: { chatId: string|null; username: string|null } = { chatId :null, username:null };
   chatId: string | null = null;
 
   constructor(
     private chatsService: ChatsService,
     private messagesService: MessagesService,
-    private socketService: SocketService,
-
-
+    private socketService: SocketService
   ) {}
 
   @ViewChild('messageContainer') messageContainer!: ElementRef;
@@ -28,11 +27,15 @@ export class ChatComponent implements OnInit {
   messages: Observable<any[]> = of([])
 
   ngOnInit(): void {
-    this.chatsService.selectedChatId$.subscribe((chatId) => {
-      this.chatId = chatId;
-      console.log("chat id dans chat component: " + this.chatId);
-      if (this.chatId) {
-        this.messages = this.messagesService.getMessagesByChat('' + this.chatId);
+    this.chatsService.selectedChat$.subscribe((chat) => {
+      // console.log("Selected chat object:", chat);
+      if (chat.chatId !== null && chat.username !== null) {
+        this.chat = chat;
+        this.chatId = chat.chatId;
+        // console.log("chat id dans chat component: " + this.chatId);
+        if (this.chatId) {
+          this.messages = this.messagesService.getMessagesByChat('' + this.chatId);
+        }
       }
     });
   }

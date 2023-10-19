@@ -15,7 +15,7 @@ import { ContactsComponent } from './views/user/contacts/contacts.component';
 const routes: Routes = [
 
 
-  
+
 
   { path: '', pathMatch: 'full', component: LoginComponent },
   { path: 'test', component: TestComponent },
@@ -31,10 +31,10 @@ const routes: Routes = [
   { path: 'conversation', component: NotChatComponent },
   { path: 'groups', component: GroupComponent },
   { path: 'contacts', component: ContactsComponent },
+  { path: 'home', component: HomeComponent }
 
 
-
-  { path: 'home/:idChat', component: HomeComponent },
+  //{ path: 'home/:idChat', component: HomeComponent },
 
 
 

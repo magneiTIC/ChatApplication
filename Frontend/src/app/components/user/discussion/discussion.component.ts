@@ -1,7 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
-import { map } from 'rxjs';
 import { ChatsService } from 'src/app/services/chats/chats.service';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { UsersService } from 'src/app/services/users/users.service';
@@ -12,42 +10,41 @@ import { UsersService } from 'src/app/services/users/users.service';
   styleUrls: ['./discussion.component.css']
 })
 export class DiscussionComponent implements OnInit {
-  chatId: string | null = null;
   @ViewChild('endOfChat' )endOfChat!: ElementRef ;
-  selectedChatId: string | null = null;
+  chatId: string | null | undefined;
+  
+  // selectedChatId: string | null = null;
   constructor( 
     private chatsService: ChatsService,
     private usersService : UsersService,
-    private messagesService: MessagesService,
-    private router:Router,
-
+    private messagesService: MessagesService
     ){
 
   
   }
-  selectChat(chatId: string) {
-    this.chatsService.setSelectedChatId(chatId);
+  selectChat(chatId: string, username: string) {
+    this.chatsService.selectedChat(chatId, username);
   }
 
   ngOnInit(): void {
-    this.chatsService.selectedChatId$.subscribe((chatId) => {
-      this.chatId = chatId;
-      console.log("Selected chat ID:", this.chatId);
+    this.chatsService.selectedChat$.subscribe((chat) => {
+      
+      this.chatId = chat.chatId;
+      // console.log("Selected chat ID:", this.chatId);
     });
   }
   
   messageControl = new FormControl('');
   searchControl = new FormControl('');
-  chatListControl = new FormControl('');
 
   currentUserId: string = sessionStorage.getItem('uid') || '';
-  selectedChat: any;   
+  
   // myChats=this.chatsService.getChatsByUser('this.currentUserId')
   myChats=this.chatsService.getChatsByUser(''+this.currentUserId);
   
   
 
-  messages=this.messagesService.getLastMessage('6526c83d0c3649b5dd64e210')
+  //messages=this.messagesService.getLastMessage('6526c83d0c3649b5dd64e210')
   users=this.usersService.getAllUsersInSameDivision() ;
 
   // users$ = combineLatest([
@@ -61,8 +58,6 @@ export class DiscussionComponent implements OnInit {
   //   })
   // );
   
-
-
 
   scrollToBottom(){
     setTimeout(() => {
