@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Auth, signInWithEmailAndPassword } from '@angular/fire/auth';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -48,6 +49,18 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/users/register`, userUpdated);
   }
 
-
+  async getCurrentUserIdByUid(uid: string): Promise<string> {
+    // Faites une requête HTTP pour obtenir l'ID de l'utilisateur par son UID
+    // Cela suppose que vous avez une API côté serveur qui peut effectuer cette recherche
+    const userId = await this.http.get<string>(`${this.apiUrl}/users/${uid}`).toPromise();
+    if (userId === undefined) {
+      throw new Error("L'utilisateur n'a pas été trouvé.");
+    }
+    sessionStorage.setItem("id,",userId)
+    console.log("session storage de id",userId)
+    return userId;
+  }
+  
+  
 
 }

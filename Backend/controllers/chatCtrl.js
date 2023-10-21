@@ -89,28 +89,67 @@ module.exports = {
   },
   
   //peupler une conversation
+  // async addMessageToChat(req, res) {
+  //   try {
+  //     const { chatId, user, content } = req.body;
+  //     const chat = await Chat.findById(chatId);
+  
+  //     if (!chat) {
+  //       return res.status(404).json({ error: 'Conversation non trouvée' });
+  //     }
+  //     const message = new Message({
+  //       user,
+  //       content,
+  //       chat: chatId,
+  //     });
+  //     await message.save();
+  //     chat.messages.push(message._id);
+  //     await chat.save();
+  
+  //     res.status(200).json(chat);
+  //   } catch (error) {
+  //     res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
+  //   }
+  // },
   async addMessageToChat(req, res) {
     try {
-      const { chatId, user, content } = req.body;
+      const { chatId, user, type, content, media } = req.body;
       const chat = await Chat.findById(chatId);
   
       if (!chat) {
         return res.status(404).json({ error: 'Conversation non trouvée' });
       }
-      const message = new Message({
+  
+      const messageData = {
         user,
-        content,
         chat: chatId,
-      });
+        type, // Le type de message (text, image, video, audio, file, quote, etc.)
+      };
+  
+      if (type === 'text' || type === 'quote') {
+        // Si le message est de type texte ou quote, enregistrez le contenu du message
+        messageData.content = content;
+      } else if (type === 'image' || type === 'video' || type === 'audio' || type === 'file') {
+        // Si le message est de type image, vidéo, audio ou fichier, enregistrez le contenu du média
+        messageData.media = {
+          data: Buffer.from(media.data, 'base64'), // Convertir les données base64 en binaire
+          contentType: media.contentType, // Type MIME du média
+        };
+      }
+  
+      const message = new Message(messageData);
       await message.save();
+  
       chat.messages.push(message._id);
       await chat.save();
   
       res.status(200).json(chat);
     } catch (error) {
+      console.error(error);
       res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
     }
-  },
+  }
+  
   
 
 }

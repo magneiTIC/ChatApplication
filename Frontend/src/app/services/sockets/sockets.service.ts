@@ -45,25 +45,30 @@
 //   }
 // }
 import { Injectable } from '@angular/core';
-import { io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SocketService {
-  private socket;
+  private socket: Socket;
 
   constructor() {
-    this.socket = io('http://localhost:3000'); // Remplacez par l'URL de votre serveur Socket.io
+    this.socket = io('http://localhost:3000'); 
   }
 
-  sendMessage(message: string) {
-    this.socket.emit('chat-message', message);
+  sendMessage(message: string, messageType: string, targetUserId: string) {
+    this.socket.emit('send-message', message, messageType, targetUserId);
   }
 
-  onMessageReceived(callback: (message: string) => void) {
+  onMessageReceived(callback: (message: any) => void) {
     this.socket.on('chat-message', (message) => {
       callback(message);
     });
   }
+
+  markMessagesAsRead(chatId: string) {
+    this.socket.emit('mark-messages-as-read', chatId);
+  }
 }
+

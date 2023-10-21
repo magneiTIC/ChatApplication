@@ -71,6 +71,21 @@ module.exports = {
       res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
     }
   },
+  async getUserIdByUid(req,res){
+    try {
+      const uid = req.params.uid;
+      const user = await UserModel.findOne({ uid: uid });
+  
+      if (!user) {
+        return res.status(404).json({ message: "Utilisateur introuvable." });
+      }
+  
+      res.status(200).json({ id: user.id });
+    } catch (error) {
+      console.error("Erreur lors de la recherche de l'ID de l'utilisateur par UID", error);
+      res.status(500).json({ error: "Erreur lors de la recherche de l'ID de l'utilisateur par UID" });
+    }
+  }
 }
 
 // const generateToken = (userId) => {

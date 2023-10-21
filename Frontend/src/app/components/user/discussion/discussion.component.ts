@@ -37,10 +37,10 @@ export class DiscussionComponent implements OnInit {
   messageControl = new FormControl('');
   searchControl = new FormControl('');
 
-  currentUserId: string = sessionStorage.getItem('uid') || '';
+  currentUserUid: string = sessionStorage.getItem('uid') || '';
   
   // myChats=this.chatsService.getChatsByUser('this.currentUserId')
-  myChats=this.chatsService.getChatsByUser(''+this.currentUserId);
+  myChats=this.chatsService.getChatsByUser(''+this.currentUserUid);
   
   
 

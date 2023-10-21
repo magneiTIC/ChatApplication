@@ -42,7 +42,7 @@ export class ChatsService {
   }
  
 
-   addMessageToChat(chatId:string, user:string, content:string) {
+   addMessageToChat(chatId:string, user:string, content:string,type:string) {
     return this.http
       .post<any>(this.apiUrl+'/addMessage',{})
       .pipe(
@@ -52,4 +52,5 @@ export class ChatsService {
        )
    }
 
+   
 }

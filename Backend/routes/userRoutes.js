@@ -9,5 +9,6 @@ router.post("/isProfileConfigured", userCtrl.isProfileConfigured);
 router.post("/register", userCtrl.register);
 // Route pour récupérer les utilisateurs d'une division spécifique
 router.get("/:uid/same-division",userCtrl.getAllUsersInSameDivision)
-
+//route pour recuperer l'id de l'utilisateur courant
+router.get("/:uid",userCtrl.getUserIdByUid)
 module.exports = router;

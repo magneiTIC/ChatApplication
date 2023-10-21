@@ -1,6 +1,5 @@
 const { io } = require("socket.io-client");
-const socket = io("http://localhost:3000");
-const readline = require('readline');
+const socket = io("http://localhost:3000"); // Replace with the actual server address
 
 socket.on('connect', () => {
     console.log("Connecté au serveur chat");
@@ -9,10 +8,11 @@ socket.on('connect', () => {
 });
 
 socket.on('chat-message', (message) => {
-    console.log("Message reçu : ", message.message, "de l'utilisateur avec ID : ", message.socketID);
+    console.log("Message reçu : ", message.content, "de l'utilisateur avec ID : ", message.user);
 });
 
 function readMessage() {
+    const readline = require('readline');
     const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
@@ -23,8 +23,9 @@ function readMessage() {
             rl.close();
             socket.disconnect();
         } else {
-            socket.emit('chat-message', message);
+            socket.emit('send-message', message, 'text', /* Replace with the target user's ID */);
             readMessage();
         }
     });
-}
+} 
+ 
