@@ -33,6 +33,7 @@ import { DiscussionComponent } from './components/user/discussion/discussion.com
 import { NotChatComponent } from './views/user/not-chat/not-chat.component';
 import { GroupComponent } from './views/user/group/group.component';
 import { ContactsComponent } from './views/user/contacts/contacts.component';
+import { Test1Component } from './views/admin/test1/test1.component';
 
 
 
@@ -56,6 +57,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     NotChatComponent,
     GroupComponent,
     ContactsComponent,
+    Test1Component,
   ],
   imports: [
     BrowserModule,

@@ -11,6 +11,7 @@ import { SidebarComponent } from './components/admin/sidebar/sidebar.component';
 import { NotChatComponent } from './views/user/not-chat/not-chat.component';
 import { GroupComponent } from './views/user/group/group.component';
 import { ContactsComponent } from './views/user/contacts/contacts.component';
+import { Test1Component } from './views/admin/test1/test1.component';
 
 const routes: Routes = [
 
@@ -25,6 +26,8 @@ const routes: Routes = [
   { path: 'admin/setting', component: SettingComponent },
   { path: 'add-user', component: AddUserComponent },
   { path: 'sidebar', component: SidebarComponent },
+  { path: 'test1', component: Test1Component },
+
 
 
   { path: 'user/setting', component: UserSettingComponent },

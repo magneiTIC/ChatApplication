@@ -110,6 +110,7 @@ export class ChatComponent implements OnInit {
     }
   }
   
+  attachFile(){}
   async getCurrentUserId() {
     try {
       
