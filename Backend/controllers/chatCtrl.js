@@ -56,7 +56,7 @@ module.exports = {
       // Recherchez les chats où l'utilisateur est membre et utilisez populate pour obtenir le nom du destinataire.
       const chats = await Chat.find({ users: user._id }).populate({
         path: 'users',
-        select: 'username',
+        select: 'username uid',
         match: { uid: { $ne: uid } }, // Exclure l'utilisateur actuel
       });
   

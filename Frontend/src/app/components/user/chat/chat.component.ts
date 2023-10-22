@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Observable,async,of } from 'rxjs'; // Importez 'Observable' depuis RxJS
+import { Observable,of } from 'rxjs'; // Importez 'Observable' depuis RxJS
 import { ChatsService } from 'src/app/services/chats/chats.service';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { SocketService } from 'src/app/services/sockets/sockets.service';
@@ -17,6 +17,7 @@ export class ChatComponent implements OnInit {
   chatId: string | null = null;
   activeChat: string | null | undefined;
   currentUserID: any;
+  
 
   constructor(
     private chatsService: ChatsService,
@@ -32,6 +33,7 @@ export class ChatComponent implements OnInit {
  
 
   ngOnInit(): void {
+    
     this.chatsService.selectedChat$.subscribe((chat) => {
       // console.log("Selected chat object:", chat);
       if (chat.chatId !== null && chat.username !== null) {
@@ -40,10 +42,13 @@ export class ChatComponent implements OnInit {
         // console.log("chat id dans chat component: " + this.chatId);
         if (this.chatId) {
           this.messages = this.messagesService.getMessagesByChat('' + this.chatId);
+         
         }
       }
     });
     this.getCurrentUserId();
+    
+    
   }
 
   onScroll(event: Event): void {
@@ -75,6 +80,13 @@ export class ChatComponent implements OnInit {
     const sentDate = new Date(sentAt);
     return sentDate.toLocaleDateString();
   }
+  
+  
+  areDatesEqual(date1: string, date2: string): boolean {
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    return d1.toDateString() === d2.toDateString();
+  }
 
   sendMessage() {
     const message = this.messageControl.value;
@@ -97,14 +109,6 @@ export class ChatComponent implements OnInit {
       }
     }
   }
-  
-  
-  areDatesEqual(date1: string, date2: string): boolean {
-    const d1 = new Date(date1);
-    const d2 = new Date(date2);
-    return d1.toDateString() === d2.toDateString();
-  }
-
   
   async getCurrentUserId() {
     try {

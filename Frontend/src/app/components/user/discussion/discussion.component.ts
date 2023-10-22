@@ -44,7 +44,6 @@ export class DiscussionComponent implements OnInit {
   
   
 
-  //messages=this.messagesService.getLastMessage('6526c83d0c3649b5dd64e210')
   users=this.usersService.getAllUsersInSameDivision() ;
 
   // users$ = combineLatest([

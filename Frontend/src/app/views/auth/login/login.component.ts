@@ -56,7 +56,7 @@ email: any;
 
       if (loginSuccessful) {
         console.log('Connexion réussie');
-        this.router.navigate(['/conversation']);
+        this.router.navigate(['/home']);
       } else {
         // Gérer l'échec de la connexion en affichant une erreur de connexion
         this.connexionError = true;
