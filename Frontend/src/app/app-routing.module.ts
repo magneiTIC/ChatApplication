@@ -15,9 +15,6 @@ import { Test1Component } from './views/admin/test1/test1.component';
 
 const routes: Routes = [
 
-
-
-
   { path: '', pathMatch: 'full', component: LoginComponent },
   { path: 'test', component: TestComponent },
   { path: 'login', component: LoginComponent },

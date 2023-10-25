@@ -22,7 +22,21 @@ const userSchema = new mongoose.Schema({
         required: true,
         enum: ['Sécurité Publique', 'Police Judiciaire', 'Surveillance du territoire']
     },
-   
+    profile: {
+        type: String,
+        required: true,
+        enum: ['Admin', 'Directeur', 'Agent']
+    },
+    devices: [
+        {
+            deviceId: String,
+            userAgent: String,
+            timestamp: Date
+        }
+    ],
+    connectionTime: Date,
+    disconnectionTime: Date, 
+    status: String
 },
 
     { collection: "Users" });

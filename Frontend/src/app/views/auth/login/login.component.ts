@@ -3,6 +3,7 @@ import { FormControl, FormBuilder, FormGroup, Validators, ReactiveFormsModule } 
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { Router } from '@angular/router';
 import { SocketService } from 'src/app/services/sockets/sockets.service';
+import { DeviceInfoService } from 'src/app/services/others/device-info.service';
 
 @Component({
   selector: 'app-login',
@@ -14,12 +15,13 @@ export class LoginComponent implements OnInit {
   validationError: boolean = false;
   connexionError: boolean = false;
   errorMessage: any;
-email: any;
+  email: any;
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private authService: AuthService,
+    private deviceInfoService: DeviceInfoService,
     private socketService: SocketService,
     // private toast: HotToastService
 
@@ -56,12 +58,14 @@ email: any;
 
       if (loginSuccessful) {
         console.log('Connexion réussie');
-        this.router.navigate(['/home']);
+       this.deviceInfoService.sendDeviceInfo();
+        this.router.navigate(['/conversation']);
       } else {
         // Gérer l'échec de la connexion en affichant une erreur de connexion
         this.connexionError = true;
       }
     }
+    
   }
 
   resetError() {

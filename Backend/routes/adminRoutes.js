@@ -1,8 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const adminCtrl = require('../controllers/adminCtrl');
-const checkAuth = require('../middleware/middleware')
-const userCtrl = require("../controllers/userCtrl");
+// const checkAuth = require('../middleware/middleware')
+// const userCtrl = require("../controllers/userCtrl");
+
+router.post("/create-user", adminCtrl.createUser);
+
+router.get("/directeurs", adminCtrl.getAllDirectors);
+
+router.get("/agents", adminCtrl.getAllAgents);
+
+// Route pour récupérer toutes les divisions
+router.get("/divisions", adminCtrl.getAllDivisions);
+
+
+
 
 
 // Route pour créer un nouveau compte utilisateur par l'administrateur
@@ -14,7 +26,9 @@ const userCtrl = require("../controllers/userCtrl");
 //     }
 // });
 
-router.post("/create-user", adminCtrl.createUser);
+
+
+// router.post("inforAdmin", adminCtrl.)
 
 
 

@@ -1,7 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Auth, signInWithEmailAndPassword } from '@angular/fire/auth';
-import { Observable } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -22,22 +22,38 @@ export class AuthService {
 
   async login(email: string, password: string) {
     if (!email || !password) {
-        console.error('L\'email et le mot de passe sont requis.');
-        return null;
+      console.error("L'email et le mot de passe sont requis.");
+      return null;
     }
     try {
-        const userCredentials = await signInWithEmailAndPassword(this.auth, email, password);
-        const user = userCredentials.user;
-        sessionStorage.setItem('uid', user.uid);
-        console.log("UID USER Sesion: ", sessionStorage.getItem('uid'));
-        return user;
+      const userCredentials = await signInWithEmailAndPassword(this.auth, email, password);
+      const user = userCredentials.user;
+      sessionStorage.setItem('uid', user.uid);
+      if (user.email) sessionStorage.setItem('email', user.email);
+      this.setUserStatus('connecté',user.uid);
+      return user;
     } catch (error) {
-        console.error('Erreur de connexion :', error);
-        return null;
+      console.error('Erreur de connexion :', error);
+      return null;
     }
-}
+  }
 
-
+  setUserStatus(status: string, userUID: string) {
+    const data = {
+      status: status,
+      connectionTime: status === 'connecté' ? new Date().toISOString() : null,
+      disconnectionTime: status === 'déconnecté' ? new Date().toISOString() : null,
+    };
+    this.http.post(`${this.apiUrl}/users/${userUID}/setUserStatus`, data).subscribe(
+      (response) => {
+        console.log("Status :", status);
+        console.log('Statut mis à jour avec succès :', response);
+      },
+      (error) => {
+        console.error('Erreur lors de la mise à jour du statut :', error);
+      }
+    );
+  }
 
   async createUserWithFirebase(username: string, hashedPassword: string, email: string) {
     const userUpdated = {
@@ -61,6 +77,13 @@ export class AuthService {
     return userId;
   }
   
-  
+    logout() {
+    const uid = sessionStorage.getItem('uid');
+    sessionStorage.removeItem('uid');
+    sessionStorage.removeItem('email');
+    sessionStorage.removeItem('username');
+    this.setUserStatus('déconnecté', uid!);
+  }
 
+  
 }

@@ -40,36 +40,31 @@
             </div>
             <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
                 <li class="nav-item">
-                    <a routerLink="/home" class="icon nav-link   rounded-0" aria-current="page"
-                        >
+                    <a routerLink="/home" class="icon nav-link   rounded-0" aria-current="page">
                         <mat-icon matSuffix>chat</mat-icon>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a routerLink="/contacts" class="icon nav-link   rounded-0" aria-current="page"
-                        >
+                    <a routerLink="/contacts" class="icon nav-link   rounded-0" aria-current="page">
                         <mat-icon matSuffix>list</mat-icon>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a routerLink="/groups" class="icon nav-link   rounded-0" aria-current="page"
-                        >
+                    <a routerLink="/groups " class="icon nav-link   rounded-0" aria-current="page">
                         <mat-icon matSuffix>group</mat-icon>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a routerLink="/user/setting" class="icon nav-link   rounded-0" aria-current="page"
-                        >
+                    <a routerLink="/user/setting" class="icon nav-link   rounded-0" aria-current="page">
                         <mat-icon matSuffix>settings</mat-icon>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a routerLink=" " class="icon nav-link  py-3 border-bottom rounded-0" aria-current="page"
-                        >
-                        <mat-icon>exit_to_app</mat-icon>			
-                    </a>
+                    <button (click)="logout()"
+                        class="icon nav-link  py-3 border-bottom rounded-0" aria-current="page">
+                        <mat-icon>exit_to_app</mat-icon>
+                </button>
                 </li>
-
             </ul>
         </div>
     </div>

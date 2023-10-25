@@ -76,6 +76,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),    
     SocketIoModule.forRoot(config),
+    
 
   ],
   exports:[

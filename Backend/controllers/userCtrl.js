@@ -3,8 +3,6 @@ const UserModel = require("../models/user");
 // const jwt = require('jsonwebtoken');
 // require("dotenv").config();
 
-
-
 module.exports = {
 
   async isProfileConfigured(req, res) {
@@ -22,22 +20,21 @@ module.exports = {
         }
       }
     } catch (error) {
-        console.error('Erreur lors de la vérification du profil :', error);
-        res.status(500).json({ message: 'Erreur lors de la vérification du profil' });
+      console.error('Erreur lors de la vérification du profil :', error);
+      res.status(500).json({ message: 'Erreur lors de la vérification du profil' });
     }
-},
-
+  },
 
   async register(req, res) {
     const { username, email, password } = req.body;
     try {
-      // Creez un compte sur firebase
+      // Creer un compte sur firebase
       const userRecord = await admin.auth().createUser({
         email: email,
         password: password,
-        // displayName: displayName,
-      }); const userUID = userRecord.uid;
-      // Mettez à jour le profil de l'utilisateur dans MongoDB
+      });
+      const userUID = userRecord.uid;
+      // Mettre à jour le profil de l'utilisateur dans MongoDB
       await UserModel.findOneAndUpdate(
         { email: email }, { username: username, uid: userUID }
       );
@@ -49,7 +46,7 @@ module.exports = {
       res.status(500).json({ message: 'Erreur lors de la tentative de terminer l\'inscription' });
     }
   },
-  
+
   async getAllUsersInSameDivision(req, res) {
     try {
       const uid = req.params.uid;
@@ -85,7 +82,40 @@ module.exports = {
       console.error("Erreur lors de la recherche de l'ID de l'utilisateur par UID", error);
       res.status(500).json({ error: "Erreur lors de la recherche de l'ID de l'utilisateur par UID" });
     }
+  },
+
+  async setUserStatus(req, res) {
+    const userId = req.params.uid;
+    const newStatus = req.body.status;
+    let connectionTime = null;
+    let disconnectionTime = null;
+    
+    if (newStatus === 'connecté') {
+      connectionTime = new Date().toISOString(); // Met à jour l'heure de connexion
+    } else if (newStatus === 'déconnecté') {
+      disconnectionTime = new Date().toISOString(); // Met à jour l'heure de déconnexion
+    }
+    
+    try {
+      const user = await UserModel.findOneAndUpdate(
+        { uid: userId },
+        { status: newStatus, connectionTime, disconnectionTime },
+        { new: true }
+      );
+  
+      if (user) {
+        res.status(200).json({ message: 'Statut, heure de connexion et heure de déconnexion mis à jour avec succès', user });
+      } else {
+        res.status(404).json({ error: 'Utilisateur non trouvé' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: 'Erreur lors de la mise à jour du statut, de l\'heure de connexion et de l\'heure de déconnexion' });
+    }
   }
+  
+
+
+
 }
 
 // const generateToken = (userId) => {
