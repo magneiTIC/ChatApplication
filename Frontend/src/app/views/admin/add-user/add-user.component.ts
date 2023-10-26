@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth/auth.service';
 
@@ -18,6 +18,10 @@ export class AddUserComponent implements OnInit {
     private router: Router,
     private authService: AuthService
   ) { }
+
+  emailControl = new FormControl(' ', [Validators.required, Validators.email]);
+
+
   ngOnInit(): void {
     this.registerForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],

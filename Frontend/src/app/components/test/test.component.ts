@@ -1,5 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-test',
@@ -10,11 +10,8 @@ export class TestComponent {
 
 @ViewChild('endOfChat' )endOfChat!: ElementRef ;
 
-  searchControl = new FormControl('');
-  messageControl = new FormControl('');
-  chatListControl = new FormControl('');
-  message=[]
-  user=''
+  emailControl = new FormControl(' ', [Validators.required, Validators.email]);
+
   scrollToBottom(){
     setTimeout(() => {
       if (this.endOfChat) {

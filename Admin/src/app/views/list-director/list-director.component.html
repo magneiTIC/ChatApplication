@@ -1,0 +1,42 @@
+<div class="container-scroller">
+
+  <app-header></app-header>
+  <div class="main-panel">
+      <div class="content-wrapper">
+        <div class="row"> 
+          <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">Liste des agents </h4>
+                
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Division</th>
+                      </tr>
+                    </thead>
+                    <tbody *ngFor="let director of directors | async ">
+                      <tr>
+                        <td> {{director.username}}</td>
+                        <td>{{director.email}}</td>
+                        <td>{{director.division}}</td>
+                      </tr>
+                     
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>                
+         
+        </div>
+      </div>
+      <!-- content-wrapper ends -->
+      <!-- partial:/assets/admin/partials/_footer.html -->
+      
+      <!-- partial -->
+    </div>
+</div>

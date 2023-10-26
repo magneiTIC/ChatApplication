@@ -16,7 +16,7 @@
               
                 <mat-autocomplete #userss="matAutocomplete">
                     <mat-option 
-                    *ngFor="let user of users |async"
+                    *ngFor="let user of users "
                     [value]="''"
                     >
                     {{ user.username}}
@@ -24,7 +24,7 @@
                 </mat-autocomplete>
             </div>
         </div>
-                <ul class="contact-list"  *ngFor="let user of users | async" >
+                <ul class="contact-list"  *ngFor="let user of users " >
 
             <li class="contact-item">
                 <img [src]="'assets/images/images-placeholder.png'" alt="Contact 1" class="contact-avatar" />

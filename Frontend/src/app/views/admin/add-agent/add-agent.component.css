@@ -1,0 +1,84 @@
+
+
+.chat-app {
+    display: flex;
+    height: 100vh;
+  }
+  .col{
+    background:rgba(225, 222, 222, 0.267)
+  }
+  /* Styles pour la barre latérale (sidebar) */
+  .sidebar {
+    flex: 1;
+    background-color: #c9e0f2;
+    border-right: 1px solid #ddd;
+    padding: 20px;
+    min-width: 280px;
+    width: 15%;
+  }
+  
+  .sidebar-header {
+    padding-bottom:0;
+    text-align: center;
+  }
+  .sidebar-header > h2{
+    text-align: left;
+  }
+  .icon{
+    color: #7ca6c7;
+    padding-bottom: 40px;
+  }
+  .search-input{
+    margin: 24px;
+    border-radius: 16px;
+  }
+  .card-container{
+    width:50%
+  }
+  .card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 450px;
+    padding: 20px;
+    margin: 0 auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+  }
+  
+  .card-header{
+    background: white;
+  
+  }
+  .card-body {
+    flex: 1 1 auto;
+  }
+    .btn-check {
+      position: absolute;
+      clip: rect(0, 0, 0, 0);
+      pointer-events: none;
+    }
+    
+    .btn-check[disabled]+.btn,
+    .btn-check:disabled+.btn {
+      pointer-events: none;
+      filter: none;
+      opacity: 0.65;
+    }
+    .btn {
+      background-color: #5398bd;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 12px 20px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    
+    .btn:hover {
+      background-color: #23a2f6;
+    }
+    

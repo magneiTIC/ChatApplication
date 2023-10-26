@@ -18,6 +18,8 @@ export class RegisterComponent implements OnInit {
     this.registerForm = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
+      password1: ['', Validators.required],
+
     });
   }
   async onSubmit() {

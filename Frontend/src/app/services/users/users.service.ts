@@ -17,23 +17,33 @@ export class UsersService implements OnInit {
   ngOnInit() { }
 
   getAllDirectors() {
-    return this.http.get(`${this.apiUrl}/admin/directeurs`).subscribe((data: any) => {
-      this.directeurs = data;
-    });
+    return this.http
+    .get<any>(this.apiUrl + '/admin/directeurs')
+    .pipe(
+      map((userData: any) => {
+        return userData
+      })
+    )
   }
 
   getAllAgents() {
-    return this.http.get(`${this.apiUrl}/admin/agents`).subscribe((data: any) => {
-      this.agents = data;
-    });
+    return this.http
+    .get<any>(this.apiUrl + '/admin/agents')
+    .pipe(
+      map((userData: any) => {
+        return userData
+      })
+    )
   }
 
   getAllDivisions() {
-    return this.http.get(`${this.apiUrl}/admin/divisions`).pipe(
-      map((divisions: any) => {
-        return divisions
+    return this.http
+    .get<any>(this.apiUrl + '/admin/divisions')
+    .pipe(
+      map((userData: any) => {
+        return userData
       })
-    );
+    )
   }
 
   getAllUsersInSameDivision() {

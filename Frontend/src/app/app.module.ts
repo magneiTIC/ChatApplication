@@ -30,10 +30,9 @@ import { UserSettingComponent } from './views/user/user-setting/user-setting.com
 import { HomeComponent } from './views/user/home/home.component';
 import { SidebarComponent } from './components/admin/sidebar/sidebar.component';
 import { DiscussionComponent } from './components/user/discussion/discussion.component';
-import { NotChatComponent } from './views/user/not-chat/not-chat.component';
 import { GroupComponent } from './views/user/group/group.component';
 import { ContactsComponent } from './views/user/contacts/contacts.component';
-import { Test1Component } from './views/admin/test1/test1.component';
+import { AddAgentComponent } from './views/admin/add-agent/add-agent.component';
 
 
 
@@ -54,10 +53,9 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     SuperAdminComponent,
     UserSettingComponent,
     DiscussionComponent,
-    NotChatComponent,
     GroupComponent,
     ContactsComponent,
-    Test1Component,
+    AddAgentComponent,
   ],
   imports: [
     BrowserModule,

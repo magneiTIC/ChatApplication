@@ -1,168 +1,101 @@
-<div class="chat-app">
-	<app-side></app-side>
-	<app-contact></app-contact>
-	<app-chat></app-chat>
-	<!-- <div class="side">
-		<div class="d-flex flex-column flex-shrink-0 bg-body-tertiary" style="width: 4.5rem;">
-			<div class="dropdown border-top">
-				<a href="#"
-					class="d-flex align-items-center justify-content-center p-3 link-body-emphasis text-decoration-none dropdown-toggle"
-					data-bs-toggle="dropdown" aria-expanded="false">
-					<img src="https://github.com/mdo.png" alt="mdo" width="24" height="24" class="rounded-circle">
-				</a>
-				<ul class="dropdown-menu text-small shadow" style="">
-					<li><a class="dropdown-item" href="#">
-							<font style="vertical-align: inherit;">
-								<font style="vertical-align: inherit;">Nouveau projet...</font>
-							</font>
-						</a></li>
-					<li><a class="dropdown-item" href="#">
-							<font style="vertical-align: inherit;">
-								<font style="vertical-align: inherit;">Paramètres</font>
-							</font>
-						</a></li>
-					<li><a class="dropdown-item" href="#">
-							<font style="vertical-align: inherit;">
-								<font style="vertical-align: inherit;">Profil</font>
-							</font>
-						</a></li>
-					<li>
-						<hr class="dropdown-divider">
-					</li>
-					<li><a class="dropdown-item" href="#">
-							<font style="vertical-align: inherit;">
-								<font style="vertical-align: inherit;">se déconnecter</font>
-							</font>
-						</a></li>
-				</ul>
-			</div>
-			<ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
-				<li class="nav-item">
-					<a href="#" class="icon nav-link   rounded-0" aria-current="page"
-						>
-						<mat-icon matSuffix>chat</mat-icon>
-					</a>
-				</li>
-				<li class="nav-item">
-					<a href="#" class="icon nav-link   rounded-0" aria-current="page"
-						>
-						<mat-icon matSuffix>list</mat-icon>
-					</a>
-				</li>
-				<li class="nav-item">
-					<a href="#" class="icon nav-link   rounded-0" aria-current="page"
-						>
-						<mat-icon matSuffix>group</mat-icon>
-					</a>
-				</li>
-				<li class="nav-item">
-					<a href="#" class="icon nav-link   rounded-0" aria-current="page"
-						>
-						<mat-icon matSuffix>settings</mat-icon>
-					</a>
-				</li>
-				<li class="nav-item">
-					<a href="#" class="icon nav-link  py-3 border-bottom rounded-0" aria-current="page"
-						>
-						<mat-icon>exit_to_app</mat-icon>			
-					</a>
-				</li>
+<!-- <div class="chat-app">
 
-			</ul>
-		</div>
-	</div> -->
-	<!-- <div class="sidebar">
-		<div class="sidebar-header">
-			<h2>Discussions </h2>
-			<div class="search-input">
-				<input type="text" class="form-control" placeholder="Rechercher  ...">
-			
-				<mat-autocomplete #users="matAutocomplete">
-				
-				</mat-autocomplete>
-			</div>
-		</div>
-		<ul class="contact-list">
-			<li class="contact-item">
-				<img [src]="'assets/images/images-placeholder.png'" alt="Contact 1" class="contact-avatar" />
-				<div class="contact-details">
-					<p mat-line class="chat-title">
-						<span class="chat-name">
-							Awa Ndiaye
-						</span>
-						<span class="chat-date">
-							20/09/2023
-						</span>
-					</p>
-					<p mat-line>
-						Coucou
-					</p>
-				</div>
-			</li>
+    <div class="side">
+        <div class="d-flex flex-column flex-shrink-0 " style="width: 4.5rem;">
+            <div class="dropdown border-top">
+                <a href="#"
+                    class="d-flex align-items-center justify-content-center p-3 link-body-emphasis text-decoration-none dropdown-toggle"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://github.com/mdo.png" alt="mdo" width="24" height="24" class="rounded-circle">
+                </a>
+                <ul class="dropdown-menu text-small shadow" style="">
+                    <li><a class="dropdown-item" href="#">
+                            <font style="vertical-align: inherit;">
+                                <font style="vertical-align: inherit;">Nouveau projet...</font>
+                            </font>
+                        </a></li>
+                    <li>
+                        <a class="dropdown-item" routerLink="/dashboard">
+                            <font style="vertical-align: inherit;">
+                                <font style="vertical-align: inherit;">Paramètres</font>
+                            </font>
+                        </a>
 
-			<li class="contact-item">
-				<img [src]="'assets/images/images-placeholder.png'" alt="Contact 1" class="contact-avatar" />
-				<div class="contact-details">
-					<p mat-line class="chat-title">
-						<span class="chat-name">
-							Habiba Dramé
-						</span>
-						<span class="chat-date">
-							20/09/2023
-						</span>
-					</p>
-					<p mat-line>
-						maleu raw si lo nk
-					</p>
-				</div>
-			</li>
-		</ul>
-	</div> -->
-	<!-- <div class="chat-container ">
-		<div class="chat-header">
-			<img [src]="'assets/images/images-placeholder.png'" alt="">
-			<h2>Habiba Dramé</h2>
-			
-		</div>
-		<ng-template #noMessage>
+                    </li>
+                    <li><a class="dropdown-item" href="#">
+                            <font style="vertical-align: inherit;">
+                                <font style="vertical-align: inherit;">Profil</font>
+                            </font>
+                        </a></li>
 
-		</ng-template>
-		<mat-divider></mat-divider>
-		<div class="chat-messages">
-			<ng-container>
-				<div class="message-bubble-container" [ngClass]="{'sender':message}">
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="#">
+                            <font style="vertical-align: inherit;">
+                                <font style="vertical-align: inherit;">se déconnecter</font>
+                            </font>
+                        </a></li>
+                </ul>
+            </div>
+            <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
+                <li class="nav-item">
+                    <a routerLink="/home" class="icon nav-link   rounded-0" aria-current="page">
+                        <mat-icon matSuffix>chat</mat-icon>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a routerLink="/contacts" class="icon nav-link   rounded-0" aria-current="page">
+                        <mat-icon matSuffix>list</mat-icon>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a routerLink="/groups " class="icon nav-link   rounded-0" aria-current="page">
+                        <mat-icon matSuffix>group</mat-icon>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a routerLink="/user/setting" class="icon nav-link   rounded-0" aria-current="page">
+                        <mat-icon matSuffix>settings</mat-icon>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <button 
+                        class="icon nav-link  py-3 border-bottom rounded-0" aria-current="page">
+                        <mat-icon>exit_to_app</mat-icon>
+                </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div> -->
 
-					<div class="message-bubble">
-						salut namenala
-						<span class="chat-date">
-							27/09/2023
-						</span>
-					</div>
-				</div>
-				<div hidden #endOfChat>
-
-				</div>
-			</ng-container>
-			<div class="message-bubble-container">
-				<div class="message-bubble">
-					maleu raw si lo nk
-					<span class="chat-date">
-						27/09/2023
-					</span>
-				</div>
-			</div>
-		</div>
-		<div class="chat-input">
-			<mat-form-field appearance="outline">
-				<input matInput [formControl]="messageControl" placeholder="Écrivez votre message..."
-					(keydown.enter)="sendMessage()" />
-				<mat-icon matSuffix class="icon"> attach_file</mat-icon>
-				<mat-icon matSuffix class="icon">send</mat-icon>
-
-			
-			</mat-form-field>
-			
-
-		</div>
-	</div> -->
+<div class="row">
+	<div class="col"></div>
+	<div class="col"></div>
 </div>
+<div class="background">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    <form >
+        
+        <h3>Connectez-vous </h3>
+
+        <label for="Email">Email</label>
+        <input type="text" placeholder="Email " formControlName="email" id="Email" required >
+
+
+        <label for="password">Mot de passe</label>
+        <input type="password" placeholder="Mot de passe" formControlName="password" id="Mot de passe"  required >
+
+        <div  class="error-label">
+            Le formulaire est invalide. Veuillez remplir tous les champs correctement s'il vous plait.
+          </div>
+
+          <div  class="error-label">
+            Verifiez les informations de connexion.
+          </div>  
+        <button type="submit">Se Connecter </button>
+       
+    </form>
