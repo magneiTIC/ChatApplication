@@ -7,7 +7,7 @@ const messageSchema = new mongoose.Schema({
     ref: 'User',
   },
   chat: {
-    type: mongoose.Schema.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'Chat',
   },
   type: {
@@ -26,7 +26,8 @@ const messageSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'sent', 'received', 'read'], // Status du message
+    enum: ['unread', 'sent', 'received', 'read'], 
+    default: 'unread'
   }
 }, { collection: "Messages" });
 

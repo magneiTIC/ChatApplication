@@ -113,7 +113,8 @@ module.exports = {
   // },
   async addMessageToChat(req, res) {
     try {
-      const { chatId, user, type, content, media } = req.body;
+      const chatId = req.params.chatId;
+      const { user, type, content, media } = req.body;
       const chat = await Chat.findById(chatId);
   
       if (!chat) {
