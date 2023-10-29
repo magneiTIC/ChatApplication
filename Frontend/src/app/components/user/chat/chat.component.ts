@@ -1,10 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Observable,of } from 'rxjs'; // Importez 'Observable' depuis RxJS
+import { Observable,map,of, scan, take } from 'rxjs'; // Importez 'Observable' depuis RxJS
 import { ChatsService } from 'src/app/services/chats/chats.service';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { SocketService } from 'src/app/services/sockets/sockets.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
+
 
 @Component({
   selector: 'app-chat',
@@ -15,7 +16,6 @@ export class ChatComponent implements OnInit {
   showDate = true;
   chat: { chatId: string|null; username: string|null } = { chatId :null, username:null };
   chatId: string | null = null;
-  activeChat: string | null | undefined;
   currentUserID: any;
   
 
@@ -29,10 +29,12 @@ export class ChatComponent implements OnInit {
   @ViewChild('messageContainer') messageContainer!: ElementRef;
   messageControl = new FormControl('');
   currentUserUid = sessionStorage.getItem('uid');
-  messages: Observable<any[]> = of([])
+  messages$: Observable<any[]> = of([]);
+
  
 
   ngOnInit(): void {
+    
     
     this.chatsService.selectedChat$.subscribe((chat) => {
       // console.log("Selected chat object:", chat);
@@ -41,12 +43,14 @@ export class ChatComponent implements OnInit {
         this.chatId = chat.chatId;
         // console.log("chat id dans chat component: " + this.chatId);
         if (this.chatId) {
-          this.messages = this.messagesService.getMessagesByChat('' + this.chatId);
-         
+          this.messages$ = this.messagesService.getMessagesByChat('' + this.chatId);
+          console.log("selected chat",this.chatId)
+          
         }
       }
     });
     this.getCurrentUserId();
+    this.listenForMessages()
     
     
   }
@@ -90,25 +94,70 @@ export class ChatComponent implements OnInit {
 
   sendMessage() {
     const message = this.messageControl.value;
-    
-    if (message && this.activeChat) {
-      // Utilisez l'activeChat pour récupérer le targetUserId
-      const targetUserId = "65173d7c19f8f5cb44cbefc2"
   
-      if (targetUserId) {
-        this.chatsService.addMessageToChat(this.chatId!, this.currentUserID, message, 'text')
-          .subscribe((response: any) => {
-            // Ici, vous pouvez extraire des informations supplémentaires de la réponse
-            // si nécessaire
+    if (message) {
+      this.chatsService.getActiveChat().subscribe((activeChat) => {
+        if (activeChat) {
+          const chatId = activeChat.chatId;
   
-            // Réinitialisez le champ de message après l'envoi
-            this.messageControl.setValue('');
+          this.chatsService.getChatsByUser("" + this.currentUserUid).subscribe((chats: any[]) => {
+            let targetChat: any = null;
+  
+            chats.forEach((chat) => {
+              if (chat.chatId === chatId) {
+                targetChat = chat;
+              }
+            });
+  
+            if (targetChat) {
+              // Ici, vous pouvez utiliser les données du targetChat, par exemple, pour obtenir l'ID du destinataire.
+              const targetUserId = targetChat.users[0]._id;
+  
+              if (targetUserId) {
+                console.log("message dans targetuserid", message);
+                console.log("id sender", this.currentUserID);
+  
+                // Envoi du message via le socket
+                this.socketService.sendMessage(message, targetUserId);
+  
+                // Une fois que le message a été envoyé via le socket, ajoutez-le à la base de données
+                this.chatsService
+                  .addMessageToChat(targetChat.chatId, this.currentUserID, message, "text")
+                  .subscribe((addedMessage) => {
+                    // Le message a été ajouté à la base de données.
+                    console.log("Message ajouté à la base de données:", addedMessage);
+                    this.listenForMessages()
+                    this.messageControl.reset();
+                  });
+              } else {
+                console.error("Le targetUserId est indéfini, impossible d'envoyer le message.");
+              }
+            } else {
+              console.error("Discussion correspondant au chatId non trouvée.");
+            }
           });
-      } else {
-        console.error("Impossible de trouver le targetUserId pour cette discussion.");
-      }
+        } else {
+          console.error("Aucun chat actif sélectionné.");
+        }
+      });
     }
   }
+  private listenForMessages() {
+    this.socketService.onMessageReceived((message: any) => {
+      // À chaque réception d'un nouveau message via le socket, appelez la méthode pour récupérer les messages de la conversation
+      this.messagesService.getMessagesByChat('' + this.chatId).subscribe((messages: any[]) => {
+        // Mettez à jour la liste des messages avec les nouveaux messages
+        console.log("listen for messages",messages)
+        this.messages$ = of(messages);
+      });
+    });
+  }
+  markMessagesAsRead(chatId: string) {
+    console.log('mark message as read ',chatId);
+    
+    this.socketService.markMessagesAsRead(chatId);
+  }
+  
   
   attachFile(){}
   async getCurrentUserId() {

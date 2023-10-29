@@ -67,14 +67,23 @@ export class AuthService {
 
   async getCurrentUserIdByUid(uid: string): Promise<string> {
     // Faites une requête HTTP pour obtenir l'ID de l'utilisateur par son UID
-    // Cela suppose que vous avez une API côté serveur qui peut effectuer cette recherche
-    const userId = await this.http.get<string>(`${this.apiUrl}/users/${uid}`).toPromise();
-    if (userId === undefined) {
-      throw new Error("L'utilisateur n'a pas été trouvé.");
+    
+    try {
+      const response = await this.http.get<any>(`${this.apiUrl}/users/${uid}`).toPromise();
+      const userId = response.id;
+  
+      if (!userId) {
+        throw new Error("L'utilisateur n'a pas été trouvé.");
+      }
+      sessionStorage.setItem("id", userId);
+      console.log("session storage de id", sessionStorage.getItem("id"));
+  
+      return userId;
+    } catch (error) {
+      // Gérez les erreurs ici
+      console.error("Une erreur s'est produite lors de la récupération de l'ID de l'utilisateur :", error);
+      throw error;
     }
-    sessionStorage.setItem("id,",userId)
-    console.log("session storage de id",userId)
-    return userId;
   }
   
     logout() {
@@ -82,6 +91,7 @@ export class AuthService {
     sessionStorage.removeItem('uid');
     sessionStorage.removeItem('email');
     sessionStorage.removeItem('username');
+    sessionStorage.removeItem('id')
     this.setUserStatus('déconnecté', uid!);
   }
 

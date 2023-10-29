@@ -1,26 +1,18 @@
 <div class="chat-app">
-
   <div class="chat-container " *ngIf="chat.username">
-    <!-- Interface de chat avec une conversation -->
     <div class="chat-header">
       <img [src]="'assets/images/images-placeholder.png'" alt="">
       <h2 *ngIf="chat.username">{{ chat.username }}</h2>
     </div>
-    <ng-template #noMessage>
-
-    </ng-template>
     <mat-divider></mat-divider>
     <div class="chat-messages" #messageContainer (scroll)="onScroll($event)">
-      <ng-container *ngIf="messages | async as messages">
+      <ng-container *ngIf="messages$ | async as messages">
         <ng-container *ngFor="let message of messages; let i = index">
-          <div class="message-date"
-            *ngIf="showDate && (i === 0 || !areDatesEqual(message.sentAt, messages[i - 1]?.sentAt))">
+          <div class="message-date" *ngIf="showDate && (i === 0 || !areDatesEqual(message.sentAt, messages[i - 1]?.sentAt))">
             {{ message.sentAt | date: 'dd/MM/yyyy' }}
           </div>
-          <hr class="message-date-line"
-            *ngIf="showDate && (i === 0 || !areDatesEqual(message.sentAt, messages[i - 1]?.sentAt))" />
-          <div class="message-bubble-container" [ngClass]="{'sender': message.user=== currentUserUid}">
-
+          <hr class="message-date-line" *ngIf="showDate && (i === 0 || !areDatesEqual(message.sentAt, messages[i - 1]?.sentAt))" />
+          <div class="message-bubble-container" [ngClass]="{'sender': message.user === currentUserUid}">
             <div class="message-bubble">
               {{ message.content }}
               <span class="chat-date">
@@ -31,50 +23,14 @@
         </ng-container>
       </ng-container>
     </div>
-    <br>
-    <div class="row reply">
-      <div class="col-sm-1 col-xs-1 reply-emojis">
-        <i class="fa fa-smile-o fa-2x"></i>
-      </div>
-      <div class="col-sm-9 col-xs-9 reply-main">
-        <textarea class="form-control" rows="3" id="comment"placeholder="Écrivez votre message..."></textarea>
-      </div>
-      <div class="col-sm-1 col-xs-1 reply-recording">
-        <a matSuffix (click)="sendMessage()">
-          <mat-icon matSuffix class="icon"> attach_file</mat-icon>
-        </a>
-      </div>
-      <div class="col-sm-1 col-xs-1 reply-recording">
+    <div class="chat-input">
+      <mat-form-field appearance="outline">
+        <input matInput [formControl]="messageControl" placeholder="Écrivez votre message..." (keydown.enter)="sendMessage()" />
         <a matSuffix (click)="sendMessage()">
           <mat-icon matSuffix class="icon">send</mat-icon>
         </a>
+      </mat-form-field>
     </div>
   </div>
-  <div class="chat-input">
-    <mat-form-field appearance="outline">
-      <input matInput [formControl]="messageControl" placeholder="Écrivez votre message..."
-        (keydown.enter)="sendMessage()" />
-      <a matSuffix (click)="sendMessage()">
-        <mat-icon matSuffix class="icon"> attach_file</mat-icon>
-      </a>
-      &nbsp;
-      <a matSuffix (click)="sendMessage()">
-        <mat-icon matSuffix class="icon">send</mat-icon>
-      </a>
-      <div matSuffix> </div>
-
-    </mat-form-field>
-
-
-  </div>
-  <!-- <div class="chat-input">
-          <mat-form-field appearance="outline">
-            <input matInput [formControl]="messageControl" placeholder="Écrivez votre message..." (keydown.enter)="sendMessage()" />
-            <a matSuffix href="javascript:void(0);" (click)="sendMessage()">
-              <mat-icon matSuffix class="icon">send</mat-icon>
-            </a>
-          </mat-form-field>
-        </div> -->
-</div>
-<img *ngIf="!chat.username" src="assets/images/chat.png" alt="">
+  <img *ngIf="!chat.username" src="assets/images/chat.png" alt="">
 </div>

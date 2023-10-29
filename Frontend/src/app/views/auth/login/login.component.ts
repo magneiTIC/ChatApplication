@@ -56,10 +56,36 @@ export class LoginComponent implements OnInit {
     } else {
       const loginSuccessful = await this.authService.login(email, password);
 
+      // if (loginSuccessful) {
+      //   console.log('Connexion réussie');
+      //   console.log("id a la connecion",sessionStorage.getItem('uid'));
+        
+      //   this.socketService.initializeSocketConnection();
+      //   this.router.navigate(['/home']);
+      // } else {
+      //   // Gérer l'échec de la connexion en affichant une erreur de connexion
+      //   this.connexionError = true;
+      // }
       if (loginSuccessful) {
-        console.log('Connexion réussie');
-       this.deviceInfoService.sendDeviceInfo();
-        this.router.navigate(['/conversation']);
+        // Récupérer l'ID de l'utilisateur à partir de l'AuthService
+        const storedUid = sessionStorage.getItem("uid");
+        if (storedUid !== null) {
+          const userId = await this.authService.getCurrentUserIdByUid(storedUid);
+  
+          if (userId) {
+            console.log('Connexion réussie');
+            // Initialiser la connexion socket avec l'ID de l'utilisateur
+            this.socketService.initializeSocketConnection();
+           this.deviceInfoService.sendDeviceInfo();
+        this.router.navigate(['/home']);
+          } else {
+            console.log("L'ID de l'utilisateur n'est pas valide");
+            // Gérer l'erreur ici, par exemple, afficher un message à l'utilisateur.
+          }
+        } else {
+          console.log("L'ID de l'utilisateur est null");
+          // Gérer l'erreur ici, par exemple, afficher un message à l'utilisateur.
+        }
       } else {
         // Gérer l'échec de la connexion en affichant une erreur de connexion
         this.connexionError = true;
@@ -72,4 +98,6 @@ export class LoginComponent implements OnInit {
     this.validationError = false;
     this.connexionError = false;
   }
+  
 }
+

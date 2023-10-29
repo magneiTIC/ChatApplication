@@ -8,29 +8,29 @@ import { Observable, map, BehaviorSubject } from 'rxjs';
 export class ChatsService {
   private apiUrl = 'http://localhost:3000'; // Assurez-vous de mettre à jour l'URL appropriée
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
 
- 
-  createChat(){
+
+  createChat() {
     return this.http
-      .post<any>(this.apiUrl+'',{})
+      .post<any>(this.apiUrl + '', {})
       .pipe(
-        map((userData: any )=>{
-         return userData
+        map((userData: any) => {
+          return userData
         })
-       )
+      )
   }
 
-  getChatsByUser(id:string){
+  getChatsByUser(id: string) {
     return this.http
-    .get<any>(this.apiUrl+'/chat/'+id)
-    .pipe(
-      map((userData: any )=>{
-       return userData
-      })
+      .get<any>(this.apiUrl + '/chat/' + id)
+      .pipe(
+        map((userData: any) => {
+          return userData
+        })
 
-     )
+      )
 
   }
 
@@ -40,17 +40,21 @@ export class ChatsService {
   selectedChat(chatId: string | null, username: string | null) {
     this.selectedChatSubject.next({ chatId, username });
   }
- 
+  
+getActiveChat(): Observable<{ chatId: string | null; username: string | null }> {
+    return this.selectedChat$;
+  }
 
-   addMessageToChat(chatId:string, user:string, content:string,type:string) {
+
+  addMessageToChat(chatId: string, user: string, content: string, type: string) {
     return this.http
-      .post<any>(this.apiUrl+'/addMessage',{})
+      .post<any>(this.apiUrl + `/chat/addMessage/${chatId}`, { "chatId": chatId, "user": user, "content": content, "type": type })
       .pipe(
-        map((userData: any )=>{
-         return userData
+        map((userData: any) => {
+          return userData
         })
-       )
-   }
+      )
+  }
 
-   
+
 }
