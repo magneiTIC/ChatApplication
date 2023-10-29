@@ -33,6 +33,7 @@ import { DiscussionComponent } from './components/user/discussion/discussion.com
 import { GroupComponent } from './views/user/group/group.component';
 import { ContactsComponent } from './views/user/contacts/contacts.component';
 import { AddAgentComponent } from './views/admin/add-agent/add-agent.component';
+import { ErrorComponent } from './views/error/error.component';
 
 
 
@@ -56,6 +57,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     GroupComponent,
     ContactsComponent,
     AddAgentComponent,
+    ErrorComponent,
   ],
   imports: [
     BrowserModule,

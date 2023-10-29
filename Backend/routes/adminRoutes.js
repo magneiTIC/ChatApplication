@@ -10,8 +10,11 @@ router.get("/directeurs", adminCtrl.getAllDirectors);
 
 router.get("/agents", adminCtrl.getAllAgents);
 
-// Route pour récupérer toutes les divisions
 router.get("/divisions", adminCtrl.getAllDivisions);
+
+router.get("/count-directors", adminCtrl.numberOfDirectors);
+
+router.get("/count-agents", adminCtrl.numberOfAgents);
 
 
 

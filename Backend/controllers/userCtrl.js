@@ -68,15 +68,16 @@ module.exports = {
       res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
     }
   },
-  async getUserIdByUid(req,res){
+
+  async getUserIdByUid(req, res) {
     try {
       const uid = req.params.uid;
       const user = await UserModel.findOne({ uid: uid });
-  
+
       if (!user) {
         return res.status(404).json({ message: "Utilisateur introuvable." });
       }
-  
+
       res.status(200).json({ id: user.id });
     } catch (error) {
       console.error("Erreur lors de la recherche de l'ID de l'utilisateur par UID", error);
@@ -89,20 +90,20 @@ module.exports = {
     const newStatus = req.body.status;
     let connectionTime = null;
     let disconnectionTime = null;
-    
+
     if (newStatus === 'connecté') {
       connectionTime = new Date().toISOString(); // Met à jour l'heure de connexion
     } else if (newStatus === 'déconnecté') {
       disconnectionTime = new Date().toISOString(); // Met à jour l'heure de déconnexion
     }
-    
+
     try {
       const user = await UserModel.findOneAndUpdate(
         { uid: userId },
         { status: newStatus, connectionTime, disconnectionTime },
         { new: true }
       );
-  
+
       if (user) {
         res.status(200).json({ message: 'Statut, heure de connexion et heure de déconnexion mis à jour avec succès', user });
       } else {
@@ -111,8 +112,10 @@ module.exports = {
     } catch (error) {
       res.status(500).json({ error: 'Erreur lors de la mise à jour du statut, de l\'heure de connexion et de l\'heure de déconnexion' });
     }
-  }
-  
+  },
+
+
+
 
 
 

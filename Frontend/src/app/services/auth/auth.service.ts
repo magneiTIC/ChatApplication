@@ -48,28 +48,11 @@ export class AuthService {
     }
   }
 
-  setUserStatus(status: string, userUID: string) {
-    const data = {
-      status: status,
-      connectionTime: status === 'connecté' ? new Date().toISOString() : null,
-      disconnectionTime: status === 'déconnecté' ? new Date().toISOString() : null,
-    };
-    this.http.post(`${this.apiUrl}/users/${userUID}/setUserStatus`, data).subscribe(
-      (response) => {
-        console.log("Status :", status);
-        console.log('Statut mis à jour avec succès :', response);
-      },
-      (error) => {
-        console.error('Erreur lors de la mise à jour du statut :', error);
-      }
-    );
-  }
-
-  async createUserWithFirebase(username: string, hashedPassword: string, email: string) {
+  async createUserWithFirebase(username: string, password: string, email: string) {
     const userUpdated = {
       'username': username,
       'email': email,
-      'password': hashedPassword
+      'password': password
     }
     console.log("HashedPassword", userUpdated.password);
     this.http.post(`${this.apiUrl}/users/register`, userUpdated)
@@ -113,5 +96,41 @@ export class AuthService {
     this.setUserStatus('déconnecté', uid!);
   }
 
-  
+  setUserStatus(status: string, userUID: string) {
+    const data = {
+      status: status,
+      connectionTime: status === 'connecté' ? new Date().toISOString() : null,
+      disconnectionTime: status === 'déconnecté' ? new Date().toISOString() : null,
+    };
+    this.http.post(`${this.apiUrl}/users/${userUID}/setUserStatus`, data).subscribe(
+      (response) => {
+        console.log("Status :", status);
+        console.log('Statut mis à jour avec succès :', response);
+      },
+      (error) => {
+        console.error('Erreur lors de la mise à jour du statut :', error);
+      }
+    );
+  }
+
+  async hasProfile(profile: string) {
+    const userId = sessionStorage.getItem('uid');
+    return this.http.get(`${this.apiUrl}/users/${userId}/checkUserProfile`).toPromise()
+      .then((response: any) => {
+        if (response && response.profile === profile) {
+          return true;
+        } else {
+          return false; 
+        }
+      })
+      .catch((error: any) => {
+        console.error('Erreur lors de la vérification du profil :', error);
+        return false; 
+      });
+  }
+ 
+  isUserLoggedIn(): boolean {
+    return !!this.auth.currentUser;
+  }
+
 }

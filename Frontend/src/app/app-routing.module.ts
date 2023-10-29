@@ -10,6 +10,8 @@ import { GroupComponent } from './views/user/group/group.component';
 import { ContactsComponent } from './views/user/contacts/contacts.component';
 import { RegisterComponent } from './views/auth/register/register.component';
 import { AddAgentComponent } from './views/admin/add-agent/add-agent.component';
+import { ErrorComponent } from './views/error/error.component';
+import { AuthGuard } from './Guard/auth.guard';
 
 const routes: Routes = [
 
@@ -19,17 +21,16 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
 
-
-  { path: 'admin/setting', component: SettingComponent },
+  { path: 'admin/setting', component: SettingComponent, canActivate: [AuthGuard], data: { expectedRole: 'ADMIN' } },
   { path: 'add-agent', component: AddAgentComponent },
   { path: 'sidebar', component: SidebarComponent },
-
 
   { path: 'user/setting', component: UserSettingComponent },
   { path: 'groups', component: GroupComponent },
   { path: 'contacts', component: ContactsComponent },
-  { path: 'home', component: HomeComponent }
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard], data: { expectedProfile: 'AGENT', expectedProfile0: 'DIRECTEUR' } },
 
+  { path: 'error', component: ErrorComponent },
 
   //{ path: 'home/:idChat', component: HomeComponent },
 

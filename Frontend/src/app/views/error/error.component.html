@@ -1,0 +1,20 @@
+<div class="error-page d-flex align-items-center flex-wrap justify-content-center pd-20">
+    <div class="pd-10">
+        <div class="error-page-wrap text-center">
+            <h1>403</h1>
+            <h3>Erreur: 403 INTERDIT</h3>
+            <p>
+                Désolé, l'accès à cette ressource sur le serveur est refusé.<br />Soit
+                vérifier l'URL
+            </p>
+            <div class="pt-20 mx-auto max-width-200">
+                <div *ngIf="!isAuthenticated">
+                    <a routerLink="/login" class="btn btn-primary btn-block btn-lg">Se connecter</a>
+                </div>
+                <div *ngIf="isAuthenticated">
+                    <a routerLink="/home" class="btn btn-primary btn-block btn-lg">Retourner à l'accueil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

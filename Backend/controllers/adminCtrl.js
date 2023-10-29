@@ -16,7 +16,8 @@ module.exports = {
             // Enregistrez l'utilisateur dans la base de données MongoDB
             await user.save();
             // Réponse de succès
-            res.status(201).json({ message: 'Inscription de l\'utilisateur commencée avec succès' });
+            const userProfile = user.profile;
+            res.status(201).json({ message: 'Inscription de l\'utilisateur commencée avec succès', userProfile: userProfile});
         } catch (error) {
             console.error('Erreur lors de la tentative de début d\'inscription :', error);
             // Gérez les erreurs ici
@@ -25,26 +26,25 @@ module.exports = {
     },
 
     async getAllDirectors(req, res) {
-        User.find({ profile: 'Directeur' })
-            .then(directeurs => {
-                res.json(directeurs);
-            })
-            .catch(err => {
-                console.error(err);
-                res.status(500).json({ error: 'Erreur lors de la récupération des Directeurs' });
-            });
+        try {
+            const directeurs = await User.find({ profile: 'Directeur' });
+            res.json(directeurs);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Erreur lors de la récupération des Directeurs' });
+        }
     },
 
     async getAllAgents(req, res) {
-        User.find({ profile: 'Agent' })
-            .then(agents => {
-                res.json(agents);
-            })
-            .catch(err => {
-                console.error(err);
-                res.status(500).json({ error: 'Erreur lors de la récupération des Agents' });
-            });
+        try {
+            const agents = await User.find({ profile: 'Agent' });
+            res.json(agents);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Erreur lors de la récupération des Agents' });
+        }
     },
+    
 
     async getAllDivisions(req, res) {
         try {
@@ -53,7 +53,29 @@ module.exports = {
         } catch (error) {
             throw new Error('Erreur lors de la récupération des divisions : ' + error);
         }
+    },
+
+    async numberOfDirectors(req, res) {
+        try {
+            const count = await User.countDocuments({ profile: "Directeur" });
+            res.json({ numberOfDirectors: count });
+          } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: "Une erreur s'est produite" });
+          }
+    },
+
+    async numberOfAgents(req, res) {
+        try {
+            const count = await User.countDocuments({ profile: "Directeur" });
+            res.json({ numberOfAgents: count });
+          } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: "Une erreur s'est produite" });
+          }
     }
+
+
 
 }
 

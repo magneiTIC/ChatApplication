@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { platformBrowser } from '@angular/platform-browser';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -7,18 +8,18 @@ import { v4 as uuidv4 } from 'uuid';
   providedIn: 'root'
 })
 export class DeviceInfoService {
-  
+
   apiUrl = 'http://localhost:3000'
 
   private deviceId: string;
 
-  constructor( private http: HttpClient ) {
+  constructor(private http: HttpClient) {
     this.deviceId = this.getDeviceId();
   }
 
   private getDeviceId(): string {
     const storedDeviceId = localStorage.getItem('deviceId');
-    if (storedDeviceId ) {
+    if (storedDeviceId) {
       return storedDeviceId;
     } else {
       const newDeviceId = this.generateDeviceId();
@@ -40,7 +41,7 @@ export class DeviceInfoService {
       userAgent,
     };
     console.log("DeviceInfo: ", data);
-  
+
     this.http.post(`${this.apiUrl}/services/collect-info`, data)
       .subscribe(
         (response) => {
@@ -53,6 +54,8 @@ export class DeviceInfoService {
         }
       );
   }
+
+ 
   
   
   

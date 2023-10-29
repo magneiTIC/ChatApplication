@@ -21,11 +21,11 @@ app.use(bodyParser.json());
 app.use(cors()); // Configure CORS
 
 // Appliquez le middleware de vérification du token JWT aux routes nécessitant une authentification
-const checkAuth = require('./middleware/middleware')
-app.get('/admin/create-user', checkAuth, (req, res) => {
+// const middleware = require('./middleware/middleware');
+// app.get('/admin/create-user', middleware.checkAuth, (req, res) => {
       // La route est protégée et l'utilisateur est authentifié
-  res.json({ message: 'Vous avez accès à cette ressource protégée.' });
-});
+//   res.json({ message: 'Vous avez accès à cette ressource protégée.' });
+// });
 
 // Appel des routes
 const adminRoutes = require('./routes/adminRoutes');

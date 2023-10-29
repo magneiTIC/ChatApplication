@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
         {
             deviceId: String,
             userAgent: String,
-            timestamp: Date
+            timestamp: Date,
         }
     ],
     connectionTime: Date,

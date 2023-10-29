@@ -7,10 +7,13 @@ import { map } from 'rxjs';
 })
 export class UsersService implements OnInit {
 
-  directeurs: any[] | undefined;
-  agents: any[] | undefined;
+  // directeurs: any[] | undefined;
+  // agents: any[] | undefined;
 
   apiUrl = 'http://localhost:3000'
+
+  numberOfDirectors: any;
+  numberOfAgents: any;
 
   constructor(private http: HttpClient) { }
 
@@ -67,5 +70,17 @@ export class UsersService implements OnInit {
       )
   }
 
+  countDirectors() {
+    this.http.get<{ numberOfDirectors: number }>(`${this.apiUrl}/admin/count-directors`)
+      .subscribe(response => {
+        this.numberOfDirectors = response.numberOfDirectors;
+      });
+  }
  
+  countAgents() {
+    this.http.get<{ numberOfAgents: number }>(`${this.apiUrl}/admin/count-agents`)
+      .subscribe(response => {
+       const numberOfAgents = response.numberOfAgents;
+      });
+  }
 }
