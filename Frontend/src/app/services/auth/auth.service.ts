@@ -17,7 +17,17 @@ export class AuthService {
   }
 
   async isProfileConfigured(email: string) {
-    return this.http.post(`${this.apiUrl}/users/isProfileConfigured`, email);
+    try {
+      const response = await this.http.post<{ isProfileConfigured: boolean } | undefined>(`${this.apiUrl}/users/isProfileConfigured`, { email }).toPromise();
+      if (response) {
+        return response.isProfileConfigured;
+      } else {
+        throw new Error('Réponse non définie.');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification du profil :', error);
+      throw new Error('Erreur lors de la vérification du profil');
+    }
   }
 
   async login(email: string, password: string) {
@@ -62,7 +72,15 @@ export class AuthService {
       'password': hashedPassword
     }
     console.log("HashedPassword", userUpdated.password);
-    return this.http.post(`${this.apiUrl}/users/register`, userUpdated);
+    this.http.post(`${this.apiUrl}/users/register`, userUpdated)
+  .subscribe(
+    (response) => {
+      console.log("Utilisateur créé avec succès :", response);
+    },
+    (error) => {
+      console.error("Échec de la requête HTTP :", error);
+    }
+  );
   }
 
   async getCurrentUserIdByUid(uid: string): Promise<string> {

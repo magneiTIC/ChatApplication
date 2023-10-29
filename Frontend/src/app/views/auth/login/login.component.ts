@@ -52,20 +52,10 @@ export class LoginComponent implements OnInit {
     if (!isProfileConfigured) {
       console.log("Profil non configuré");
       // Rediriger l'utilisateur vers la page "register" s'il n'a pas configuré son profil
+      sessionStorage.setItem('email',email)
       this.router.navigate(['/register']);
     } else {
       const loginSuccessful = await this.authService.login(email, password);
-
-      // if (loginSuccessful) {
-      //   console.log('Connexion réussie');
-      //   console.log("id a la connecion",sessionStorage.getItem('uid'));
-        
-      //   this.socketService.initializeSocketConnection();
-      //   this.router.navigate(['/home']);
-      // } else {
-      //   // Gérer l'échec de la connexion en affichant une erreur de connexion
-      //   this.connexionError = true;
-      // }
       if (loginSuccessful) {
         // Récupérer l'ID de l'utilisateur à partir de l'AuthService
         const storedUid = sessionStorage.getItem("uid");

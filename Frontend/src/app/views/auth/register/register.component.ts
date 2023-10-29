@@ -31,12 +31,17 @@ export class RegisterComponent implements OnInit {
     const username = this.registerForm.value.username;
     const password = this.registerForm.value.password;
     const email = sessionStorage.getItem('email');
+   
     try {
-      if(email != null) {
-        this.authService.createUserWithFirebase(username, password, email)
+      if(email) {
+        await this.authService.createUserWithFirebase(username, password, email)
         console.log('Inscription de l\'utilisateur terminée avec succès :');
         // Gérez la réponse ici, par exemple, affichez un message de confirmation
         this.router.navigate(['/login']);
+      }
+      else{
+        console.log("inscription bi dialoul");
+        
       }
     } catch (error) {
       console.error('Erreur lors de la tentative de début d\'inscription :');

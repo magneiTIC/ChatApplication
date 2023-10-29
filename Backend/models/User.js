@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
     profile: {
         type: String,
         required: true,
-        enum: ['Admin', 'Directeur', 'Agent']
+        enum: ['ADMIN', 'DIRECTEUR', 'AGENT']
     },
     devices: [
         {

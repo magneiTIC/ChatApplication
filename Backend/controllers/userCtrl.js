@@ -14,9 +14,9 @@ module.exports = {
       } else {
         const checkUsername = user.username;
         if (!checkUsername) {
-          res.json({ message: "Le profil n'est pas encore configuré", isProfileConfigured: false });
+          res.json({isProfileConfigured: false });
         } else {
-          res.status(200).json({ message: "Profil déjà configuré" });
+          res.status(200).json({ isProfileConfigured: true });
         }
       }
     } catch (error) {
@@ -26,7 +26,7 @@ module.exports = {
   },
 
   async register(req, res) {
-    const { username, email, password } = req.body;
+    const { username, email, password } = req.body
     try {
       // Creer un compte sur firebase
       const userRecord = await admin.auth().createUser({
