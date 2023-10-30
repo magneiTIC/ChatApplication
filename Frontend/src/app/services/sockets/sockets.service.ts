@@ -61,4 +61,10 @@ export class SocketService {
       console.log("Chat ID : ", this.socket.id);
     });
   }
+  disconnect() {
+    if (this.socket) {
+      this.socket.disconnect();
+    }
+  }
+
 }

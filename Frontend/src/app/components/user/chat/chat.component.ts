@@ -1,10 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Observable,map,of, scan, take } from 'rxjs'; // Importez 'Observable' depuis RxJS
+import { Observable,map,mergeMap,of, scan, take } from 'rxjs'; // Importez 'Observable' depuis RxJS
 import { ChatsService } from 'src/app/services/chats/chats.service';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { SocketService } from 'src/app/services/sockets/sockets.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
+
 
 
 @Component({
@@ -144,12 +145,17 @@ export class ChatComponent implements OnInit {
   }
   private listenForMessages() {
     this.socketService.onMessageReceived((message: any) => {
-      // À chaque réception d'un nouveau message via le socket, appelez la méthode pour récupérer les messages de la conversation
-      this.messagesService.getMessagesByChat('' + this.chatId).subscribe((messages: any[]) => {
-        // Mettez à jour la liste des messages avec les nouveaux messages
-        console.log("listen for messages",messages)
-        this.messages$ = of(messages);
-      });
+      // Assurez-vous que vous avez une valeur de chatId correcte avant de demander les messages.
+      if (this.chatId) {
+        this.messagesService.getMessagesByChat('' + this.chatId).subscribe((messages: any[]) => {
+          // Mise à jour de la liste des messages avec les nouveaux messages reçus via le socket.
+          console.log("listen for messages", messages);
+          this.messages$ = this.messages$ ? this.messages$.pipe(mergeMap(existingMessages => of([...existingMessages, ...messages]))): of(messages);
+        });
+      } 
+      // else {
+      //   console.error("chatId manquant ou incorrect.");
+      // }
     });
   }
   markMessagesAsRead(chatId: string) {

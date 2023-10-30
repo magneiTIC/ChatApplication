@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Auth, signInWithEmailAndPassword } from '@angular/fire/auth';
 import { Observable, catchError, throwError } from 'rxjs';
+import { SocketService } from '../sockets/sockets.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class AuthService {
 
   apiUrl = 'http://localhost:3000'
 
-  constructor(private auth: Auth, private http: HttpClient) { }
+  constructor(private auth: Auth, private http: HttpClient, private socketService:SocketService) { }
 
   createUser(userData: any) {
     return this.http.post(`${this.apiUrl}/admin/create-user`, userData);
@@ -93,6 +94,7 @@ export class AuthService {
     sessionStorage.removeItem('email');
     sessionStorage.removeItem('username');
     sessionStorage.removeItem('id')
+    this.socketService.disconnect();
     this.setUserStatus('déconnecté', uid!);
   }
 
