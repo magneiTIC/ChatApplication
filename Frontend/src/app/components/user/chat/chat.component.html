@@ -23,14 +23,24 @@
         </ng-container>
       </ng-container>
     </div>
+
     <div class="chat-input">
+      <label for="file-input" class="file-button">
+        <input type="file" id="file-input" style="display: none;">
+        <mat-icon class="icon">attach_file</mat-icon>
+      </label>
+
       <mat-form-field appearance="outline">
         <input matInput [formControl]="messageControl" placeholder="Écrivez votre message..." (keydown.enter)="sendMessage()" />
-        <a matSuffix (click)="sendMessage()">
-          <mat-icon matSuffix class="icon">send</mat-icon>
-        </a>
       </mat-form-field>
+
+      <a matSuffix  class="send-button" (click)="sendMessage()">
+        <mat-icon matSuffix class="icon">send</mat-icon>
+      </a>
+    
     </div>
+    
+ 
   </div>
-  <img *ngIf="!chat.username" src="assets/images/chat.png" alt="">
+  <img *ngIf="!chat.username" src="assets/images/police.png" alt="">
 </div>

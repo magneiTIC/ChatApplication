@@ -13,8 +13,15 @@ export class AuthService {
 
   constructor(private auth: Auth, private http: HttpClient, private socketService:SocketService) { }
 
-  createUser(userData: any) {
-    return this.http.post(`${this.apiUrl}/admin/create-user`, userData);
+  async createUser(email:string,profile:string,division:string) {
+    try{
+      this.http.post(`${this.apiUrl}/admin/create-user`, {email,profile,division});
+      
+      
+      return console.log('creation reussie');
+    }catch(error){
+      console.error("Error creating user", error);
+    }
   }
 
   async isProfileConfigured(email: string) {

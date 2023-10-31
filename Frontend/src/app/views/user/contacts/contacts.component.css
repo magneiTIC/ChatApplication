@@ -31,6 +31,21 @@
     margin-bottom: 10px;
     cursor: pointer;
   }
+  .contact-item:hover {
+    background-color: #ffffff5a;
+    /* display: flex; 
+    width: fit-content;
+    position: relative; */
+
+    padding-top: 8px;
+    padding-bottom: 18px;
+    padding-left: 8px;
+    padding-right: 100px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+  
+  
+  }
   
   .contact-avatar {
     width: 40px;
@@ -54,6 +69,10 @@
   
   
   }
+  .contact-group-header {
+    font-weight: bold;
+  }
+  
   /* Styles au clic (active) d'un contact */
 .contact-item:active {
     background-color: #ccc;

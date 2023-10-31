@@ -68,8 +68,6 @@ export class DiscussionComponent implements OnInit {
    
   
   
-  sendMessage(){
 
-  }
 
 }

@@ -21,6 +21,7 @@ import {
 
 export class ContactComponent implements OnInit {
   @ViewChild('endOfChat' )endOfChat!: ElementRef ;
+  chatId: string | null | undefined;
 
   constructor( 
     private chatsService: ChatsService,
@@ -30,7 +31,18 @@ export class ContactComponent implements OnInit {
 
   
   }
+  selectChat(chatId: string, username: string) {
+    this.chatsService.selectedChat(chatId, username);
+  }
   ngOnInit(): void {
+
+    this.chatsService.selectedChat$.subscribe((chat) => {
+      
+      this.chatId = chat.chatId;
+      // console.log("Selected chat ID:", this.chatId);
+    });
+
+
     console.log(this.myChats)
     this.myChats.subscribe((valeur) => {
       console.log(valeur);
@@ -50,19 +62,9 @@ export class ContactComponent implements OnInit {
   
   
 
-  messages=this.messagesService.getLastMessage('6526c83d0c3649b5dd64e210')
   users=this.usersService.getAllUsersInSameDivision() ;
 
-  // users$ = combineLatest([
-  //   this.users,
-  //   this.searchControl.valueChanges.pipe(startWith('')),
-  // ]).pipe(
-  //   map(([users, searchString]) => {
-  //     return users.filter((u) =>
-  //       u.displayName?.toLowerCase().includes(searchString.toLowerCase())
-  //     );
-  //   })
-  // );
+
   
 
   scrollToBottom(){

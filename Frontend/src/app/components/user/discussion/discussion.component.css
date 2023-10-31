@@ -42,22 +42,24 @@
   .contact-details {
     flex: 1;
   }
-  
+   
   .contact-details h3 {
     margin: 0;
     font-size: 16px;
   }
   .contact-item:hover {
     background-color: #ffffff5a;
-    display: flex;
+    /* display: flex; 
+    width: fit-content;
+    position: relative; */
+
     padding-top: 8px;
     padding-bottom: 18px;
     padding-left: 8px;
     padding-right: 100px;
     margin-bottom: 8px;
     border-radius: 8px;
-    width: fit-content;
-    position: relative;
+  
   
   }
   /* Styles au clic (active) d'un contact */

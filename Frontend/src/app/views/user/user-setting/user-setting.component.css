@@ -4,6 +4,9 @@
   display: flex;
   height: 100vh;
 }
+.col{
+  background:rgba(225, 222, 222, 0.267)
+}
 
 /* Styles pour la barre latérale (sidebar) */
 .sidebar {
@@ -80,12 +83,12 @@
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 600px;
+  width: 500px;
   padding: 20px;
   margin: 0 auto;
   position: absolute;
   top: 50%;
-  left: 60%;
+  left: 50%;
   transform: translate(-50%, -50%);
   background: #fff;
 }

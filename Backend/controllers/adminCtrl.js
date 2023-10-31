@@ -24,10 +24,24 @@ module.exports = {
             res.status(500).json({ message: 'Erreur lors de la tentative de début d\'inscription' });
         }
     },
-
+    async getUser(req, res) {
+        try {
+            const uid = req.params.uid;
+            const user = await Users.findOne({ uid:uid });
+        
+            if (!user) {
+              return res.status(404).json({ message: "Utilisateur introuvable." });
+            }else{
+                res.json(user);
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
+        }
+    },
     async getAllDirectors(req, res) {
         try {
-            const directeurs = await User.find({ profile: 'Directeur' });
+            const directeurs = await User.find({ profile: 'DIRECTEUR' });
             res.json(directeurs);
         } catch (err) {
             console.error(err);
@@ -37,14 +51,13 @@ module.exports = {
 
     async getAllAgents(req, res) {
         try {
-            const agents = await User.find({ profile: 'Agent' });
+            const agents = await User.find({ profile: 'AGENT' });
             res.json(agents);
         } catch (err) {
             console.error(err);
             res.status(500).json({ error: 'Erreur lors de la récupération des Agents' });
         }
     },
-    
 
     async getAllDivisions(req, res) {
         try {
@@ -54,27 +67,17 @@ module.exports = {
             throw new Error('Erreur lors de la récupération des divisions : ' + error);
         }
     },
-
-    async numberOfDirectors(req, res) {
-        try {
-            const count = await User.countDocuments({ profile: "Directeur" });
-            res.json({ numberOfDirectors: count });
-          } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: "Une erreur s'est produite" });
-          }
+    async numberOfDirectors(req,res){
+        const total = await User.countDocuments({ profile: "DIRECTEUR" })
+        res.status(200).json(total)
+        
     },
-
-    async numberOfAgents(req, res) {
-        try {
-            const count = await User.countDocuments({ profile: "Directeur" });
-            res.json({ numberOfAgents: count });
-          } catch (error) {
-            console.error(error);
-            res.status(500).json({ error: "Une erreur s'est produite" });
-          }
-    }
-
+    async numberOfAgents(req,res){
+        const total = await User.countDocuments({ profile: "AGENT" })
+        res.json(total)
+        
+    },
+   
 
 
 }

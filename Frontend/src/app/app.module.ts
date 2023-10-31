@@ -8,6 +8,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { TestComponent } from './components/test/test.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import {MatRadioModule} from "@angular/material/radio";
+import {MatSelectModule} from "@angular/material/select"
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { MatToolbarModule} from '@angular/material/toolbar'
 import{MatListModule} from '@angular/material/list'
@@ -19,21 +21,18 @@ import { environment } from 'src/environments/environment';
 import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 import { HttpClientModule } from '@angular/common/http';
-import { SettingComponent } from './views/admin/setting/setting.component';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
-import { AddUserComponent } from './views/admin/add-user/add-user.component';
 import { ChatComponent } from './components/user/chat/chat.component';
 import { ContactComponent } from './components/user/contact/contact.component';
 import { SideComponent } from './components/user/side/side.component';
-import { SuperAdminComponent } from './views/super-admin/super-admin.component';
 import { UserSettingComponent } from './views/user/user-setting/user-setting.component';
 import { HomeComponent } from './views/user/home/home.component';
-import { SidebarComponent } from './components/admin/sidebar/sidebar.component';
 import { DiscussionComponent } from './components/user/discussion/discussion.component';
 import { GroupComponent } from './views/user/group/group.component';
 import { ContactsComponent } from './views/user/contacts/contacts.component';
 import { AddAgentComponent } from './views/admin/add-agent/add-agent.component';
 import { ErrorComponent } from './views/error/error.component';
+import { AuthorisationComponent } from './views/admin/authorisation/authorisation.component';
 
 
 
@@ -45,19 +44,16 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     TestComponent,
     LoginComponent,
     RegisterComponent,
-    SettingComponent,
-    AddUserComponent,
     ChatComponent,
     ContactComponent,
     SideComponent,
-    SidebarComponent,
-    SuperAdminComponent,
     UserSettingComponent,
     DiscussionComponent,
     GroupComponent,
     ContactsComponent,
     AddAgentComponent,
     ErrorComponent,
+    AuthorisationComponent,
   ],
   imports: [
     BrowserModule,
@@ -68,10 +64,12 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     MatFormFieldModule,
     MatInputModule,
     MatAutocompleteModule,
+    MatRadioModule,
     BrowserAnimationsModule,
     MatToolbarModule,
     MatIconModule,
     MatListModule,
+    MatSelectModule,
     HttpClientModule,
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),    

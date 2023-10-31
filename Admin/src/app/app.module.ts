@@ -13,6 +13,8 @@ import { ListDirectorComponent } from './views/list-director/list-director.compo
 import { ListAgentComponent } from './views/list-agent/list-agent.component';
 import { AddDirectorComponent } from './views/add-director/add-director.component';
 import { AddAgentComponent } from './views/add-agent/add-agent.component';
+import { FormsModule,ReactiveFormsModule } from '@angular/forms';
+import { InfoUserComponent } from './views/info-user/info-user.component';
 
 @NgModule({
   declarations: [
@@ -25,12 +27,16 @@ import { AddAgentComponent } from './views/add-agent/add-agent.component';
     ListDirectorComponent,
     ListAgentComponent,
     AddDirectorComponent,
-    AddAgentComponent
+    AddAgentComponent,
+    InfoUserComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
+
 
   ],
   providers: [],

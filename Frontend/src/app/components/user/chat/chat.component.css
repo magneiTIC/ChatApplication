@@ -1,3 +1,11 @@
+
+.logo{
+  position: absolute;
+  left:50%;
+  top:50%;
+  height: 3000px;
+  transform: translate(-50%, -50%);
+}
 .chat-app {
     display: flex;
     height: 100vh;
@@ -98,6 +106,7 @@
   .chat-input > mat-form-field{
     width: 100%;
   }
+
 mat-form-field{
   padding-left: 10px;
 }
@@ -124,9 +133,13 @@ mat-form-field{
     font-size: 0.7rem;
     color: rgba(0,0,0,0.7)
   }
+
   .icon{
     color: #7ca6c7;
     padding-bottom: 40px;
+    margin-left: 5px;
+    margin-right: 5px;
+
     
   }
 
@@ -177,15 +190,18 @@ mat-form-field{
     margin-left: 10px;
   }
   
-  button.send-button {
-    background-color: #0099ff;
+  button {
+    background-color: #9bb9b948;
+    background-size: auto;
     color: #fff;
     border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
+    border-radius: 9px;
+    padding: 5px 5px;
+    margin-left: 5px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 5px;
   }
+
   
   .file-button {
     
@@ -199,44 +215,13 @@ mat-form-field{
     margin-right: 10px;
   }
   
+  .send-button i {
+    font-size: 20px;
+    margin-left: 10px;
+  }
+  
   /* Style pour le focus sur le textarea */
   textarea:focus {
     outline: none;
     box-shadow: 0 0 5px #0099ff;
-  }
-
-
-  .reply {
-    height: 70px;
-    padding-left: 30px;
-  }
-  .reply-emojis {
-    padding: 5px 0 !important;
-  }
-  .reply-emojis i {
-    padding: 5px 2px !important;
-    font-size: 1.8em !important;
-  }
-  .reply-main {
-    padding: 2px 8px !important;
-  }
-  .reply-main textarea {
-    padding: 8px !important;
-    font-size: 18px;
-    padding-left: 30px;
-
-  }
-  .reply-recording {
-    padding: 5px 0 !important;
-  }
-  .reply-recording i {
-    padding: 5px 0 !important;
-    font-size: 1.8em !important;
-  }
-  .reply-send {
-    padding: 5px 0 !important;
-  }
-  .reply-send i {
-    padding: 5px 2px 5px 0 !important;
-    font-size: 1.8em !important;
   }

@@ -6,6 +6,9 @@ const adminCtrl = require('../controllers/adminCtrl');
 
 router.post("/create-user", adminCtrl.createUser);
 
+router.get("/user/:uid", adminCtrl.getUser);
+
+
 router.get("/directeurs", adminCtrl.getAllDirectors);
 
 router.get("/agents", adminCtrl.getAllAgents);
@@ -13,6 +16,7 @@ router.get("/agents", adminCtrl.getAllAgents);
 router.get("/divisions", adminCtrl.getAllDivisions);
 
 router.get("/count-directors", adminCtrl.numberOfDirectors);
+
 
 router.get("/count-agents", adminCtrl.numberOfAgents);
 
