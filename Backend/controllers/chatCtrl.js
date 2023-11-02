@@ -1,7 +1,7 @@
 const Chat = require("../models/chat")
 const Message=require("../models/message")
 const Users= require("../models/user")
-
+const {uploadFileMiddleware} = require("../config/upload")
 
 const formatSentAt = (sentAt) => {
   const currentDate = new Date();
@@ -111,45 +111,129 @@ module.exports = {
   //     res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
   //   }
   // },
-  async addMessageToChat(req, res) {
-    try {
-      const chatId = req.params.chatId;
-      const { user, type, content, media } = req.body;
-      const chat = await Chat.findById(chatId);
+  // async addMessageToChat(req, res) {
+  //   try {
+  //     const chatId = req.params.chatId;
+  //     const { user, type, content, media } = req.body;
+  //     const chat = await Chat.findById(chatId);
   
-      if (!chat) {
-        return res.status(404).json({ error: 'Conversation non trouvée' });
-      }
+  //     if (!chat) {
+  //       return res.status(404).json({ error: 'Conversation non trouvée' });
+  //     }
   
-      const messageData = {
-        user,
-        chat: chatId,
-        type, // Le type de message (text, image, video, audio, file, quote, etc.)
-      };
+  //     const messageData = {
+  //       user,
+  //       chat: chatId,
+  //       type, // Le type de message (text, image, video, audio, file, quote, etc.)
+  //     };
   
-      if (type === 'text' || type === 'quote') {
-        // Si le message est de type texte ou quote, enregistrez le contenu du message
-        messageData.content = content;
-      } else if (type === 'image' || type === 'video' || type === 'audio' || type === 'file') {
-        // Si le message est de type image, vidéo, audio ou fichier, enregistrez le contenu du média
-        messageData.media = {
-          data: Buffer.from(media.data, 'base64'), // Convertir les données base64 en binaire
-          contentType: media.contentType, // Type MIME du média
-        };
-      }
+  //     if (type === 'text' || type === 'quote') {
+  //       // Si le message est de type texte ou quote, enregistrez le contenu du message
+  //       messageData.content = content;
+  //     } else if (type === 'image' || type === 'video' || type === 'audio' || type === 'file') {
+  //       // Si le message est de type image, vidéo, audio ou fichier, enregistrez le contenu du média
+  //       if (media && media.data) {
+  //         const reader = new FileReader();
+  //         reader.onload = async (e) => {
+  //           const arrayBuffer = e.target.result;
+  //           if (arrayBuffer) {
+  //             const bufferData = new Uint8Array(arrayBuffer);
+  //             messageData.media = {
+  //               data: Buffer.from(bufferData), // Convert ArrayBuffer to Buffer
+  //               contentType: media.contentType,
+  //             };
   
+  //             const message = new Message(messageData);
+  //             await message.save();
+  
+  //             chat.messages.push(message._id);
+  //             await chat.save();
+  
+  //             res.status(200).json(chat);
+  //           } else {
+  //             console.error("Failed to read the Blob data.");
+  //             res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
+  //           }
+  //     }}
+  
+  //     const message = new Message(messageData);
+  //     await message.save();
+  
+  //     chat.messages.push(message._id);
+  //     await chat.save();
+  
+  //     res.status(200).json(chat);
+  //   } }
+  //   catch (error) {
+  //     console.error(error);
+  //     res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
+  //   }
+  // }
+
+
+async addMessageToChat(req, res) {
+  try {
+    const chatId = req.params.chatId;
+    const { user, type, content } = req.body;
+    const chat = await Chat.findById(chatId);
+
+    if (!chat) {
+      return res.status(404).json({ error: 'Conversation non trouvée' });
+    }
+
+    const messageData = {
+      user,
+      chat: chatId,
+      type,
+    };
+
+    if (type === 'text' || type === 'quote') {
+      messageData.content = content;
+    } else if (['image', 'video', 'audio', 'file'].includes(type)) {
+      // If the message is of media type, use Multer to handle file upload
+      await uploadFileMiddleware(req, res, (err) => {
+        console.log("req.file",req.file)
+        console.log("req.body",req.body)
+        if (req.file==undefined) {
+          console.error("Multer error:", err);
+          return res.status(500).json({ error: "Erreur lors de l'envoi du média" });
+        }
+        if (req.file) {
+          // Multer has stored the uploaded file in req.file
+          messageData.media = {
+            data: req.file.buffer, // Use the file buffer provided by Multer
+            contentType: req.file.mimetype,
+          };
+        }
+
+      });
+      
+        
+      
+
+        const message = new Message(messageData);
+        await message.save();
+
+        chat.messages.push(message._id);
+        await chat.save();
+
+        res.status(200).json(chat);
+     
+    } else {
       const message = new Message(messageData);
       await message.save();
-  
+
       chat.messages.push(message._id);
       await chat.save();
-  
+
       res.status(200).json(chat);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
   }
+}
+
   
   
 

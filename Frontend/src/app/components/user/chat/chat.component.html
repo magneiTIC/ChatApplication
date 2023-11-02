@@ -26,7 +26,8 @@
 
     <div class="chat-input">
       <label for="file-input" class="file-button">
-        <input type="file" id="file-input" style="display: none;">
+        <input type="file" id="file-input" style="display: none;" (change)="onFileSelected($event)">
+
         <mat-icon class="icon">attach_file</mat-icon>
       </label>
 

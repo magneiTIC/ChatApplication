@@ -55,6 +55,15 @@ getActiveChat(): Observable<{ chatId: string | null; username: string | null }> 
         })
       )
   }
+  addMediaToChat(chatId: string, user: string, media:any,type:string) {
+    return this.http
+      .post<any>(this.apiUrl + `/chat/addMessage/${chatId}`, { "chatId": chatId, "user": user, "media":media ,"type":type})
+      .pipe(
+        map((userData: any) => {
+          return userData
+        })
+      )
+  }
 
 
 }

@@ -27,7 +27,7 @@ export class SocketService {
     return this.socketId;
   }
 
-  sendMessage(message: string, targetUserId: string) {
+  sendMessage(message: string|any , targetUserId: string) {
     this.socket.emit('send-message', message, targetUserId);
   }
 
