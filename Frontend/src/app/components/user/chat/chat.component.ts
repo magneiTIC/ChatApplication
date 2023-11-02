@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Observable,map,mergeMap,of, scan, take } from 'rxjs'; // Importez 'Observable' depuis RxJS
+import { Observable, map, mergeMap, of, scan, take } from 'rxjs'; // Importez 'Observable' depuis RxJS
 import { ChatsService } from 'src/app/services/chats/chats.service';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { SocketService } from 'src/app/services/sockets/sockets.service';
@@ -15,29 +15,37 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 })
 export class ChatComponent implements OnInit {
   showDate = true;
-  chat: { chatId: string|null; username: string|null } = { chatId :null, username:null };
+  chat: { chatId: string | null; username: string | null } = { chatId: null, username: null };
   chatId: string | null = null;
   currentUserID: any;
-  selectedFile: File| undefined;
-  
+  selectedFile: File | undefined;
+
 
   constructor(
     private chatsService: ChatsService,
     private messagesService: MessagesService,
     private socketService: SocketService,
-    private authService:AuthService
-  ) {}
+    private authService: AuthService,
+    
+  ) { // Écoutez l'événement de capture d'écran
+    document.addEventListener('keydown', function (event) {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
+        console.log("tentative de capture d'ecran")
+        applyBlackout();
+      }
+    });}
 
   @ViewChild('messageContainer') messageContainer!: ElementRef;
   messageControl = new FormControl('');
   currentUserUid = sessionStorage.getItem('uid');
   messages$: Observable<any[]> = of([]);
 
- 
+
 
   ngOnInit(): void {
+
     
-    
+
     this.chatsService.selectedChat$.subscribe((chat) => {
       // console.log("Selected chat object:", chat);
       if (chat.chatId !== null && chat.username !== null) {
@@ -46,15 +54,15 @@ export class ChatComponent implements OnInit {
         // console.log("chat id dans chat component: " + this.chatId);
         if (this.chatId) {
           this.messages$ = this.messagesService.getMessagesByChat('' + this.chatId);
-          console.log("selected chat",this.chatId)
-          
+          console.log("selected chat", this.chatId)
+
         }
       }
     });
     this.getCurrentUserId();
     this.listenForMessages()
-    
-    
+
+
   }
 
   onScroll(event: Event): void {
@@ -86,8 +94,8 @@ export class ChatComponent implements OnInit {
     const sentDate = new Date(sentAt);
     return sentDate.toLocaleDateString();
   }
-  
-  
+
+
   areDatesEqual(date1: string, date2: string): boolean {
     const d1 = new Date(date1);
     const d2 = new Date(date2);
@@ -96,32 +104,32 @@ export class ChatComponent implements OnInit {
 
   sendMessage() {
     const message = this.messageControl.value;
-  
+
     if (message) {
       this.chatsService.getActiveChat().subscribe((activeChat) => {
         if (activeChat) {
           const chatId = activeChat.chatId;
-  
+
           this.chatsService.getChatsByUser("" + this.currentUserUid).subscribe((chats: any[]) => {
             let targetChat: any = null;
-  
+
             chats.forEach((chat) => {
               if (chat.chatId === chatId) {
                 targetChat = chat;
               }
             });
-  
+
             if (targetChat) {
               // Ici, vous pouvez utiliser les données du targetChat, par exemple, pour obtenir l'ID du destinataire.
               const targetUserId = targetChat.users[0]._id;
-  
+
               if (targetUserId) {
                 console.log("message dans targetuserid", message);
                 console.log("id sender", this.currentUserID);
-  
+
                 // Envoi du message via le socket
                 this.socketService.sendMessage(message, targetUserId);
-  
+
                 // Une fois que le message a été envoyé via le socket, ajoutez-le à la base de données
                 this.chatsService
                   .addMessageToChat(targetChat.chatId, this.currentUserID, message, "text")
@@ -151,47 +159,47 @@ export class ChatComponent implements OnInit {
         this.messagesService.getMessagesByChat('' + this.chatId).subscribe((messages: any[]) => {
           // Mise à jour de la liste des messages avec les nouveaux messages reçus via le socket.
           console.log("listen for messages", messages);
-          this.messages$ = this.messages$ ? this.messages$.pipe(mergeMap(existingMessages => of([...existingMessages, ...messages]))): of(messages);
+          this.messages$ = this.messages$ ? this.messages$.pipe(mergeMap(existingMessages => of([...existingMessages, ...messages]))) : of(messages);
         });
-      } 
+      }
     });
   }
   markMessagesAsRead(chatId: string) {
-    console.log('mark message as read ',chatId);
-    
+    console.log('mark message as read ', chatId);
+
     this.socketService.markMessagesAsRead(chatId);
   }
-  
-  
+
+
   sendFile(file: File) {
     if (file) {
-      console.log("file",file);
-      
+      console.log("file", file);
+
       this.chatsService.getActiveChat().subscribe((activeChat) => {
         if (activeChat) {
           const chatId = activeChat.chatId;
-  
+
           this.chatsService.getChatsByUser("" + this.currentUserUid).subscribe((chats: any[]) => {
             let targetChat: any = null;
-  
+
             chats.forEach((chat) => {
               if (chat.chatId === chatId) {
                 targetChat = chat;
               }
             });
-  
+
             if (targetChat) {
               const targetUserId = targetChat.users[0]._id;
-  
+
               if (targetUserId) {
                 const formData = new FormData();
                 formData.append('chatId', targetChat.chatId);
                 formData.append('user', this.currentUserID);
                 formData.append('media', file);
                 formData.append('type', 'file'); // Set the type to 'file'
-  
+
                 this.socketService.sendMessage(formData, targetUserId);
-                
+
                 this.chatsService.addMediaToChat(targetChat.chatId, this.currentUserID, file, 'file') // Provide 'file' as the type
                   .subscribe((addedMessage) => {
                     console.log("Document added to the database:", addedMessage);
@@ -211,8 +219,8 @@ export class ChatComponent implements OnInit {
       });
     }
   }
-  
-  
+
+
   onFileSelected(event: any) {
     const inputElement = event.target as HTMLInputElement;
     if (inputElement.files && inputElement.files.length > 0) {
@@ -220,15 +228,12 @@ export class ChatComponent implements OnInit {
       this.sendFile(this.selectedFile);
     }
     // Appelez la méthode sendFile avec le fichier sélectionné
-    
-  }
-  
-   
 
+  }
 
   async getCurrentUserId() {
     try {
-      
+
       const userId = await this.authService.getCurrentUserIdByUid(this.currentUserUid!);
       this.currentUserID = userId;
       //console.log("user id in chat component: ", this.currentUserID);
@@ -237,6 +242,30 @@ export class ChatComponent implements OnInit {
       console.error("Une erreur s'est produite : ", error);
     }
   }
+  // Fonction pour appliquer un masque noir
   
-  
+
+
+
+
 }
+function applyBlackout() {
+  // Créez un élément div pour le masque noir
+  var blackoutDiv = document.createElement('div');
+  blackoutDiv.style.position = 'fixed';
+  blackoutDiv.style.top = '0';
+  blackoutDiv.style.left = '0';
+  blackoutDiv.style.width = '100%';
+  blackoutDiv.style.height = '100%';
+  blackoutDiv.style.backgroundColor = 'black';
+  blackoutDiv.style.zIndex = '9999';
+
+  // Ajoutez le masque noir à la page
+  document.body.appendChild(blackoutDiv);
+
+  // Supprimez le masque noir après un certain délai
+  setTimeout(function () {
+    document.body.removeChild(blackoutDiv);
+  }, 3000); // Par exemple, supprimez le masque après 3 secondes
+}
+
