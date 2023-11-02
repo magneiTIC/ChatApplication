@@ -11,6 +11,8 @@ router.post("/register", userCtrl.register);
 router.get("/:uid/same-division",userCtrl.getAllUsersInSameDivision)
 //route pour recuperer l'id de l'utilisateur courant
 router.get("/:uid",userCtrl.getUserIdByUid)
+//route pour recuperer les informations d'un utilisateur 
+router.get("/info/:uid",userCtrl.getUserByUid)
 //route pour récupérer le statut de l'utilisateur
 router.post("/:uid/setUserStatus", userCtrl.setUserStatus)
 //route pour récupérer le profil de l'utilisateur

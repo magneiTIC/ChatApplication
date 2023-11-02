@@ -77,5 +77,19 @@ getActiveChat(): Observable<{ chatId: string | null; username: string | null }> 
   }
   
 
+  addFileToChat(chatId: string, user: string, content: File, type: string) {
+    const formData = new FormData();
+    formData.append('chatId', chatId);
+    formData.append('user', user);
+    formData.append('type', type);
+    formData.append('content', content);
+    return this.http
+      .post<any>(this.apiUrl + `/chat/addMessage/${chatId}`,formData)
+      .pipe(
+        map((userData: any) => {
+          return userData
+        })
+      )
+  }
 
 }

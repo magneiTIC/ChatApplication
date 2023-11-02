@@ -20,14 +20,20 @@
               </span>
             </div>
           </div>
+          <div   #endOfChat></div>
         </ng-container>
       </ng-container>
+
     </div>
 
     <div class="chat-input">
       <label for="file-input" class="file-button">
-        <input type="file" id="file-input" style="display: none;" (change)="onFileSelected($event)">
 
+        <input type="file" id="file-input" style="display: none;">
+        <mat-icon class="icon">image</mat-icon>
+      </label>
+      <label for="file-input" class="file-button">
+        <input type="file" id="file-input" style="display: none;" (change)="onFileSelected($event)">
         <mat-icon class="icon">attach_file</mat-icon>
       </label>
 
@@ -38,7 +44,10 @@
       <a matSuffix  class="send-button" (click)="sendMessage()">
         <mat-icon matSuffix class="icon">send</mat-icon>
       </a>
-    
+      <label for="file-input" class="file-button">
+        <input type="file" id="file-input" style="display: none;">
+        <mat-icon class="icon"></mat-icon>
+      </label>
     </div>
     
  

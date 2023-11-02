@@ -7,7 +7,6 @@ import { SocketService } from 'src/app/services/sockets/sockets.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
 
 
-
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
@@ -35,7 +34,9 @@ export class ChatComponent implements OnInit {
       }
     });}
 
-  @ViewChild('messageContainer') messageContainer!: ElementRef;
+  @ViewChild('EndOfChat') EndOfChat!: ElementRef;
+
+  endOfChat!: ElementRef;
   messageControl = new FormControl('');
   currentUserUid = sessionStorage.getItem('uid');
   messages$: Observable<any[]> = of([]);
@@ -53,16 +54,26 @@ export class ChatComponent implements OnInit {
         this.chatId = chat.chatId;
         // console.log("chat id dans chat component: " + this.chatId);
         if (this.chatId) {
-          this.messages$ = this.messagesService.getMessagesByChat('' + this.chatId);
+          this.messages$ = this.messagesService.getMessagesByChat('' + this.chatId).pipe( tap(() => {
+            this.scrollToBottom();
+          })
+        );;
           console.log("selected chat", this.chatId)
 
         }
       }
     });
+
     this.getCurrentUserId();
     this.listenForMessages()
-
-
+  }
+ 
+  scrollToBottom() {
+    setTimeout(() => {
+      if (this.endOfChat) {
+        this.endOfChat.nativeElement.scrollIntoView({ behavior: 'smooth' });
+  }
+}, 100);
   }
 
   onScroll(event: Event): void {
@@ -74,16 +85,9 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  scrollToBottom(): void {
-    if (this.messageContainer) {
-      const element = this.messageContainer.nativeElement as HTMLElement;
-      if (element.scrollTop === 0) {
-        this.showDate = true;
-      } else {
-        this.showDate = false;
-      }
-    }
-  }
+
+
+ 
 
   formatMessageTime(sentAt: string): string {
     const sentDate = new Date(sentAt);
@@ -133,12 +137,15 @@ export class ChatComponent implements OnInit {
                 // Une fois que le message a été envoyé via le socket, ajoutez-le à la base de données
                 this.chatsService
                   .addMessageToChat(targetChat.chatId, this.currentUserID, message, "text")
-                  .subscribe((addedMessage) => {
+                  .subscribe(
+                    (addedMessage) => {
                     // Le message a été ajouté à la base de données.
                     console.log("Message ajouté à la base de données:", addedMessage);
                     this.listenForMessages()
                     this.messageControl.reset();
-                  });
+                    this.scrollToBottom();
+                   },
+                  );
               } else {
                 console.error("Le targetUserId est indéfini, impossible d'envoyer le message.");
               }

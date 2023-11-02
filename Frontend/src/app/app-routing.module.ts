@@ -20,16 +20,16 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
 
-  { path: 'add-agent', component: AddAgentComponent },
-  { path: 'autorisation', component: AuthorisationComponent },
+  { path: 'add-agent', component: AddAgentComponent,  canActivate: [AuthGuard], data: { expectedRole: 'DIRECTEUR' } },
+  { path: 'autorisation', component: AuthorisationComponent , canActivate: [AuthGuard], data: { expectedRole: 'DIRECTEUR' } },
 
 
-  // , canActivate: [AuthGuard], data: { expectedRole: 'DIRECTEUR' }
+  
 
   { path: 'user/setting', component: UserSettingComponent },
   { path: 'groups', component: GroupComponent },
-  { path: 'contacts', component: ContactsComponent },
-  { path: 'home', component: HomeComponent,  },
+  { path: 'contacts', component: ContactsComponent},
+  { path: 'home', component: HomeComponent },
 
   { path: 'error', component: ErrorComponent },
 

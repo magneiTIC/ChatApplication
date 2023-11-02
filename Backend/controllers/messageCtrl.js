@@ -1,6 +1,27 @@
 const Message = require('../models/message');
 const Chat=require('../models/chat')
 const User = require('../models/user')
+
+const formatSentAt = (sentAt) => {
+  const currentDate = new Date();
+  const lastMessageDate = new Date(sentAt);
+
+  if (currentDate.toDateString() === lastMessageDate.toDateString()) {
+    // Aujourd'hui : afficher l'heure uniquement
+    const hours = lastMessageDate.getHours();
+    const minutes = lastMessageDate.getMinutes();
+    return `${hours}:${minutes}`;
+  } else if (new Date(currentDate - 24 * 60 * 60 * 1000).toDateString() === lastMessageDate.toDateString()) {
+    // Hier : afficher "Hier"
+    return 'Hier';
+  } else {
+    // Date antérieure à hier : afficher la date sans l'heure
+    const day = lastMessageDate.getDate();
+    const month = lastMessageDate.getMonth() + 1;
+    const year = lastMessageDate.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+};
 module.exports={
   //Création d'un nouveau message
   // async createMessage(req,res){
@@ -39,6 +60,8 @@ module.exports={
   //   }
   // },
 
+  
+
   async getMessagesByChat(req, res) {
     try {
       const chatId = req.params.chatId;
@@ -46,7 +69,8 @@ module.exports={
         .sort({ sentAt: 'asc' })
         .populate('user', 'uid')
         .exec();
-  
+
+        // sentAt: lastMessage ? formatSentAt(lastMessage.sentAt) : null,
       const formattedMessages = messages.map((message) => {
         let messageData = {
           type: message.type,

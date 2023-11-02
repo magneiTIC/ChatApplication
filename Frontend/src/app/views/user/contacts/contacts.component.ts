@@ -58,20 +58,7 @@ export class ContactsComponent implements OnInit{
   }
 
 
-//     users: any[] = []; // Assurez-vous que le type correspond aux données de votre service
-// groupedUsers: Map<string, any[]> = new Map();
-//     //  users=this.usersService.getAllUsersInSameDivision() ;
-     
 
-//   ngOnInit(): void {
-//     this.usersService.getAllUsersInSameDivision().subscribe((data: any[]) => {
-//       // Triez les utilisateurs par ordre alphabétique
-//       this.users = data.sort((a, b) => (a.username > b.username) ? 1 : -1);
-    
-//   })
-
-
-// }
 
   
   
