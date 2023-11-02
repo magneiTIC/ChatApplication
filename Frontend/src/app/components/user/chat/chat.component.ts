@@ -18,6 +18,7 @@ export class ChatComponent implements OnInit {
   chat: { chatId: string|null; username: string|null } = { chatId :null, username:null };
   chatId: string | null = null;
   currentUserID: any;
+  selectedFile: File| undefined;
   
 
   constructor(
@@ -164,7 +165,8 @@ export class ChatComponent implements OnInit {
   
   sendFile(file: File) {
     if (file) {
-      console.log("file",file)
+      console.log("file",file);
+      
       this.chatsService.getActiveChat().subscribe((activeChat) => {
         if (activeChat) {
           const chatId = activeChat.chatId;
@@ -182,47 +184,43 @@ export class ChatComponent implements OnInit {
               const targetUserId = targetChat.users[0]._id;
   
               if (targetUserId) {
-                // Créez un objet FormData pour envoyer le fichier
                 const formData = new FormData();
-                formData.append('data', file.name);
-                formData.append('contentType',file.type)
-                
+                formData.append('chatId', targetChat.chatId);
+                formData.append('user', this.currentUserID);
+                formData.append('media', file);
+                formData.append('type', 'file'); // Set the type to 'file'
   
-                // Ici, vous pouvez envoyer le fichier via le socket.
                 this.socketService.sendMessage(formData, targetUserId);
-                // Une fois que le message a été envoyé via le socket, ajoutez-le à la base de données
-                this.chatsService
-                  .addMediaToChat(targetChat.chatId, this.currentUserID,{'data': file.name,'contentType':file.type},"file")
+                
+                this.chatsService.addMediaToChat(targetChat.chatId, this.currentUserID, file, 'file') // Provide 'file' as the type
                   .subscribe((addedMessage) => {
-                    // Le message a été ajouté à la base de données.
-                    console.log("document ajouté à la base de données:", addedMessage);
-                    this.listenForMessages()
+                    console.log("Document added to the database:", addedMessage);
+                    this.listenForMessages();
                     this.messageControl.reset();
                   });
               } else {
-                console.error("Le targetUserId est indéfini, impossible d'envoyer le fichier.");
+                console.error("The targetUserId is undefined, unable to send the file.");
               }
             } else {
-              console.error("Discussion correspondant au chatId non trouvée.");
+              console.error("No chat corresponding to the chatId found.");
             }
           });
         } else {
-          console.error("Aucun chat actif sélectionné.");
+          console.error("No active chat selected.");
         }
       });
     }
   }
-
- 
-  
-  
   
   
   onFileSelected(event: any) {
-    const file = event.target.files[0]; // Récupérez le fichier sélectionné
-  
+    const inputElement = event.target as HTMLInputElement;
+    if (inputElement.files && inputElement.files.length > 0) {
+      this.selectedFile = inputElement.files[0];
+      this.sendFile(this.selectedFile);
+    }
     // Appelez la méthode sendFile avec le fichier sélectionné
-    this.sendFile(file);
+    
   }
   
    

@@ -55,15 +55,27 @@ getActiveChat(): Observable<{ chatId: string | null; username: string | null }> 
         })
       )
   }
-  addMediaToChat(chatId: string, user: string, media:any,type:string) {
-    return this.http
-      .post<any>(this.apiUrl + `/chat/addMessage/${chatId}`, { "chatId": chatId, "user": user, "media":media ,"type":type})
-      .pipe(
-        map((userData: any) => {
-          return userData
-        })
-      )
+  // addMediaToChat(chatId: string, user: string, media:any,type:string) {
+  //   return this.http
+  //     .post<any>(this.apiUrl + `/chat/addMessage/${chatId}`, { "chatId": chatId, "user": user ,"media":media,"type":type})
+  //     .pipe(
+  //       map((userData: any) => {
+  //         return userData
+  //       })
+  //     )
+  // }
+  addMediaToChat(chatId: string, user: string, media: any, type: string) {
+    const formData = new FormData();
+    formData.append('chatId', chatId);
+    formData.append('user', user);
+
+    formData.append('type', type);
+  
+    formData.append('file', media);
+  
+    return this.http.post<any>(this.apiUrl + `/chat/addMessage/${chatId}`, formData);
   }
+  
 
 
 }

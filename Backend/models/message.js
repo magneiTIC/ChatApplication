@@ -16,10 +16,6 @@ const messageSchema = new mongoose.Schema({
     enum: ['text', 'image', 'video', 'audio', 'file', 'quote'],
   },
   content: String,
-  media: {
-    data: Buffer,
-    contentType: String,
-  },
   sentAt: {
     type: Date,
     default: Date.now,

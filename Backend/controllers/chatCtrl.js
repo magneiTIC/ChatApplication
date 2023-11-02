@@ -1,7 +1,7 @@
 const Chat = require("../models/chat")
-const Message=require("../models/message")
-const Users= require("../models/user")
-const {uploadFileMiddleware} = require("../config/upload")
+const Message = require("../models/message")
+const Users = require("../models/user")
+const { uploadFileMiddleware } = require("./upload")
 
 const formatSentAt = (sentAt) => {
   const currentDate = new Date();
@@ -27,52 +27,52 @@ module.exports = {
 
   // Création d'une nouvelle conversation
   async createChat(req, res) {
-      try {
-          const { users } = req.body
-          const newChat = new Chat({ users })
-          await newChat.save();
-          console.log("conversation créée avec succès");
-          return res.status(200).json({ message: "conversation créée avec succès" })
+    try {
+      const { users } = req.body
+      const newChat = new Chat({ users })
+      await newChat.save();
+      console.log("conversation créée avec succès");
+      return res.status(200).json({ message: "conversation créée avec succès" })
 
-      }
-      catch (error) {
-          console.log("Erreur lors de creation d'une conversation",error)
-          res.status(500).json({ error: 'Erreur lors de la création de la conversation' });
-      }
+    }
+    catch (error) {
+      console.log("Erreur lors de creation d'une conversation", error)
+      res.status(500).json({ error: 'Erreur lors de la création de la conversation' });
+    }
 
   },
 
-  
+
   //Liste des conversations d'un user
   async getChatsByUser(req, res) {
     try {
       const uid = req.params.uid;
       const user = await Users.findOne({ uid });
-  
+
       if (!user) {
         return res.status(404).json({ message: "Utilisateur introuvable." });
       }
-  
+
       // Recherchez les chats où l'utilisateur est membre et utilisez populate pour obtenir le nom du destinataire.
       const chats = await Chat.find({ users: user._id }).populate({
         path: 'users',
         select: 'username uid',
         match: { uid: { $ne: uid } }, // Exclure l'utilisateur actuel
       });
-  
+
       const filteredChats = chats.filter((chat) => chat.users.length > 0); // Supprimer les chats vides
-  
+
       const chatsWithLastMessages = await Promise.all(
         filteredChats.map(async (chat) => {
           const lastMessage = await Message.findOne({ chat: chat._id })
             .sort({ sentAt: -1 })
             .exec();
-  
+
           const lastMessageInfo = {
             sentAt: lastMessage ? formatSentAt(lastMessage.sentAt) : null,
             content: lastMessage ? lastMessage.content : null, // Utilisez le content du dernier message ou null s'il n'y en a pas
           };
-  
+
           return {
             lastMessage: lastMessageInfo,
             users: chat.users,
@@ -80,20 +80,20 @@ module.exports = {
           };
         })
       );
-  
+
       res.status(200).json(chatsWithLastMessages);
     } catch (error) {
       console.log("Erreur d'affichage des conversations d'un user", error);
       res.status(500).json({ error: "Erreur lors de l'affichage des conversations d'un user" });
     }
   },
-  
+
   //peupler une conversation
   // async addMessageToChat(req, res) {
   //   try {
   //     const { chatId, user, content } = req.body;
   //     const chat = await Chat.findById(chatId);
-  
+
   //     if (!chat) {
   //       return res.status(404).json({ error: 'Conversation non trouvée' });
   //     }
@@ -105,7 +105,7 @@ module.exports = {
   //     await message.save();
   //     chat.messages.push(message._id);
   //     await chat.save();
-  
+
   //     res.status(200).json(chat);
   //   } catch (error) {
   //     res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
@@ -116,17 +116,17 @@ module.exports = {
   //     const chatId = req.params.chatId;
   //     const { user, type, content, media } = req.body;
   //     const chat = await Chat.findById(chatId);
-  
+
   //     if (!chat) {
   //       return res.status(404).json({ error: 'Conversation non trouvée' });
   //     }
-  
+
   //     const messageData = {
   //       user,
   //       chat: chatId,
   //       type, // Le type de message (text, image, video, audio, file, quote, etc.)
   //     };
-  
+
   //     if (type === 'text' || type === 'quote') {
   //       // Si le message est de type texte ou quote, enregistrez le contenu du message
   //       messageData.content = content;
@@ -142,26 +142,26 @@ module.exports = {
   //               data: Buffer.from(bufferData), // Convert ArrayBuffer to Buffer
   //               contentType: media.contentType,
   //             };
-  
+
   //             const message = new Message(messageData);
   //             await message.save();
-  
+
   //             chat.messages.push(message._id);
   //             await chat.save();
-  
+
   //             res.status(200).json(chat);
   //           } else {
   //             console.error("Failed to read the Blob data.");
   //             res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
   //           }
   //     }}
-  
+
   //     const message = new Message(messageData);
   //     await message.save();
-  
+
   //     chat.messages.push(message._id);
   //     await chat.save();
-  
+
   //     res.status(200).json(chat);
   //   } }
   //   catch (error) {
@@ -171,70 +171,51 @@ module.exports = {
   // }
 
 
-async addMessageToChat(req, res) {
-  try {
-    const chatId = req.params.chatId;
-    const { user, type, content } = req.body;
-    const chat = await Chat.findById(chatId);
+  async addMessageToChat(req, res) {
+    try {
+      const chatId = req.params.chatId;
+      const { user, type, content } = req.body;
+      const media=req.file.path
+      const chat = await Chat.findById(chatId);
 
-    if (!chat) {
-      return res.status(404).json({ error: 'Conversation non trouvée' });
-    }
-
-    const messageData = {
-      user,
-      chat: chatId,
-      type,
-    };
-
-    if (type === 'text' || type === 'quote') {
-      messageData.content = content;
-    } else if (['image', 'video', 'audio', 'file'].includes(type)) {
-      // If the message is of media type, use Multer to handle file upload
-      await uploadFileMiddleware(req, res, (err) => {
-        console.log("req.file",req.file)
-        console.log("req.body",req.body)
-        if (req.file==undefined) {
-          console.error("Multer error:", err);
+      if (!chat) {
+        return res.status(404).json({ error: 'Conversation non trouvée' });
+      }
+  
+      const messageData = {
+        user,
+        chat: chatId,
+        type,
+      };
+  
+      if (type === 'text' || type === 'quote') {
+        messageData.content = content;
+      } else if (['image', 'video', 'audio', 'file'].includes(type)) {
+        
+        if (!media) {
+          console.error("Multer error: File not uploaded");
           return res.status(500).json({ error: "Erreur lors de l'envoi du média" });
         }
-        if (req.file) {
-          // Multer has stored the uploaded file in req.file
-          messageData.media = {
-            data: req.file.buffer, // Use the file buffer provided by Multer
-            contentType: req.file.mimetype,
-          };
-        }
-
-      });
-      
-        
-      
-
-        const message = new Message(messageData);
-        await message.save();
-
-        chat.messages.push(message._id);
-        await chat.save();
-
-        res.status(200).json(chat);
-     
-    } else {
+  
+        // Multer has stored the uploaded file in req.file
+        messageData.content = media;
+      }
+  
       const message = new Message(messageData);
       await message.save();
-
+  
       chat.messages.push(message._id);
       await chat.save();
-
+  
       res.status(200).json(chat);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
   }
-}
+  
 
-  
-  
+
+
 
 }
