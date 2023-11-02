@@ -16,7 +16,7 @@ module.exports = {
         if (!checkUsername) {
           res.json({isProfileConfigured: false });
         } else {
-          res.status(200).json({ isProfileConfigured: true });
+          res.status(200).json({ isProfileConfigured: true , profil: user.profile, division: user.division});
         }
       }
     } catch (error) {
@@ -113,11 +113,6 @@ module.exports = {
       res.status(500).json({ error: 'Erreur lors de la mise à jour du statut, de l\'heure de connexion et de l\'heure de déconnexion' });
     }
   },
-
-
-
-
-
 
 }
 

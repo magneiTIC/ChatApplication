@@ -13,7 +13,6 @@ export class AuthGuard implements CanActivate{
     const expectedProfile = route.data['expectedProfile'];
     const expectedProfile0 = route.data['expectedProfile0'];
 
-
     if (this.authService.isUserLoggedIn() &&  (await this.authService.hasProfile(expectedProfile) || await this.authService.hasProfile(expectedProfile0))) {
       return true;
     } else {

@@ -37,7 +37,6 @@ module.exports = {
         }
     }
 
-
     // async screenshotDetected(req, res) {
     //     const message = req.body.message;
     //     const userDetails = req.body.userDetails;

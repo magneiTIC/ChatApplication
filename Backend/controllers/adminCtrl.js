@@ -24,6 +24,7 @@ module.exports = {
             res.status(500).json({ message: 'Erreur lors de la tentative de début d\'inscription' });
         }
     },
+
     async getUser(req, res) {
         try {
             const uid = req.params.uid;
@@ -39,6 +40,7 @@ module.exports = {
             res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
         }
     },
+    
     async getAllDirectors(req, res) {
         try {
             const directeurs = await User.find({ profile: 'DIRECTEUR' });
@@ -67,11 +69,13 @@ module.exports = {
             throw new Error('Erreur lors de la récupération des divisions : ' + error);
         }
     },
+
     async numberOfDirectors(req,res){
         const total = await User.countDocuments({ profile: "DIRECTEUR" })
         res.status(200).json(total)
         
     },
+
     async numberOfAgents(req,res){
         const total = await User.countDocuments({ profile: "AGENT" })
         res.json(total)

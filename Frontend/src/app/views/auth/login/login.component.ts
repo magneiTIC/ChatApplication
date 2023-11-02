@@ -52,22 +52,22 @@ export class LoginComponent implements OnInit {
     if (!isProfileConfigured) {
       console.log("Profil non configuré");
       // Rediriger l'utilisateur vers la page "register" s'il n'a pas configuré son profil
-      sessionStorage.setItem('email',email)
+      sessionStorage.setItem('email', email)
       this.router.navigate(['/register']);
     } else {
+      
       const loginSuccessful = await this.authService.login(email, password);
       if (loginSuccessful) {
         // Récupérer l'ID de l'utilisateur à partir de l'AuthService
         const storedUid = sessionStorage.getItem("uid");
         if (storedUid !== null) {
           const userId = await this.authService.getCurrentUserIdByUid(storedUid);
-  
           if (userId) {
             console.log('Connexion réussie');
             // Initialiser la connexion socket avec l'ID de l'utilisateur
             this.socketService.initializeSocketConnection();
-           this.deviceInfoService.sendDeviceInfo();
-        this.router.navigate(['/home']);
+            this.deviceInfoService.sendDeviceInfo();
+            this.router.navigate(['/home']);
           } else {
             console.log("L'ID de l'utilisateur n'est pas valide");
             // Gérer l'erreur ici, par exemple, afficher un message à l'utilisateur.
@@ -81,14 +81,14 @@ export class LoginComponent implements OnInit {
         this.connexionError = true;
       }
     }
-    
+
   }
 
   resetError() {
     this.validationError = false;
     this.connexionError = false;
   }
-  
+
 }
 
 
