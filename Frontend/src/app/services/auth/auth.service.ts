@@ -28,12 +28,8 @@ export class AuthService {
     try {
       const response = await this.http.post<{ isProfileConfigured: boolean, profil: any, division: any } | undefined>(`${this.apiUrl}/users/isProfileConfigured`, { email }).toPromise();
       if (response) {
-        const profile = response.profil;
-        sessionStorage.setItem('profile', profile);
-        console.log('profile', profile);
-        sessionStorage.setItem('division', response.division)
-        console.log('division', response.division);
-        
+        sessionStorage.setItem('profil', response.profil);
+        sessionStorage.setItem('division', response.division);        
         return response.isProfileConfigured;
       } else {
         throw new Error('Réponse non définie.');
