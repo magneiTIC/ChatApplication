@@ -1,0 +1,53 @@
+<div class="chat-app">
+
+    <div class="sidebar">
+        <!-- Barre latérale avec la liste des contacts -->
+        <div class="sidebar-header">
+            <h2>Discussions </h2> 
+            <div class="search-input">
+                <!-- <input type="text" class="form-control" placeholder="Rechercher  ..."> -->
+                <mat-form-field>
+                
+                <input
+                    matInput
+                    images-placeholder="Rechercher"
+                    [matAutocomplete]="userss"
+                    class="form-control"
+                    placeholder="Rechercher  ..."
+                >
+
+            </mat-form-field>    
+                <mat-autocomplete #userss="matAutocomplete">
+                    <mat-option 
+                    *ngFor="let user of users |async"
+                    [value]="''"
+                    >
+                    {{ user.username}}
+                </mat-option>
+                </mat-autocomplete>
+            </div>
+        </div>
+        <!-- <ul class="contact-list"  *ngFor="let chat of myChats | async" > -->
+            <!-- <ul class="contact-list"  *ngFor="let message of messages | async" > -->
+                <ul class="contact-list"  *ngFor="let chat of myChats | async" >
+
+            <li class="contact-item" (click)="selectChat(chat.chatId, chat.users[0].username)">
+                <img [src]="'assets/images/images-placeholder.png'" alt="Contact 1" class="contact-avatar" />
+                <div class="contact-details">
+                    <p mat-line class="chat-title">
+                        <span class="chat-name">
+                            {{chat.users[0].username}}
+                        </span>
+                        <span class="chat-date">
+                            20/09/2023
+                        </span>
+                    </p>
+                    <p mat-line>
+                        Coucou
+                    </p>
+                </div>
+            </li>         
+            <!-- Ajoutez d'autres contacts ici -->
+        </ul>
+    </div>
+</div>

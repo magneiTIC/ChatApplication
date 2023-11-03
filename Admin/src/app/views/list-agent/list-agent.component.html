@@ -21,6 +21,9 @@
                             <th>Email</th>
                             <th>Division</th>
                             <th>Statut</th>
+                            <th>Date derniére connexion</th>
+
+
                           </tr>
                         </thead>
                         <tbody *ngFor="let agent of agents | async ">
@@ -29,7 +32,11 @@
                             <td>{{agent.email}}</td>
                             <td>{{agent.division}}</td>
                             <td>{{agent.status}}</td>
+                            <td>{{agent.disconnectionTime}}</td>
+
+
                           </tr>
+
                         </tbody>
                       </table>
                     </div>

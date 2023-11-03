@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
@@ -6,14 +6,9 @@ import { UserService } from 'src/app/services/user/user.service';
   templateUrl: './info-user.component.html',
   styleUrls: ['./info-user.component.css']
 })
-export class InfoUserComponent implements OnInit {
+export class InfoUserComponent {
   constructor(
     private userService: UserService
   ){}
-  ngOnInit(): void {
-    this.user.subscribe((valeur) => {
-      console.log(valeur);
-     });
-  }
-  user=this.userService.getUser('hRpMyoB2XuNx4mFWqTm5vo3nmWU2')
+  user=this.userService.getUser()
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { Router } from '@angular/router';
@@ -9,16 +9,10 @@ import Swal from 'sweetalert2';
   templateUrl: './side.component.html',
   styleUrls: ['./side.component.css']
 })
-export class SideComponent implements OnInit{
+export class SideComponent {
 
   
   constructor(private authService: AuthService, private auth: Auth, private router: Router) { }
-  ngOnInit(): void {
-console.log(this.profile);
-  }
-
-
-profile=sessionStorage.getItem('profil');
 
 logout() {
   this.authService.logout();
