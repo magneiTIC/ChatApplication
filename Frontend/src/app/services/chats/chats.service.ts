@@ -73,7 +73,7 @@ getActiveChat(): Observable<{ chatId: string | null; username: string | null }> 
   
     formData.append('file', media);
   
-    return this.http.post<any>(this.apiUrl + `/chat/addMessage/${chatId}`, formData);
+    return this.http.post<any>(this.apiUrl + `/chat/addMedia/${chatId}`, formData);
   }
   
 

@@ -1,5 +1,4 @@
 const User = require('../models/user');
-
 // const bcrypt = require('bcrypt'); // Pour hasher les mots de passe
 // const admin = require('firebase-admin');
 // const jwt = require('jsonwebtoken');

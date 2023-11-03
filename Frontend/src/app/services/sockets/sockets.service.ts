@@ -30,6 +30,9 @@ export class SocketService {
   sendMessage(message: string|any , targetUserId: string) {
     this.socket.emit('send-message', message, targetUserId);
   }
+  // sendFile(data: any,targetUserId:string) {
+  //   this.socket.emit('sent-file', data,targetUserId);
+  // }
 
   onMessageReceived(callback: (message: any) => void) {
     this.socket.on('chat-message', (message) => {
@@ -37,6 +40,12 @@ export class SocketService {
       callback(message);
     });
   }
+  // onFileReceived(callback: (data: any) => void) {
+  //   this.socket.on('file-received', (data)=>{
+  //     console.log("fichier reçu", data);
+  //     callback(data)
+  //   });
+  // }
 
   markMessagesAsRead(chatId: string) {
     this.socket.emit('mark-messages-as-read', chatId);

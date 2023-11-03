@@ -203,7 +203,7 @@ export class ChatComponent implements OnInit {
                 this.chatsService.addMediaToChat(targetChat.chatId, this.currentUserID, file, 'file') // Provide 'file' as the type
                   .subscribe((addedMessage) => {
                     console.log("Document added to the database:", addedMessage);
-                    this.listenForMessages();
+                   // this.listenForMessages();
                     this.messageControl.reset();
                   });
               } else {

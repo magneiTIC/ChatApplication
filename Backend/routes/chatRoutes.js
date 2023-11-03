@@ -7,6 +7,7 @@ router.post("/",ChatCtrl.createChat);
 
 router.get("/:uid",ChatCtrl.getChatsByUser)
  
-router.post("/addMessage/:chatId",uploadFileMiddleware, ChatCtrl.addMessageToChat);
+router.post("/addMessage/:chatId", ChatCtrl.addMessageToChat);
+router.post("/addMedia/:chatId",uploadFileMiddleware, ChatCtrl.addMediaToChat);
 
 module.exports=router;

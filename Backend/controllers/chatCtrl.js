@@ -175,7 +175,6 @@ module.exports = {
     try {
       const chatId = req.params.chatId;
       const { user, type, content } = req.body;
-      const media=req.file.path
       const chat = await Chat.findById(chatId);
 
       if (!chat) {
@@ -190,7 +189,38 @@ module.exports = {
   
       if (type === 'text' || type === 'quote') {
         messageData.content = content;
-      } else if (['image', 'video', 'audio', 'file'].includes(type)) {
+      } 
+  
+      const message = new Message(messageData);
+      await message.save();
+  
+      chat.messages.push(message._id);
+      await chat.save();
+  
+      res.status(200).json(chat);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
+    }
+  },
+  async addMediaToChat(req, res) {
+    try {
+      const chatId = req.params.chatId;
+      const { user, type} = req.body;
+      const media=req.file.path
+      const chat = await Chat.findById(chatId);
+
+      if (!chat) {
+        return res.status(404).json({ error: 'Conversation non trouvée' });
+      }
+  
+      const messageData = {
+        user,
+        chat: chatId,
+        type,
+      };
+  
+       if (['image', 'video', 'audio', 'file'].includes(type)) {
         
         if (!media) {
           console.error("Multer error: File not uploaded");
