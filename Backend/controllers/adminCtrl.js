@@ -24,10 +24,10 @@ module.exports = {
         }
     },
 
-    async getUser(req, res) {
+    async getAgentByUID(req, res) {
         try {
             const uid = req.params.uid;
-            const user = await Users.findOne({ uid:uid });
+            const user = await User.findOne({ uid:uid });
         
             if (!user) {
               return res.status(404).json({ message: "Utilisateur introuvable." });

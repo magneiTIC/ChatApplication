@@ -7,7 +7,13 @@ const serviceAccount = require('./config/serviceAccountKey.json');
 const mongoose = require('mongoose')
 const dbConfig = require("./config/db.conf")
 const socketIo = require("socket.io")
-       
+const path = require('path');
+
+// Définissez le chemin vers le dossier "uploads"
+const uploadsDirectory = path.join(__dirname);
+
+// Servez les fichiers statiques depuis le dossier "uploads"
+  app.use('/uploads', express.static(uploadsDirectory));
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({

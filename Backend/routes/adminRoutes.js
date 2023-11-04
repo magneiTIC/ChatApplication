@@ -6,7 +6,7 @@ const adminCtrl = require('../controllers/adminCtrl');
 
 router.post("/create-user", adminCtrl.createUser);
 
-router.get("/user/:uid", adminCtrl.getUser);
+router.get("/agent/:uid", adminCtrl.getAgentByUID);
 
 
 router.get("/directeurs", adminCtrl.getAllDirectors);

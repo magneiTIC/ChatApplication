@@ -21,6 +21,7 @@ import { environment } from 'src/environments/environment';
 import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
 import { provideAuth,getAuth } from '@angular/fire/auth';
 import { HttpClientModule } from '@angular/common/http';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { ChatComponent } from './components/user/chat/chat.component';
 import { ContactComponent } from './components/user/contact/contact.component';
@@ -71,6 +72,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     MatListModule,
     MatSelectModule,
     HttpClientModule,
+    PdfViewerModule,
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideAuth(() => getAuth()),    
     SocketIoModule.forRoot(config),

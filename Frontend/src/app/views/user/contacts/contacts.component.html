@@ -20,33 +20,21 @@
             <div *ngFor="let letter of sortedChats | keyvalue">
                 <div class="contact-group">
                   <div class="contact-group-header">{{ letter.key }}</div>
-                  <ul>
-                    <li *ngFor="let chat of letter.value" class="contact-item" (click)="selectChat(chat.chatId, chat.users[0].username)">
-                      <img [src]="'assets/images/images-placeholder.png'" alt="Contact 1" class="contact-avatar" />
-                      <div class="contact-details">
-                        <p mat-line class="chat-title">
-                          <span class="chat-name">{{ chat.users[0].username }}</span>
-                        </p>
-                      </div>
-                    </li>
+                     <ul>
+                        <li *ngFor="let chat of letter.value" class="contact-item" (click)="selectChat(chat.chatId, chat.users[0].username)">
+                            <img [src]="'assets/images/images-placeholder.png'" alt="Contact 1" class="contact-avatar" />
+                            <div class="contact-details">
+                                <p mat-line class="chat-title">
+                                <span class="chat-name">{{ chat.users[0].username }}</span>
+                                </p>
+                            </div>
+                        </li>
                   </ul>
                 </div>
               </div>
               
               
-            <!-- <ul class="contact-list" *ngFor="let chat of myChats | async">
-
-                <li class="contact-item" (click)="selectChat(chat.chatId, chat.users[0].username)">
-                    <img [src]="'assets/images/images-placeholder.png'" alt="Contact 1" class="contact-avatar" />
-                    <div class="contact-details">
-                        <p mat-line class="chat-title">
-                            <span class="chat-name">
-                                {{chat.users[0].username}}
-                            </span>
-
-                    </div>
-                </li>
-            </ul> -->
+          
         </div>
         <app-chat></app-chat>	
 

@@ -58,19 +58,22 @@ module.exports={
         if (message.type === 'text' || message.type === 'quote') {
           messageData.content = message.content;
         }
-  
-        if (message.media) {
-          messageData.media = {};
-  
-          if (message.media.data && message.media.contentType) {
-            messageData.media.data = message.media.data.toString('base64');
-            messageData.media.contentType = message.media.contentType;
-          } else {
-            // Gérer le cas où les propriétés de message.media ne sont pas définies
-            messageData.media.data = null;
-            messageData.media.contentType = null;
-          }
+        else if (message.type === 'file'){
+          messageData.content = message.content;
+
         }
+        // if (message.media) {
+        //   messageData.media = {};
+
+        //   if (message.media.data && message.media.contentType) {
+        //     messageData.media.data = message.media.data.toString('base64');
+        //     messageData.media.contentType = message.media.contentType;
+        //   } else {
+        //     // Gérer le cas où les propriétés de message.media ne sont pas définies
+        //     messageData.media.data = null;
+        //     messageData.media.contentType = null;
+        //   }
+        // }
   
         return messageData;
       });

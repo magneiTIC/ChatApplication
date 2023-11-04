@@ -11,7 +11,7 @@ const routes: Routes = [
 
   { path: '', pathMatch: 'full', component: DashboardComponent },
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'info', component: InfoUserComponent },
+  { path: 'info/:uid', component: InfoUserComponent },
 
   
   { path: 'listeDirecteur', component: ListDirectorComponent },

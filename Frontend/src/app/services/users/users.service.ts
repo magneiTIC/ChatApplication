@@ -19,6 +19,8 @@ export class UsersService implements OnInit {
 
   ngOnInit() { }
 
+ 
+
   getAllDirectors() {
     return this.http
     .get<any>(this.apiUrl + '/admin/directeurs')
@@ -69,6 +71,9 @@ export class UsersService implements OnInit {
         })
       )
   }
+
+ 
+
 
   countDirectors() {
     this.http.get<{ numberOfDirectors: number }>(`${this.apiUrl}/admin/count-directors`)

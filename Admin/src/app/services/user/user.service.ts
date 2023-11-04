@@ -24,10 +24,10 @@ export class UserService {
       console.error("Error creating user", error);
     }
   }
-  getUser() {
+  getAgent(uid:string) {
 
     return this.http
-    .get<any>(this.apiUrl + '/admin/user')
+    .get<any>(this.apiUrl + '/admin/agent/'+uid)
     .pipe(
       map((userData: any) => {
         return userData

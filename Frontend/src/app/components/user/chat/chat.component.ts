@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Observable, map, mergeMap, of, scan, take } from 'rxjs'; // Importez 'Observable' depuis RxJS
+import { Observable, map, mergeMap, of, scan, take, tap } from 'rxjs'; // Importez 'Observable' depuis RxJS
 import { ChatsService } from 'src/app/services/chats/chats.service';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { SocketService } from 'src/app/services/sockets/sockets.service';
@@ -41,11 +41,39 @@ export class ChatComponent implements OnInit {
   messages$: Observable<any[]> = of([]);
 
 
+  isPopupVisible = false;
+  popupFileUrl: string | undefined;
 
+  // openPopup(fileUrl: string) {
+  //   this.isPopupVisible = true;
+  //   this.popupFileUrl = fileUrl;
+  // }
+
+  closePopup() {
+    this.isPopupVisible = false;
+    this.popupFileUrl = '';
+  }
+  openPopup(fileUrl: string) {
+    const width = 800;
+    const height = 600;
+    
+    // Ouvrez la fenêtre popup
+    const popupWindow = window.open(fileUrl, 'Popup', `width=${width}, height=${height}`);
+
+  }
+  
+  getFullFileUrl(relativePath: string): string {
+    const BASE_URL = 'http://localhost:3000'; 
+  
+    return `${BASE_URL}/uploads/${relativePath}`;
+  }
+  
   ngOnInit(): void {
 
     
-
+    
+    
+    
     this.chatsService.selectedChat$.subscribe((chat) => {
       // console.log("Selected chat object:", chat);
       if (chat.chatId !== null && chat.username !== null) {
@@ -55,6 +83,10 @@ export class ChatComponent implements OnInit {
         if (this.chatId) {
           this.messages$ = this.messagesService.getMessagesByChat('' + this.chatId);
           console.log("selected chat", this.chatId)
+          this.messages$.forEach((message) => {
+            // Faites quelque chose avec chaque message, par exemple :
+            console.log(message);
+          });
 
         }
       }
@@ -74,16 +106,16 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  scrollToBottom(): void {
-    if (this.messageContainer) {
-      const element = this.messageContainer.nativeElement as HTMLElement;
-      if (element.scrollTop === 0) {
-        this.showDate = true;
-      } else {
-        this.showDate = false;
-      }
-    }
-  }
+  // scrollToBottom(): void {
+  //   if (this.messageContainer) {
+  //     const element = this.messageContainer.nativeElement as HTMLElement;
+  //     if (element.scrollTop === 0) {
+  //       this.showDate = true;
+  //     } else {
+  //       this.showDate = false;
+  //     }
+  //   }
+  // }
 
   formatMessageTime(sentAt: string): string {
     const sentDate = new Date(sentAt);

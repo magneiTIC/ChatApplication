@@ -8,17 +8,36 @@
     <div class="chat-messages" #messageContainer (scroll)="onScroll($event)">
       <ng-container *ngIf="messages$ | async as messages">
         <ng-container *ngFor="let message of messages; let i = index">
-          <div class="message-date" *ngIf="showDate && (i === 0 || !areDatesEqual(message.sentAt, messages[i - 1]?.sentAt))">
+          <div class="message-date"
+            *ngIf="showDate && (i === 0 || !areDatesEqual(message.sentAt, messages[i - 1]?.sentAt))">
             {{ message.sentAt | date: 'dd/MM/yyyy' }}
           </div>
-          <hr class="message-date-line" *ngIf="showDate && (i === 0 || !areDatesEqual(message.sentAt, messages[i - 1]?.sentAt))" />
+          <hr class="message-date-line"
+            *ngIf="showDate && (i === 0 || !areDatesEqual(message.sentAt, messages[i - 1]?.sentAt))" />
           <div class="message-bubble-container" [ngClass]="{'sender': message.user === currentUserUid}">
-            <div class="message-bubble">
+            <div class="message-bubble" *ngIf="message.type === 'text'">
               {{ message.content }}
               <span class="chat-date">
                 {{ message.sentAt | date: 'HH:mm' }}
               </span>
             </div>
+            <div class="message-bubble" *ngIf="message.type === 'file'">
+              <div *ngFor="let message of messages">
+                <div *ngIf="message.type === 'file'">
+                  <a href="javascript:void(0)" (click)="openPopup(getFullFileUrl(message.content))" target="_blank">
+                    <mat-icon matSuffix>file_present</mat-icon>
+                    Fichier
+                  </a>
+                </div>
+              </div>
+             
+              
+              <span class="chat-date">
+                {{ message.sentAt | date: 'HH:mm' }}
+              </span>
+            </div>
+
+
           </div>
         </ng-container>
       </ng-container>
@@ -32,16 +51,17 @@
       </label>
 
       <mat-form-field appearance="outline">
-        <input matInput [formControl]="messageControl" placeholder="Écrivez votre message..." (keydown.enter)="sendMessage()" />
+        <input matInput [formControl]="messageControl" placeholder="Écrivez votre message..."
+          (keydown.enter)="sendMessage()" />
       </mat-form-field>
 
-      <a matSuffix  class="send-button" (click)="sendMessage()">
+      <a matSuffix class="send-button" (click)="sendMessage()">
         <mat-icon matSuffix class="icon">send</mat-icon>
       </a>
-    
+
     </div>
-    
- 
+
+
   </div>
   <img *ngIf="!chat.username" src="assets/images/police.png" alt="">
 </div>

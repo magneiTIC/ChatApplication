@@ -1,65 +1,41 @@
 <div class="chat-app">
-	<app-side></app-side>
-   
-    <div class="chat-app">
+  <app-side></app-side>
 
-        <div class="sidebar">
-            <!-- Barre latérale avec la liste des contacts -->
-            <div class="sidebar-header">
-                <h2>Divisions </h2> 
-                <div class="search-input">               
-                    <input 
-                    matInput
-                    images-placeholder="Rechercher"
-                    [matAutocomplete]="userss"
-                    class="form-control"
-                    placeholder="Rechercher  ..."                >
-                  
-                    <mat-autocomplete #userss="matAutocomplete">
-                        <mat-option 
-                        [value]="''"
-                        >
-                       Awa Ndiaye
-                    </mat-option>
-                    </mat-autocomplete>
-                </div>
+  <div class="chat-app">
 
-            </div>
-            <!-- <ul class="contact-list"  *ngFor="let chat of myChats | async" > -->
-                <!-- <ul class="contact-list"  *ngFor="let message of messages | async" > -->
-                    <ul class="contact-list">
-                        <li class="contact-group">
-                          <div class="contact-group-header">S</div>
-                          <ul>
-                            <li class="contact">
-                              <img src="assets/images/avatar.jpeg" alt="Contact 1">
-                              <div class="contact-details">
-                                <span class="contact-name">Sécurité Publique</span>
-                              </div>
-                            </li>
-                            <li class="contact">
-                                <img src="assets/images/avatar.jpeg" alt="Contact 1">
-                                <div class="contact-details">
-                                  <span class="contact-name">Surveillance du territoire</span>
-                                </div>
-                              </li>
-                          </ul>
+    <div class="sidebar">
+      <!-- Barre latérale avec la liste des contacts -->
+      <div class="sidebar-header">
+        <h2>Divisions </h2>
+        <div class="search-input">
+          <input matInput images-placeholder="Rechercher" [matAutocomplete]="userss" class="form-control"
+            placeholder="Rechercher  ...">
+
+          <mat-autocomplete #userss="matAutocomplete">
+            <mat-option *ngFor="let division of divisions | async" [value]="division">
+              {{ division }}
+            </mat-option>
+          </mat-autocomplete>
+        </div>
+     
+
+
+                 <div *ngFor="let letter of sortedDivisions | keyvalue">
+                  <div class="contact-group">
+                    <div class="contact-group-header">{{ letter.key }}</div>
+                      <ul >
+                        <li *ngFor="let division of letter.value" class="contact-item" >
+                          <img [src]="'assets/images/avatar.jpeg'" alt="Contact 1" class="contact-avatar" />
+                          <div class="contact-details">
+                            <p mat-line class="chat-title">
+                              <span class="contact-name">{{ division }}</span>
+                            </p>
+                          </div>
                         </li>
-                        <li class="contact-group">
-                          <div class="contact-group-header">P</div>
-                          <ul>
-                            <li class="contact">
-                                <img src="assets/images/avatar.jpeg" alt="Contact 1">
-                                <div class="contact-details">
-                                <span class="contact-name">Police Judiciaire</span>
-                              </div>
-                            </li>
-                          </ul>
-                        </li>
-                        <!-- Ajoutez plus de contacts ici, en les regroupant par lettre -->
                       </ul>
                    
         </div>
+        <app-chat></app-chat>	
+
     </div>
 </div>
-

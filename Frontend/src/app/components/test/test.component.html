@@ -1,42 +1,16 @@
-<!-- <div class="chat-app">
-
-    <div class="side">
-        <div class="d-flex flex-column flex-shrink-0 " style="width: 4.5rem;">
-            <div class="dropdown border-top">
-                <a href="#"
-                    class="d-flex align-items-center justify-content-center p-3 link-body-emphasis text-decoration-none dropdown-toggle"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="https://github.com/mdo.png" alt="mdo" width="24" height="24" class="rounded-circle">
-                </a>
-                <ul class="dropdown-menu text-small shadow" style="">
-                    <li><a class="dropdown-item" href="#">
-                            <font style="vertical-align: inherit;">
-                                <font style="vertical-align: inherit;">Nouveau projet...</font>
-                            </font>
-                        </a></li>
-                    <li>
-                        <a class="dropdown-item" routerLink="/dashboard">
-                            <font style="vertical-align: inherit;">
-                                <font style="vertical-align: inherit;">Paramètres</font>
-                            </font>
-                        </a>
-
-                    </li>
-                    <li><a class="dropdown-item" href="#">
-                            <font style="vertical-align: inherit;">
-                                <font style="vertical-align: inherit;">Profil</font>
-                            </font>
-                        </a></li>
-
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="#">
-                            <font style="vertical-align: inherit;">
-                                <font style="vertical-align: inherit;">se déconnecter</font>
-                            </font>
-                        </a></li>
-                </ul>
+<div class="chat-app">
+  <app-contacts></app-contacts>
+    <div class="chat-container " *ngIf="chat.username">
+      <div class="chat-header">
+        <img [src]="'assets/images/images-placeholder.png'" alt="">
+        <h2 *ngIf="chat.username">{{ chat.username }}</h2>
+      </div>
+      <mat-divider></mat-divider>
+      <div class="chat-messages" #messageContainer>
+        <ng-container *ngIf="messages$ | async as messages">
+          <ng-container *ngFor="let message of messages; let i = index">
+            <div class="message-date" *ngIf="showDate && (i === 0 || !areDatesEqual(message.sentAt, messages[i - 1]?.sentAt))">
+              {{ message.sentAt | date: 'dd/MM/yyyy' }}
             </div>
             <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
                 <li class="nav-item">
@@ -66,9 +40,12 @@
                 </button>
                 </li>
             </ul>
+            </ng-container>
+            </ng-container>
         </div>
+        
     </div>
-</div> -->
+</div> 
 
 <div class="row">
 	<div class="col"></div>

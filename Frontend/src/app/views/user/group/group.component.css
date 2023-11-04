@@ -21,6 +21,7 @@
 
 .contact-group-header {
   font-weight: bold;
+  text-align: left;
 }
 
 .contact {
@@ -42,7 +43,7 @@
 }
 
 .contact-name {
-  font-weight: bold;
+  text-align: left;
 }
 
 
