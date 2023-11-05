@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const generateKey = require("../utils/generate-key");
 
 const userSchema = new mongoose.Schema({
     email: {
@@ -8,12 +9,10 @@ const userSchema = new mongoose.Schema({
     },
     username: {
         type: String,
-        // required: true,
         unique: true,
     },
     uid: {
         type: String,
-        // required: true,
         unique: true,
     },
     division:
@@ -36,7 +35,7 @@ const userSchema = new mongoose.Schema({
     ],
     connectionTime: Date,
     disconnectionTime: Date, 
-    status: String
+    status: String,
 },
 
     { collection: "Users" });

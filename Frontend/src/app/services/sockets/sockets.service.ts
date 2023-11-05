@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { io } from 'socket.io-client';
+import { environment } from '../../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
@@ -27,8 +29,8 @@ export class SocketService {
     return this.socketId;
   }
 
-  sendMessage(message: string|any , targetUserId: string) {
-    this.socket.emit('send-message', message, targetUserId);
+  sendMessage(message: string|any , targetUserId: string, sharedKey: string) {
+    this.socket.emit('send-message', message, targetUserId, sharedKey);
   }
   // sendFile(data: any,targetUserId:string) {
   //   this.socket.emit('sent-file', data,targetUserId);

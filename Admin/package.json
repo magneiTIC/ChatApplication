@@ -20,6 +20,7 @@
     "@angular/platform-browser-dynamic": "^16.1.0",
     "@angular/router": "^16.1.0",
     "@mdi/font": "^3.9.97",
+    "firebase": "^10.5.2",
     "flag-icon-css": "^3.3.0",
     "font-awesome": "^4.7.0",
     "material-icons": "^1.13.11",

@@ -2,5 +2,6 @@
 /*log
 .env
 /config
+secret
 
 # databaseURL: 'https://chat-app-project-b3fdf.firebaseio.com'

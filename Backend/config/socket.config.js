@@ -1,8 +1,10 @@
 const Message = require('../models/message');
 const userSockets = new Map();
 const mongoose = require('mongoose');
-
-
+const { decryptPrivateKey, encryptMessage } = require('../config/generate-key')
+require('dotenv').config();
+const encryptionKey = process.env.ENCRYPTION_KEY;
+const ivKey = process.env.IV_KEY;
 
 module.exports = io => {
   io.on("connection", socket => {
@@ -21,8 +23,6 @@ module.exports = io => {
     // Lorsque l'utilisateur se connecte, envoyez les messages non lus s'il y a un ID utilisateur valide
     if (userId && mongoose.isValidObjectId(userId)) { // Utilisez mongoose.isValidObjectId pour vérifier si l'ID est valide
       const query = { user: new mongoose.Types.ObjectId(userId), status: 'unread' };
-      
-    
       Message.find(query)
         .then(messages => {
           // Envoyez les messages non lus à l'utilisateur.
@@ -37,11 +37,13 @@ module.exports = io => {
     } else {
       console.log("L'utilisateur n'est pas connecté ou l'ID n'est pas valide.");
     }
-    
 
-    socket.on('send-message', async (message, targetUserId) => {
+
+    socket.on('send-message', async (message, targetUserId, sharedKey) => {
       // Émettez le message à l'utilisateur emetteur, que ce soit en ligne ou hors ligne
-      await socket.emit('chat-message', message);
+      const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
+      const encryptedMessage = (await encryptMessage(message, sharedKey)).toString();
+      await socket.emit('chat-message', encryptedMessage);
 
       const targetSocket = userSockets.get(targetUserId);
       console.log("target socket id", targetSocket ? targetSocket.id : "N/A");
@@ -50,9 +52,9 @@ module.exports = io => {
       if (targetSocket) {
         // Émettez le message à l'utilisateur cible
         try {
-      
-          await socket.to(targetSocket.id).emit('chat-message', message)
-          
+
+          await socket.to(targetSocket.id).emit('chat-message', encryptedMessage)
+
           //await targetSocket.emit('chat-message', message);
           console.log("Message envoyé avec succès à l'utilisateur cible");
 
@@ -62,7 +64,7 @@ module.exports = io => {
         }
       } else {
         // L'utilisateur cible n'est pas en ligne, vous pouvez gérer cela comme vous le souhaitez
-        await socket.emit('chat-message', message);
+        await socket.emit('chat-message', encryptedMessage);
         console.log("L'utilisateur cible n'est pas en ligne, vous pouvez prendre des mesures appropriées ici.");
       }
     });
@@ -96,32 +98,32 @@ module.exports = io => {
     //   }
     // });
     // Mettez à jour le statut des messages de la discussion sélectionnée comme "read"
-socket.on('mark-messages-as-read', async (chatId) => {
-  try {
-    // Vérifiez si chatId est un ObjectId valide
-    if (chatId && mongoose.isValidObjectId(chatId)) {
-      const query = { chat: new mongoose.Types.ObjectId(chatId), status: 'unread' };
-  
-      const messages = await Message.find(query);
+    socket.on('mark-messages-as-read', async (chatId) => {
+      try {
+        // Vérifiez si chatId est un ObjectId valide
+        if (chatId && mongoose.isValidObjectId(chatId)) {
+          const query = { chat: new mongoose.Types.ObjectId(chatId), status: 'unread' };
 
-      // Marquez les messages comme "lus" dans la base de données
-      const updatePromises = messages.map(async (message) => {
-        message.status = 'read'; // Marquez le message comme lu (status = 'read')
-        await message.save();
-      });
+          const messages = await Message.find(query);
 
-      await Promise.all(updatePromises);
+          // Marquez les messages comme "lus" dans la base de données
+          const updatePromises = messages.map(async (message) => {
+            message.status = 'read'; // Marquez le message comme lu (status = 'read')
+            await message.save();
+          });
 
-      // Informez le client que les messages ont été marqués comme "lus"
-      socket.emit('messages-marked-as-read', chatId);
-    } else {
-      console.log("Invalid chatId or chatId is null.");
-    }
-  } catch (error) {
-    // Gérer les erreurs de mise à jour
-    console.error("Erreur lors du marquage des messages comme lus :", error);
-  }
-});
+          await Promise.all(updatePromises);
+
+          // Informez le client que les messages ont été marqués comme "lus"
+          socket.emit('messages-marked-as-read', chatId);
+        } else {
+          console.log("Invalid chatId or chatId is null.");
+        }
+      } catch (error) {
+        // Gérer les erreurs de mise à jour
+        console.error("Erreur lors du marquage des messages comme lus :", error);
+      }
+    });
 
   });
 };

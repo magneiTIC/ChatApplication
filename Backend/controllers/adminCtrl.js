@@ -1,4 +1,6 @@
 const User = require('../models/user');
+const EncryptionKey = require('../models/encryption-key');
+const { getSecretKey } = require('../config/generate-key')
 // const bcrypt = require('bcrypt'); // Pour hasher les mots de passe
 // const admin = require('firebase-admin');
 // const jwt = require('jsonwebtoken');
@@ -9,17 +11,29 @@ module.exports = {
     async createUser(req, res) {
         const { email, division, profile } = req.body;
         const motDePasseParDefaut = 'passer';
+        let defaultValue = (Math.random() + 1).toString(36).substring(7);
         try {
-            // Créez un profil utilisateur dans la base de données MongoDB avec les données nécessaires
-            const user = new User({ email, division, profile, password: motDePasseParDefaut, isConfigured: false });
-            // Enregistrez l'utilisateur dans la base de données MongoDB
+            const user = new User({
+                email,
+                division,
+                profile,
+                password: motDePasseParDefaut,
+                username: defaultValue,
+                uid: defaultValue,
+                isConfigured: false,
+            });
             await user.save();
-            // Réponse de succès
+            const { publicKey, encryptedPrivateKey } = await getSecretKey() ;
+            const encryptionKey = new EncryptionKey({
+                userId: user._id, 
+                privateKey: encryptedPrivateKey, 
+                publicKey: publicKey, 
+            });
+            await encryptionKey.save();
             const userProfile = user.profile;
-            res.status(201).json({ message: 'Inscription de l\'utilisateur commencée avec succès', userProfile: userProfile});
+            res.status(201).json({ message: 'Inscription de l\'utilisateur commencée avec succès', userProfile: userProfile });
         } catch (error) {
             console.error('Erreur lors de la tentative de début d\'inscription :', error);
-            // Gérez les erreurs ici
             res.status(500).json({ message: 'Erreur lors de la tentative de début d\'inscription' });
         }
     },
@@ -30,8 +44,8 @@ module.exports = {
             const user = await User.findOne({ uid:uid });
         
             if (!user) {
-              return res.status(404).json({ message: "Utilisateur introuvable." });
-            }else{
+                return res.status(404).json({ message: "Utilisateur introuvable." });
+            } else {
                 res.json(user);
             }
         } catch (err) {
@@ -39,7 +53,7 @@ module.exports = {
             res.status(500).json({ error: 'Erreur lors de la récupération des utilisateurs' });
         }
     },
-    
+
     async getAllDirectors(req, res) {
         try {
             const directeurs = await User.find({ profile: 'DIRECTEUR' });
@@ -69,18 +83,18 @@ module.exports = {
         }
     },
 
-    async numberOfDirectors(req,res){
+    async numberOfDirectors(req, res) {
         const total = await User.countDocuments({ profile: "DIRECTEUR" })
         res.status(200).json(total)
-        
+
     },
 
-    async numberOfAgents(req,res){
+    async numberOfAgents(req, res) {
         const total = await User.countDocuments({ profile: "AGENT" })
         res.json(total)
-        
+
     },
-   
+
 
 
 }

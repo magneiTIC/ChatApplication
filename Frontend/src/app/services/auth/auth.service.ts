@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Auth, signInWithEmailAndPassword } from '@angular/fire/auth';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, catchError, map, throwError } from 'rxjs';
 import { SocketService } from '../sockets/sockets.service';
 
 @Injectable({
@@ -11,25 +11,32 @@ export class AuthService {
 
   apiUrl = 'http://localhost:3000'
 
-  constructor(private auth: Auth, private http: HttpClient, private socketService:SocketService) { }
+  constructor(private auth: Auth, private http: HttpClient, private socketService: SocketService) { }
 
-  async createUser(email:string,profile:string,division:string) {
-    try{
-      this.http.post(`${this.apiUrl}/admin/create-user`, {email,profile,division});
-      
-      
-      return console.log('creation reussie');
-    }catch(error){
-      console.error("Error creating user", error);
-    }
+  async createUser(email: string, profile: string, division: string) {
+    return this.http.post<any>(`${this.apiUrl}/admin/create-user`, {
+      email,
+      profile,
+      division
+    })
+      .pipe(map(userData => {
+        return userData;
+      }))
   }
+  // try{
+  //   this.http.post(`${this.apiUrl}/admin/create-user`, {email,profile,division});
+  //   return console.log('creation reussie');
+  // }catch(error){
+  //   console.error("Error creating user", error);
+  // }
+
 
   async isProfileConfigured(email: string) {
     try {
       const response = await this.http.post<{ isProfileConfigured: boolean, profil: any, division: any } | undefined>(`${this.apiUrl}/users/isProfileConfigured`, { email }).toPromise();
       if (response) {
         sessionStorage.setItem('profil', response.profil);
-        sessionStorage.setItem('division', response.division);        
+        sessionStorage.setItem('division', response.division);
         return response.isProfileConfigured;
       } else {
         throw new Error('Réponse non définie.');
@@ -48,9 +55,12 @@ export class AuthService {
     try {
       const userCredentials = await signInWithEmailAndPassword(this.auth, email, password);
       const user = userCredentials.user;
+      const idToken = await user.getIdToken();
+      console.log("AUTHTOKEN", idToken);
       sessionStorage.setItem('uid', user.uid);
+      sessionStorage.setItem('authToken', idToken);
       if (user.email) sessionStorage.setItem('email', user.email);
-      this.setUserStatus('connecté',user.uid);
+      this.setUserStatus('connecté', user.uid);
       return user;
     } catch (error) {
       console.error('Erreur de connexion :', error);
@@ -58,7 +68,7 @@ export class AuthService {
     }
   }
 
-  async createUserWithFirebase(username: string, password: string, email: string) {
+  async createUserWithFirebase(username: string, password: string, email: string ) {
     const userUpdated = {
       'username': username,
       'email': email,
@@ -66,29 +76,29 @@ export class AuthService {
     }
     console.log("HashedPassword", userUpdated.password);
     this.http.post(`${this.apiUrl}/users/register`, userUpdated)
-  .subscribe(
-    (response) => {
-      console.log("Utilisateur créé avec succès :", response);
-    },
-    (error) => {
-      console.error("Échec de la requête HTTP :", error);
-    }
-  );
+      .subscribe(
+        (response) => {
+          console.log("Utilisateur créé avec succès :", response);
+        },
+        (error) => {
+          console.error("Échec de la requête HTTP :", error);
+        }
+      );
   }
 
   async getCurrentUserIdByUid(uid: string): Promise<string> {
     // Faites une requête HTTP pour obtenir l'ID de l'utilisateur par son UID
-    
+
     try {
       const response = await this.http.get<any>(`${this.apiUrl}/users/${uid}`).toPromise();
       const userId = response.id;
-  
+
       if (!userId) {
         throw new Error("L'utilisateur n'a pas été trouvé.");
       }
       sessionStorage.setItem("id", userId);
       console.log("session storage de id", sessionStorage.getItem("id"));
-  
+
       return userId;
     } catch (error) {
       // Gérez les erreurs ici
@@ -96,8 +106,8 @@ export class AuthService {
       throw error;
     }
   }
-  
-    logout() {
+
+  logout() {
     const uid = sessionStorage.getItem('uid');
     sessionStorage.removeItem('uid');
     sessionStorage.removeItem('email');
@@ -134,15 +144,15 @@ export class AuthService {
           sessionStorage.setItem('profile', profile);
           return true;
         } else {
-          return false; 
+          return false;
         }
       })
       .catch((error: any) => {
         console.error('Erreur lors de la vérification du profil :', error);
-        return false; 
+        return false;
       });
   }
- 
+
   isUserLoggedIn(): boolean {
     return !!this.auth.currentUser;
   }

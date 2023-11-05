@@ -1,13 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const adminCtrl = require('../controllers/adminCtrl');
-// const checkAuth = require('../middleware/middleware')
+const checkAuth = require('../middleware/middleware')
 // const userCtrl = require("../controllers/userCtrl");
 
-router.post("/create-user", adminCtrl.createUser);
+router.post("/create-user" ,adminCtrl.createUser);
 
 router.get("/agent/:uid", adminCtrl.getAgentByUID);
-
 
 router.get("/directeurs", adminCtrl.getAllDirectors);
 

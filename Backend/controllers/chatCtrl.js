@@ -2,6 +2,8 @@ const Chat = require("../models/chat")
 const Message = require("../models/message")
 const Users = require("../models/user")
 const { uploadFileMiddleware } = require("./upload")
+const { sharedKey } = require("../config/generate-key")
+const EncryptionKey = require("../models/encryption-key");
 
 const formatSentAt = (sentAt) => {
   const currentDate = new Date();
@@ -28,18 +30,22 @@ module.exports = {
   // Création d'une nouvelle conversation
   async createChat(req, res) {
     try {
-      const { users } = req.body
-      const newChat = new Chat({ users })
-      await newChat.save();
-      console.log("conversation créée avec succès");
-      return res.status(200).json({ message: "conversation créée avec succès" })
-
+      const { idUsers } = req.body
+      const keysA = await EncryptionKey.findOne({ userId: idUsers[0] })
+      const keysB = await EncryptionKey.findOne({ userId: idUsers[1] })
+      const sharedkeyA = await sharedKey(keysA.privateKey, keysB.publicKey)
+      const sharedkeyB = await sharedKey(keysB.privateKey, keysA.publicKey)
+      if(sharedkeyA===sharedkeyB) {
+        const newChat = new Chat({ users: idUsers, sharedKey: sharedkeyA })
+        await newChat.save();
+        console.log("conversation créée avec succès");
+        return res.status(200).json({ message: "conversation créée avec succès" })
+      }  
     }
     catch (error) {
       console.log("Erreur lors de creation d'une conversation", error)
       res.status(500).json({ error: 'Erreur lors de la création de la conversation' });
     }
-
   },
 
 
@@ -76,7 +82,8 @@ module.exports = {
           return {
             lastMessage: lastMessageInfo,
             users: chat.users,
-            chatId: chat._id
+            chatId: chat._id,
+            sharedKey: chat.sharedKey
           };
         })
       );

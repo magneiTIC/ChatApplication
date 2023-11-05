@@ -1,6 +1,6 @@
 const express = require("express");
 const userCtrl = require("../controllers/userCtrl");
-const middleware = require("../middleware/middleware");
+// const middleware = require("../middleware/middleware");
 const router = express.Router();
 
 // Route pour se connecter en tant que utilisateur
@@ -14,6 +14,6 @@ router.get("/:uid",userCtrl.getUserIdByUid)
 //route pour récupérer le statut de l'utilisateur
 router.post("/:uid/setUserStatus", userCtrl.setUserStatus)
 //route pour récupérer le profil de l'utilisateur
-router.get("/:uid/checkUserProfile", middleware.checkUserProfile);
+// router.get("/:uid/checkUserProfile", middleware.checkUserProfile);
 
 module.exports = router;

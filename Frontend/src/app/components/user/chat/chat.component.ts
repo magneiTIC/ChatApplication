@@ -6,8 +6,6 @@ import { MessagesService } from 'src/app/services/messages/messages.service';
 import { SocketService } from 'src/app/services/sockets/sockets.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
 
-
-
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
@@ -15,10 +13,11 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 })
 export class ChatComponent implements OnInit {
   showDate = true;
-  chat: { chatId: string | null; username: string | null } = { chatId: null, username: null };
+  chat: { chatId: string | null; username: string | null; sharedKey: string | null } = { chatId: null, username: null, sharedKey: null };
   chatId: string | null = null;
   currentUserID: any;
   selectedFile: File | undefined;
+  sharedKey: string | null = null;
 
 
   constructor(
@@ -79,7 +78,8 @@ export class ChatComponent implements OnInit {
       if (chat.chatId !== null && chat.username !== null) {
         this.chat = chat;
         this.chatId = chat.chatId;
-        // console.log("chat id dans chat component: " + this.chatId);
+        this.sharedKey = chat.sharedKey;
+        console.log("sharedKey dans chat component: " + this.sharedKey);
         if (this.chatId) {
           this.messages$ = this.messagesService.getMessagesByChat('' + this.chatId);
           console.log("selected chat", this.chatId)
@@ -136,31 +136,27 @@ export class ChatComponent implements OnInit {
 
   sendMessage() {
     const message = this.messageControl.value;
-
     if (message) {
       this.chatsService.getActiveChat().subscribe((activeChat) => {
         if (activeChat) {
           const chatId = activeChat.chatId;
-
           this.chatsService.getChatsByUser("" + this.currentUserUid).subscribe((chats: any[]) => {
             let targetChat: any = null;
-
             chats.forEach((chat) => {
               if (chat.chatId === chatId) {
                 targetChat = chat;
               }
             });
-
             if (targetChat) {
               // Ici, vous pouvez utiliser les données du targetChat, par exemple, pour obtenir l'ID du destinataire.
               const targetUserId = targetChat.users[0]._id;
-
+              const sharedKey = targetChat.sharedKey
+              console.log(`sharedKey: ${sharedKey}`);
               if (targetUserId) {
                 console.log("message dans targetuserid", message);
                 console.log("id sender", this.currentUserID);
-
                 // Envoi du message via le socket
-                this.socketService.sendMessage(message, targetUserId);
+                this.socketService.sendMessage(message, targetUserId, sharedKey);
 
                 // Une fois que le message a été envoyé via le socket, ajoutez-le à la base de données
                 this.chatsService
@@ -185,17 +181,29 @@ export class ChatComponent implements OnInit {
     }
   }
   private listenForMessages() {
-    this.socketService.onMessageReceived((message: any) => {
-      // Assurez-vous que vous avez une valeur de chatId correcte avant de demander les messages.
-      if (this.chatId) {
-        this.messagesService.getMessagesByChat('' + this.chatId).subscribe((messages: any[]) => {
-          // Mise à jour de la liste des messages avec les nouveaux messages reçus via le socket.
-          console.log("listen for messages", messages);
-          this.messages$ = this.messages$ ? this.messages$.pipe(mergeMap(existingMessages => of([...existingMessages, ...messages]))) : of(messages);
-        });
+    this.socketService.onMessageReceived((encryptedMessage: any) => {
+      if (this.sharedKey) {
+  
+        // Utilisation de CryptoJS pour déchiffrer le message
+        const decryptedMessage = CryptoJS.AES.decrypt(encryptedMessage, this.sharedKey, {
+          mode: CryptoJS.mode.CFB, // Assurez-vous d'utiliser le mode correct (CFB, CBC, etc.)
+          padding: CryptoJS.pad.Pkcs7, // Assurez-vous d'utiliser le mode de remplissage correct
+        }).toString(CryptoJS.enc.Utf8);
+  
+        console.log('Message déchiffré :', decryptedMessage);
+  
+        // Assurez-vous que vous avez une valeur de chatId correcte avant de traiter les messages déchiffrés.
+        if (this.chatId) {
+          this.messagesService.getMessagesByChat('' + this.chatId).subscribe((messages: any[]) => {
+            // Mise à jour de la liste des messages avec les nouveaux messages reçus via le socket.
+            console.log("listen for messages", messages);
+            this.messages$ = this.messages$ ? this.messages$.pipe(mergeMap(existingMessages => of([...existingMessages, decryptedMessage]))) : of([decryptedMessage]);
+          });
+        }
       }
     });
   }
+  
   markMessagesAsRead(chatId: string) {
     console.log('mark message as read ', chatId);
 
@@ -222,7 +230,7 @@ export class ChatComponent implements OnInit {
 
             if (targetChat) {
               const targetUserId = targetChat.users[0]._id;
-
+              const sharedKey = targetChat.sharedKey
               if (targetUserId) {
                 const formData = new FormData();
                 formData.append('chatId', targetChat.chatId);
@@ -230,7 +238,7 @@ export class ChatComponent implements OnInit {
                 formData.append('media', file);
                 formData.append('type', 'file'); // Set the type to 'file'
 
-                this.socketService.sendMessage(formData, targetUserId);
+                this.socketService.sendMessage(formData, targetUserId, sharedKey);
 
                 this.chatsService.addMediaToChat(targetChat.chatId, this.currentUserID, file, 'file') // Provide 'file' as the type
                   .subscribe((addedMessage) => {

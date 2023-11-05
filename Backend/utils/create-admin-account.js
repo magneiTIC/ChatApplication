@@ -1,34 +1,34 @@
 const admin = require('firebase-admin');
+const User = require("../models/user");
 const serviceAccount = require('../config/serviceAccountKey.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
-// Informations de l'administrateur
 const adminInfo = {
   email: 'adn@admin.test',
   password: 's3cure',
-  displayName: 'ADMIN',
+  profile: 'ADMIN',
+  username: 'admin',
 };
 
 async function createAdmin() {
   try {
-    // Utilisez Firebase Authentication pour créer le compte administrateur
-    await admin.auth().createUser({
+    const user = await admin.auth().createUser({
       email: adminInfo.email,
       password: adminInfo.password,
-      displayName: adminInfo.displayName,
-    })
-      .then(() => {
-        console.log('Compte administrateur créé avec succès');
-      })
-      .catch((error) => {
-        console.error('Erreur lors de la création du compte administrateur', error);
-      });
+    });
+    const adminUser = new User({
+      username: adminInfo.username, 
+      profile: adminInfo.profile,
+      uid: user.uid, 
+    });
+    await adminUser.save();
+    console.log('Compte administrateur créé avec succès', user.getToken());
   } catch (error) {
-    console.error(error);
+    console.error('Erreur lors de la création du compte administrateur', error);
   }
 }
 
-createAdmin()
+createAdmin();

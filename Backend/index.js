@@ -24,14 +24,11 @@ require("dotenv").config();
 
 app.use(bodyParser.json());
 
-app.use(cors()); // Configure CORS
+app.use(cors()); 
 
-// Appliquez le middleware de vérification du token JWT aux routes nécessitant une authentification
-// const middleware = require('./middleware/middleware');
-// app.get('/admin/create-user', middleware.checkAuth, (req, res) => {
-      // La route est protégée et l'utilisateur est authentifié
-//   res.json({ message: 'Vous avez accès à cette ressource protégée.' });
-// });
+
+
+const checkAuth = require('./middleware/middleware');
 
 // Appel des routes
 const adminRoutes = require('./routes/adminRoutes');
@@ -43,11 +40,11 @@ app.use('/users', userRoutes);
 const serviceRoutes = require("./routes/serviceRoutes");
 app.use('/services', serviceRoutes);
 
-const chatRoutes=require("./routes/chatRoutes")
-app.use('/chat',chatRoutes)
+const chatRoutes = require("./routes/chatRoutes");
+app.use('/chat',chatRoutes);
 
-const messageRoutes=require("./routes/messagesRoutes")
-app.use('/message',messageRoutes)
+const messageRoutes = require("./routes/messagesRoutes");
+app.use('/message',messageRoutes);
 
 //connexion à mongodb
 mongoose.connect(dbConfig.mongoURI, dbConfig.mongoOptions)

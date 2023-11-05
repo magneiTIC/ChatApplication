@@ -1,22 +1,21 @@
 const admin = require('firebase-admin');
-const UserModel = require("../models/user");
-// const jwt = require('jsonwebtoken');
-// require("dotenv").config();
+const User = require("../models/user");
 
 module.exports = {
 
   async isProfileConfigured(req, res) {
     try {
       const email = req.body.email;
-      const user = await UserModel.findOne({ email: email });
+      const user = await User.findOne({ email: email });
       if (!user) {
         return res.status(404).json({ message: "Utilisateur introuvable." });
       } else {
         const checkUsername = user.username;
-        if (!checkUsername) {
-          res.json({isProfileConfigured: false });
+        const checkUid = user.uid;
+        if (checkUsername === checkUid) {
+          res.json({ isProfileConfigured: false });
         } else {
-          res.status(200).json({ isProfileConfigured: true , profil: user.profile, division: user.division});
+          res.status(200).json({ isProfileConfigured: true, profil: user.profile, division: user.division });
         }
       }
     } catch (error) {
@@ -35,7 +34,7 @@ module.exports = {
       });
       const userUID = userRecord.uid;
       // Mettre à jour le profil de l'utilisateur dans MongoDB
-      await UserModel.findOneAndUpdate(
+      await User.findOneAndUpdate(
         { email: email }, { username: username, uid: userUID }
       );
       // Réponse de succès
@@ -51,13 +50,13 @@ module.exports = {
     try {
       const uid = req.params.uid;
       // Recherchez l'utilisateur en fonction de son ID pour obtenir sa division
-      const user = await UserModel.findOne({ uid });
+      const user = await User.findOne({ uid });
       if (!user) {
         return res.status(404).json({ message: "Utilisateur non trouvé." });
       }
       const division = user.division;
       // Utilisez la méthode find() de Mongoose pour rechercher les utilisateurs de la même division
-      const users = await UserModel.find({ division, uid: { $ne: uid } });
+      const users = await User.find({ division, uid: { $ne: uid } });
       if (users.length === 0) {
         return res.status(404).json({ message: "Aucun utilisateur trouvé dans la même division." });
       }
@@ -72,13 +71,29 @@ module.exports = {
   async getUserIdByUid(req, res) {
     try {
       const uid = req.params.uid;
-      const user = await UserModel.findOne({ uid: uid });
+      const user = await User.findOne({ uid: uid });
 
       if (!user) {
         return res.status(404).json({ message: "Utilisateur introuvable." });
       }
 
       res.status(200).json({ id: user.id });
+    } catch (error) {
+      console.error("Erreur lors de la recherche de l'ID de l'utilisateur par UID", error);
+      res.status(500).json({ error: "Erreur lors de la recherche de l'ID de l'utilisateur par UID" });
+    }
+  },
+
+  async getUserByUid(req, res) {
+    try {
+      const uid = req.params.uid;
+      const user = await User.findOne({ uid: uid });
+
+      if (!user) {
+        return res.status(404).json({ message: "Utilisateur introuvable." });
+      }
+
+      res.status(200).json({ user });
     } catch (error) {
       console.error("Erreur lors de la recherche de l'ID de l'utilisateur par UID", error);
       res.status(500).json({ error: "Erreur lors de la recherche de l'ID de l'utilisateur par UID" });
@@ -98,7 +113,7 @@ module.exports = {
     }
 
     try {
-      const user = await UserModel.findOneAndUpdate(
+      const user = await User.findOneAndUpdate(
         { uid: userId },
         { status: newStatus, connectionTime, disconnectionTime },
         { new: true }

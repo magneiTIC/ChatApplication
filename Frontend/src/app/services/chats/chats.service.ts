@@ -34,14 +34,14 @@ export class ChatsService {
 
   }
 
-  private selectedChatSubject = new BehaviorSubject<{ chatId: string | null, username: string | null }>({ chatId: null, username: null });
+  private selectedChatSubject = new BehaviorSubject<{ chatId: string | null, username: string | null, sharedKey: string | null }>({ chatId: null, username: null, sharedKey: null });
   selectedChat$ = this.selectedChatSubject.asObservable();
 
-  selectedChat(chatId: string | null, username: string | null) {
-    this.selectedChatSubject.next({ chatId, username });
+  selectedChat(chatId: string | null, username: string | null, sharedKey: string | null) {
+    this.selectedChatSubject.next({ chatId, username, sharedKey });
   }
   
-getActiveChat(): Observable<{ chatId: string | null; username: string | null }> {
+getActiveChat(): Observable<{ chatId: string | null; username: string | null, sharedKey: string | null }> {
     return this.selectedChat$;
   }
 

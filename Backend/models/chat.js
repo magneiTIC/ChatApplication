@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const chatSchema = new mongoose.Schema({
-  
+
   users: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -12,7 +12,7 @@ const chatSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.ObjectId,
       ref: 'Messages'
-    } 
+    }
   ],
   createdAt: {
     type: Date,
@@ -21,8 +21,14 @@ const chatSchema = new mongoose.Schema({
   autorised:
   {
     type: Boolean,
-    default:true
-  }
+    default: true
+  },
+  sharedKey: 
+    {
+      type: String,
+      required: true,
+      unique: true
+    }
 },
   //{ timestamps: true },
   { collection: "Chats" }

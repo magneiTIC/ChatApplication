@@ -15,12 +15,10 @@ export class UserService {
   apiUrl = 'http://localhost:3000'
   
   async createUser(email:string,profile:string,division:string) {
-    try{
+    try { 
       this.http.post(`${this.apiUrl}/admin/create-user`, {email,profile,division});
-      
-      
       return console.log('creation reussie');
-    }catch(error){
+    } catch(error) {
       console.error("Error creating user", error);
     }
   }
@@ -54,6 +52,7 @@ export class UserService {
       })
     )
   }
+
   countDirectors()  {
    return this.http
     .get<any>(this.apiUrl + '/admin/count-directors')
@@ -71,6 +70,7 @@ export class UserService {
       map((userData: any) => userData)
     );
   }
+
   getAllDivisions() {
     return this.http.get(`${this.apiUrl}/admin/divisions`).pipe(
       map((divisions: any) => {
