@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { io } from 'socket.io-client';
 import { environment } from '../../../environments/environment';
-
+import { MessagesService } from '../messages/messages.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,11 @@ export class SocketService {
   private socketId!: string;
   apiUrl = 'http://localhost:3000';
 
-  constructor() {
+  constructor(
+    private messagesService:MessagesService
+
+  ) {
+    
     // La connexion socket est initialement établie dans le constructeur, vous pouvez laisser cette partie inchangée.
     this.socket = io(this.apiUrl, {
       query: {
@@ -23,23 +27,26 @@ export class SocketService {
       console.log("Connecté au serveur chat");
       console.log("Chat ID : ", this.socket.id);
     });
+ 
   }
 
   getSocketId() {
     return this.socketId;
   }
 
-  sendMessage(message: string|any , targetUserId: string, sharedKey: string) {
-    this.socket.emit('send-message', message, targetUserId, sharedKey);
+  sendMessage(message: string|any , targetUserId: string,sharedKey: string, chatId: string, user: string, type: string) {
+    this.socket.emit('send-message', message, targetUserId,sharedKey,chatId,user,type);
   }
+  
   // sendFile(data: any,targetUserId:string) {
   //   this.socket.emit('sent-file', data,targetUserId);
   // }
 
-  onMessageReceived(callback: (message: any) => void) {
-    this.socket.on('chat-message', (message) => {
-      console.log("message recu ", message);
-      callback(message);
+  onMessageReceived(callback: (decryptedMessage: any) => void) {
+    this.socket.on('chat-message', (encryptedMessage) => {
+      console.log("message recu ", encryptedMessage);
+      //const decryptedMessage= this.messagesService.decryptionMessage(encryptedMessage,encryptedSharedKey)
+      callback(encryptedMessage);
     });
   }
   // onFileReceived(callback: (data: any) => void) {

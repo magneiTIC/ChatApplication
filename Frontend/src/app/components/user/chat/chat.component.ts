@@ -5,6 +5,8 @@ import { ChatsService } from 'src/app/services/chats/chats.service';
 import { MessagesService } from 'src/app/services/messages/messages.service';
 import { SocketService } from 'src/app/services/sockets/sockets.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import * as CryptoJS from 'crypto-js';
+
 
 @Component({
   selector: 'app-chat',
@@ -26,20 +28,20 @@ export class ChatComponent implements OnInit {
     private socketService: SocketService,
     private authService: AuthService,
     
+
   ) { // Écoutez l'événement de capture d'écran
     document.addEventListener('keydown', function (event) {
       if ((event.ctrlKey || event.metaKey) && event.key === 'c') {
         console.log("tentative de capture d'ecran")
         applyBlackout();
       }
-    });}
+    });
+  }
 
   @ViewChild('messageContainer') messageContainer!: ElementRef;
   messageControl = new FormControl('');
   currentUserUid = sessionStorage.getItem('uid');
   messages$: Observable<any[]> = of([]);
-
-
   isPopupVisible = false;
   popupFileUrl: string | undefined;
 
@@ -55,24 +57,24 @@ export class ChatComponent implements OnInit {
   openPopup(fileUrl: string) {
     const width = 800;
     const height = 600;
-    
+
     // Ouvrez la fenêtre popup
     const popupWindow = window.open(fileUrl, 'Popup', `width=${width}, height=${height}`);
 
   }
-  
+
   getFullFileUrl(relativePath: string): string {
-    const BASE_URL = 'http://localhost:3000'; 
-  
+    const BASE_URL = 'http://localhost:3000';
+
     return `${BASE_URL}/uploads/${relativePath}`;
   }
-  
+
   ngOnInit(): void {
 
-    
-    
-    
-    
+
+
+
+
     this.chatsService.selectedChat$.subscribe((chat) => {
       // console.log("Selected chat object:", chat);
       if (chat.chatId !== null && chat.username !== null) {
@@ -145,28 +147,21 @@ export class ChatComponent implements OnInit {
             chats.forEach((chat) => {
               if (chat.chatId === chatId) {
                 targetChat = chat;
+                console.log('target chat',targetChat)
               }
             });
             if (targetChat) {
               // Ici, vous pouvez utiliser les données du targetChat, par exemple, pour obtenir l'ID du destinataire.
               const targetUserId = targetChat.users[0]._id;
               const sharedKey = targetChat.sharedKey
-              console.log(`sharedKey: ${sharedKey}`);
+              const chatId= targetChat.chatId
+              //console.log(`sharedKey: ${sharedKey}`);
               if (targetUserId) {
                 console.log("message dans targetuserid", message);
                 console.log("id sender", this.currentUserID);
                 // Envoi du message via le socket
-                this.socketService.sendMessage(message, targetUserId, sharedKey);
-
-                // Une fois que le message a été envoyé via le socket, ajoutez-le à la base de données
-                this.chatsService
-                  .addMessageToChat(targetChat.chatId, this.currentUserID, message, "text")
-                  .subscribe((addedMessage) => {
-                    // Le message a été ajouté à la base de données.
-                    console.log("Message ajouté à la base de données:", addedMessage);
-                    this.listenForMessages()
-                    this.messageControl.reset();
-                  });
+                this.socketService.sendMessage(message, targetUserId, sharedKey,chatId,this.currentUserID,'text');
+                     this.messageControl.reset();
               } else {
                 console.error("Le targetUserId est indéfini, impossible d'envoyer le message.");
               }
@@ -181,27 +176,18 @@ export class ChatComponent implements OnInit {
     }
   }
   private listenForMessages() {
-    this.socketService.onMessageReceived((encryptedMessage: any) => {
-      if (this.sharedKey) {
-  
-        // Utilisation de CryptoJS pour déchiffrer le message
-        const decryptedMessage = CryptoJS.AES.decrypt(encryptedMessage, this.sharedKey, {
-          mode: CryptoJS.mode.CFB, // Assurez-vous d'utiliser le mode correct (CFB, CBC, etc.)
-          padding: CryptoJS.pad.Pkcs7, // Assurez-vous d'utiliser le mode de remplissage correct
-        }).toString(CryptoJS.enc.Utf8);
-  
-        console.log('Message déchiffré :', decryptedMessage);
-  
+    this.socketService.onMessageReceived((encryptedMessage: any) => 
+    {
         // Assurez-vous que vous avez une valeur de chatId correcte avant de traiter les messages déchiffrés.
         if (this.chatId) {
           this.messagesService.getMessagesByChat('' + this.chatId).subscribe((messages: any[]) => {
             // Mise à jour de la liste des messages avec les nouveaux messages reçus via le socket.
             console.log("listen for messages", messages);
-            this.messages$ = this.messages$ ? this.messages$.pipe(mergeMap(existingMessages => of([...existingMessages, decryptedMessage]))) : of([decryptedMessage]);
+            this.messages$ = this.messages$ ? this.messages$.pipe(mergeMap(existingMessages => of([...existingMessages, this.messages$]))) : of([this.messages$]);
           });
         }
-      }
-    });
+      })
+   
   }
   
   markMessagesAsRead(chatId: string) {
@@ -231,6 +217,9 @@ export class ChatComponent implements OnInit {
             if (targetChat) {
               const targetUserId = targetChat.users[0]._id;
               const sharedKey = targetChat.sharedKey
+              const chatId= targetChat.chatId
+              console.log("chat id wesh :", chatId);
+              
               if (targetUserId) {
                 const formData = new FormData();
                 formData.append('chatId', targetChat.chatId);
@@ -238,14 +227,7 @@ export class ChatComponent implements OnInit {
                 formData.append('media', file);
                 formData.append('type', 'file'); // Set the type to 'file'
 
-                this.socketService.sendMessage(formData, targetUserId, sharedKey);
-
-                this.chatsService.addMediaToChat(targetChat.chatId, this.currentUserID, file, 'file') // Provide 'file' as the type
-                  .subscribe((addedMessage) => {
-                    console.log("Document added to the database:", addedMessage);
-                   // this.listenForMessages();
-                    this.messageControl.reset();
-                  });
+                this.socketService.sendMessage(file, targetUserId, sharedKey,chatId,this.currentUserID,'file')
               } else {
                 console.error("The targetUserId is undefined, unable to send the file.");
               }
@@ -265,9 +247,10 @@ export class ChatComponent implements OnInit {
     const inputElement = event.target as HTMLInputElement;
     if (inputElement.files && inputElement.files.length > 0) {
       this.selectedFile = inputElement.files[0];
+      // Appelez la méthode sendFile avec le fichier sélectionné
       this.sendFile(this.selectedFile);
     }
-    // Appelez la méthode sendFile avec le fichier sélectionné
+    
 
   }
 
@@ -282,13 +265,13 @@ export class ChatComponent implements OnInit {
       console.error("Une erreur s'est produite : ", error);
     }
   }
-  // Fonction pour appliquer un masque noir
   
 
 
 
 
 }
+// Fonction pour appliquer un masque noir
 function applyBlackout() {
   // Créez un élément div pour le masque noir
   var blackoutDiv = document.createElement('div');

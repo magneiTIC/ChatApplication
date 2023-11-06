@@ -16,27 +16,28 @@
             *ngIf="showDate && (i === 0 || !areDatesEqual(message.sentAt, messages[i - 1]?.sentAt))" />
           <div class="message-bubble-container" [ngClass]="{'sender': message.user === currentUserUid}">
             <div class="message-bubble" *ngIf="message.type === 'text'">
+
               {{ message.content }}
               <span class="chat-date">
                 {{ message.sentAt | date: 'HH:mm' }}
               </span>
-            </div>
-            <div class="message-bubble" *ngIf="message.type === 'file'">
-              <div *ngFor="let message of messages">
-                <div *ngIf="message.type === 'file'">
-                  <a href="javascript:void(0)" (click)="openPopup(getFullFileUrl(message.content))" target="_blank">
-                    <mat-icon matSuffix>file_present</mat-icon>
-                    Fichier
-                  </a>
-                </div>
-              </div>
-             
-              
-              <span class="chat-date">
-                {{ message.sentAt | date: 'HH:mm' }}
-              </span>
-            </div>
 
+              <div class="message-bubble" *ngIf="message.type === 'file'">
+                <div *ngFor="let message of messages">
+                  <div *ngIf="message.type === 'file'">
+                    <a href="javascript:void(0)" (click)="openPopup(getFullFileUrl(message.content))" target="_blank">
+                      <mat-icon matSuffix>file_present</mat-icon>
+                      Fichier
+                    </a>
+                  </div>
+                </div>
+
+
+                <span class="chat-date">
+                  {{ message.sentAt | date: 'HH:mm' }}
+                </span>
+              </div>
+            </div>
 
           </div>
         </ng-container>

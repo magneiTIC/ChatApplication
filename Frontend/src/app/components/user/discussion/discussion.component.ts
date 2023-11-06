@@ -12,6 +12,7 @@ import { UsersService } from 'src/app/services/users/users.service';
 export class DiscussionComponent implements OnInit {
   @ViewChild('endOfChat' )endOfChat!: ElementRef ;
   chatId: string | null | undefined;
+  sharedKey: string | null | undefined;
   
   // selectedChatId: string | null = null;
   constructor( 
@@ -22,15 +23,17 @@ export class DiscussionComponent implements OnInit {
 
   
   }
-  selectChat(chatId: string, username: string) {
-    this.chatsService.selectedChat(chatId, username);
+  selectChat(chatId: string, username: string,sharedKey:string) {
+    this.chatsService.selectedChat(chatId, username,sharedKey);
   }
 
   ngOnInit(): void {
     this.chatsService.selectedChat$.subscribe((chat) => {
       
       this.chatId = chat.chatId;
-      // console.log("Selected chat ID:", this.chatId);
+       console.log("Selected chat ID:", this.chatId);
+       console.log("Selected shared key:", this.sharedKey);
+
     });
   }
   

@@ -5,6 +5,7 @@ const { decryptPrivateKey, encryptMessage } = require('../config/generate-key')
 require('dotenv').config();
 const encryptionKey = process.env.ENCRYPTION_KEY;
 const ivKey = process.env.IV_KEY;
+const { addMessageToChat } = require ('../controllers/chatCtrl')
 
 module.exports = io => {
   io.on("connection", socket => {
@@ -27,7 +28,7 @@ module.exports = io => {
         .then(messages => {
           // Envoyez les messages non lus à l'utilisateur.
           messages.forEach((message) => {
-            socket.emit('chat-message', message);
+            //socket.emit('chat-message', message);
             console.log("Affichage des messages non lus");
           });
         })
@@ -39,11 +40,17 @@ module.exports = io => {
     }
 
 
-    socket.on('send-message', async (message, targetUserId, sharedKey) => {
+    socket.on('send-message', async (message, targetUserId, sharedKey,chatId,user,type) => {
       // Émettez le message à l'utilisateur emetteur, que ce soit en ligne ou hors ligne
+      //console.log("ivkey",ivKey)
       const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
-      const encryptedMessage = (await encryptMessage(message, sharedKey)).toString();
-      await socket.emit('chat-message', encryptedMessage);
+      //console.log('decrypted shared key',decryptedSharedKey)
+      const encryptedMessageObject = (await encryptMessage(message, decryptedSharedKey))
+      console.log("message crypté",encryptedMessageObject.encryptedMessage)
+      content=encryptedMessageObject.encryptedMessage
+       await addMessageToChat(chatId,user,content,type)
+      //console.log('message dans la base de données',msg)
+      await socket.emit('chat-message', encryptedMessageObject.encryptedMessage);
 
       const targetSocket = userSockets.get(targetUserId);
       console.log("target socket id", targetSocket ? targetSocket.id : "N/A");
@@ -53,7 +60,7 @@ module.exports = io => {
         // Émettez le message à l'utilisateur cible
         try {
 
-          await socket.to(targetSocket.id).emit('chat-message', encryptedMessage)
+          await socket.to(targetSocket.id).emit('chat-message', encryptedMessageObject.encryptedMessage)
 
           //await targetSocket.emit('chat-message', message);
           console.log("Message envoyé avec succès à l'utilisateur cible");
@@ -64,7 +71,7 @@ module.exports = io => {
         }
       } else {
         // L'utilisateur cible n'est pas en ligne, vous pouvez gérer cela comme vous le souhaitez
-        await socket.emit('chat-message', encryptedMessage);
+        await socket.emit('chat-message', encryptedMessageObject.encryptedMessage);
         console.log("L'utilisateur cible n'est pas en ligne, vous pouvez prendre des mesures appropriées ici.");
       }
     });
@@ -74,7 +81,7 @@ module.exports = io => {
       console.log(`La connexion WebSocket a été fermée avec le code ${code} et la raison : ${reason}`);
     });
 
-    //Mettez à jour le statut des messages de la discussion sélectionnée comme "read"
+    //Mettez à jour le statut des messages de la discussion sélectionnée comme "read" bgfre3
     // socket.on('mark-messages-as-read', async (chatId) => {
     //   try {
     //     // Supposons que vous ayez une structure de données de message avec un champ "status" pour le suivi de l'état de lecture

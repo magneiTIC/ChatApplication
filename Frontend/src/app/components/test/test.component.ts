@@ -113,6 +113,7 @@ export class TestComponent implements OnInit {
             chats.forEach((chat) => {
               if (chat.chatId === chatId) {
                 targetChat = chat;
+                
               }
             });
 
@@ -125,7 +126,7 @@ export class TestComponent implements OnInit {
                 console.log("id sender", this.currentUserID);
 
                 // Envoi du message via le socket
-                this.socketService.sendMessage(message, targetUserId);
+                //this.socketService.sendMessage(message, targetUserId,sharedKey);
 
                 // Une fois que le message a été envoyé via le socket, ajoutez-le à la base de données
                 this.chatsService
@@ -195,7 +196,7 @@ export class TestComponent implements OnInit {
                 formData.append('media', file);
                 formData.append('type', 'file'); // Set the type to 'file'
 
-                this.socketService.sendMessage(formData, targetUserId);
+                //this.socketService.sendMessage(formData, targetUserId);
 
                 this.chatsService.addMediaToChat(targetChat.chatId, this.currentUserID, file, 'file') // Provide 'file' as the type
                   .subscribe((addedMessage) => {

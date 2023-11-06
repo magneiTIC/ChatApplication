@@ -31,8 +31,8 @@ export class ContactComponent implements OnInit {
 
   
   }
-  selectChat(chatId: string, username: string) {
-    this.chatsService.selectedChat(chatId, username);
+  selectChat(chatId: string, username: string,sharedKey:string ) {
+    this.chatsService.selectedChat(chatId, username,sharedKey);
   }
   ngOnInit(): void {
 

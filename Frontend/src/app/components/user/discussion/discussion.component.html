@@ -19,7 +19,7 @@
         <!-- <ul class="contact-list"  *ngFor="let message of messages | async" > -->
         <ul class="contact-list" *ngFor="let chat of myChats | async">
 
-            <li class="contact-item" (click)="selectChat(chat.chatId, chat.users[0].username)">
+            <li class="contact-item" (click)="selectChat(chat.chatId, chat.users[0].username,chat.sharedKey)">
                 <img [src]="'assets/images/images-placeholder.png'" alt="Contact 1" class="contact-avatar" />
                 <div class="contact-details">
                     <p mat-line class="chat-title">

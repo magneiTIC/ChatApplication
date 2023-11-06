@@ -2,8 +2,10 @@ const Chat = require("../models/chat")
 const Message = require("../models/message")
 const Users = require("../models/user")
 const { uploadFileMiddleware } = require("./upload")
-const { sharedKey } = require("../config/generate-key")
+const { sharedKey, decryptMessage, decryptPrivateKey } = require("../config/generate-key")
 const EncryptionKey = require("../models/encryption-key");
+const encryptionKey = process.env.ENCRYPTION_KEY;
+const ivKey = process.env.IV_KEY;
 
 const formatSentAt = (sentAt) => {
   const currentDate = new Date();
@@ -35,12 +37,12 @@ module.exports = {
       const keysB = await EncryptionKey.findOne({ userId: idUsers[1] })
       const sharedkeyA = await sharedKey(keysA.privateKey, keysB.publicKey)
       const sharedkeyB = await sharedKey(keysB.privateKey, keysA.publicKey)
-      if(sharedkeyA===sharedkeyB) {
+      if (sharedkeyA === sharedkeyB) {
         const newChat = new Chat({ users: idUsers, sharedKey: sharedkeyA })
         await newChat.save();
         console.log("conversation créée avec succès");
         return res.status(200).json({ message: "conversation créée avec succès" })
-      }  
+      }
     }
     catch (error) {
       console.log("Erreur lors de creation d'une conversation", error)
@@ -73,18 +75,27 @@ module.exports = {
           const lastMessage = await Message.findOne({ chat: chat._id })
             .sort({ sentAt: -1 })
             .exec();
+          if (lastMessage) {
+            const sharedKey = chat.sharedKey;
+            const msg = lastMessage.content;
+            const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
+            const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
 
-          const lastMessageInfo = {
-            sentAt: lastMessage ? formatSentAt(lastMessage.sentAt) : null,
-            content: lastMessage ? lastMessage.content : null, // Utilisez le content du dernier message ou null s'il n'y en a pas
-          };
+            const lastMessageInfo = {
+              sentAt: lastMessage ? formatSentAt(lastMessage.sentAt) : null,
+              content: lastMessage ? decryptedMessage : null, // Utilisez le content du dernier message ou null s'il n'y en a pas
+            };
+            return {
+              lastMessage: lastMessageInfo,
+              users: chat.users,
+              chatId: chat._id,
+              sharedKey: chat.sharedKey
+            };
+          }
 
-          return {
-            lastMessage: lastMessageInfo,
-            users: chat.users,
-            chatId: chat._id,
-            sharedKey: chat.sharedKey
-          };
+          
+
+          
         })
       );
 
@@ -96,7 +107,6 @@ module.exports = {
   },
 
   //peupler une conversation
-  // async addMessageToChat(req, res) {
   //   try {
   //     const { chatId, user, content } = req.body;
   //     const chat = await Chat.findById(chatId);
@@ -178,81 +188,109 @@ module.exports = {
   // }
 
 
-  async addMessageToChat(req, res) {
+  // async addMessageToChat(req, res) {
+  //   try {
+  //     const chatId = req.params.chatId;
+  //     const { user, type, content } = req.body;
+  //     const chat = await Chat.findById(chatId);
+
+  //     if (!chat) {
+  //       return res.status(404).json({ error: 'Conversation non trouvée' });
+  //     }
+
+  //     const messageData = {
+  //       user,
+  //       chat: chatId,
+  //       type,
+  //     };
+
+  //     if (type === 'text' || type === 'quote') {
+  //       messageData.content = content;
+  //     } 
+
+  //     const message = new Message(messageData);
+  //     await message.save();
+
+  //     chat.messages.push(message._id);
+  //     await chat.save();
+
+  //     res.status(200).json(chat);
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
+  //   }
+  // },
+  async addMediaToChat(req, res) {
     try {
       const chatId = req.params.chatId;
-      const { user, type, content } = req.body;
+      const { user, type } = req.body;
+      const media = req.file.path
       const chat = await Chat.findById(chatId);
 
       if (!chat) {
         return res.status(404).json({ error: 'Conversation non trouvée' });
       }
-  
+
       const messageData = {
         user,
         chat: chatId,
         type,
       };
-  
-      if (type === 'text' || type === 'quote') {
-        messageData.content = content;
-      } 
-  
+
+      if (['image', 'video', 'audio', 'file'].includes(type)) {
+
+        if (!media) {
+          console.error("Multer error: File not uploaded");
+          return res.status(500).json({ error: "Erreur lors de l'envoi du média" });
+        }
+
+        // Multer has stored the uploaded file in req.file
+        messageData.content = media;
+      }
+
       const message = new Message(messageData);
       await message.save();
-  
+
       chat.messages.push(message._id);
       await chat.save();
-  
+
       res.status(200).json(chat);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
     }
   },
-  async addMediaToChat(req, res) {
-    try {
-      const chatId = req.params.chatId;
-      const { user, type} = req.body;
-      const media=req.file.path
-      const chat = await Chat.findById(chatId);
 
-      if (!chat) {
-        return res.status(404).json({ error: 'Conversation non trouvée' });
-      }
-  
-      const messageData = {
-        user,
-        chat: chatId,
-        type,
-      };
-  
-       if (['image', 'video', 'audio', 'file'].includes(type)) {
-        
-        if (!media) {
-          console.error("Multer error: File not uploaded");
-          return res.status(500).json({ error: "Erreur lors de l'envoi du média" });
-        }
-  
-        // Multer has stored the uploaded file in req.file
-        messageData.content = media;
-      }
-  
-      const message = new Message(messageData);
-      await message.save();
-  
-      chat.messages.push(message._id);
-      await chat.save();
-  
-      res.status(200).json(chat);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
+  addMessageToChat
+}
+
+async function addMessageToChat(chatId, user, content, type) {
+  try {
+    const chat = await Chat.findById(chatId);
+
+    if (!chat) {
+      return { error: 'Conversation non trouvée' };
     }
+
+    const messageData = {
+      user,
+      chat: chatId,
+      type,
+    };
+
+    if (type === 'text' || type === 'quote') {
+      messageData.content = content;
+    }
+
+    const message = new Message(messageData);
+    await message.save();
+
+    chat.messages.push(message._id);
+    await chat.save();
+
+    return chat;
+  } catch (error) {
+    console.error(error);
+    return { error: "Erreur lors de l'ajout du message à la conversation" };
   }
-  
-
-
-
-
 }
