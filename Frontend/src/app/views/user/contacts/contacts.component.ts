@@ -28,6 +28,8 @@ export class ContactsComponent implements OnInit{
     ngOnInit(): void {
       this.chatsService.selectedChat$.subscribe((chat) => {
         
+
+        
         this.chatId = chat.chatId;
       });
 
@@ -35,13 +37,18 @@ export class ContactsComponent implements OnInit{
         this.sortedChats = this.sortChatsByFirstLetter(chats);
       });
 
+      console.log('users',this.users)
+      this.users.subscribe((user: any) => {
+        console.log('users',user)
+
+      });
 
     }
     currentUserUid: string = sessionStorage.getItem('uid') || '';
-    myChats=this.chatsService.getChatsByUser(''+this.currentUserUid);
+    myChats=this.usersService.listContactsInSameDivision(''+this.currentUserUid);
   
     users=this.usersService.getAllUsersInSameDivision() ;
-
+    
 
     sortedChats: SortedChats = {};
     sortChatsByFirstLetter(chats: any) {

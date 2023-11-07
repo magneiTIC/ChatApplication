@@ -74,7 +74,7 @@ export class UsersService implements OnInit {
 
  listContactsInSameDivision(uid:string){
   return this.http
-      .get<any>(this.apiUrl + `/chat/contacts/${uid}`)
+      .get<any>(this.apiUrl + `/users/contacts/${uid}`)
       .pipe(
         map((userData: any) => {
           return userData
@@ -86,7 +86,7 @@ export class UsersService implements OnInit {
 contactsByDivision(uid:string){
 
   return this.http
-  .get<any>(this.apiUrl + `/chat/contactsByDivision/${uid}`)
+  .get<any>(this.apiUrl + `/users/contactsByDivision/${uid}`)
   .pipe(
     map((userData: any) => {
       return userData

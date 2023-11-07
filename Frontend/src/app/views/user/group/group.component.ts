@@ -38,7 +38,7 @@ export class GroupComponent {
 
     }
     currentUserUid: string = sessionStorage.getItem('uid') || '';
-    myChats=this.chatsService.getChatsByUser(''+this.currentUserUid);
+    myChats=this.usersService.contactsByDivision(''+this.currentUserUid);
   
     divisions=this.usersService.getAllDivisions() ;
 
