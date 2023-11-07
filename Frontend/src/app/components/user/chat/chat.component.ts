@@ -87,7 +87,8 @@ export class ChatComponent implements OnInit {
     });
     this.getCurrentUserId();
     this.listenForMessages();
-    //this.loadMessages()
+    this.loadMessages()
+    this.scrollToBottom()
   }
 
   onScroll(event: Event): void {
@@ -152,8 +153,8 @@ export class ChatComponent implements OnInit {
                 console.log("id sender", this.currentUserID);
                 // Envoi du message via le socket
                 this.socketService.sendMessage(message, targetUserId, sharedKey, chatId, this.currentUserID, 'text');
-                this.listenForMessages()
-                this.loadMessages()
+                //this.listenForMessages()
+                //this.loadMessages()
                 this.messageControl.reset();
               } else {
                 console.error("Le targetUserId est indéfini, impossible d'envoyer le message.");
@@ -193,12 +194,10 @@ export class ChatComponent implements OnInit {
       });
   }
   scrollToBottom(): void {
-    setTimeout(() => {
-      if (this.messageContainer) {
-        const element = this.messageContainer.nativeElement as HTMLElement;
-        element.scrollTop = element.scrollHeight;
-      }
-    }, 0);
+    if (this.messageContainer) {
+      const element = this.messageContainer.nativeElement as HTMLElement;
+      element.scrollTop = element.scrollHeight;
+    }
   }
     
 

@@ -1,5 +1,12 @@
 const admin = require('firebase-admin');
 const User = require("../models/user");
+const Chat=require('../models/chat')
+const Message = require("../models/message")
+const { sharedKey, decryptMessage, decryptPrivateKey } = require("../config/generate-key")
+const EncryptionKey = require("../models/encryption-key");
+const encryptionKey = process.env.ENCRYPTION_KEY;
+const ivKey = process.env.IV_KEY;
+
 
 module.exports = {
 
@@ -128,9 +135,155 @@ module.exports = {
       res.status(500).json({ error: 'Erreur lors de la mise à jour du statut, de l\'heure de connexion et de l\'heure de déconnexion' });
     }
   },
+  //liste des contacts dans la meme division de l'utilisateur 
+  async listContactsInSameDivision(req, res) {
+    try {
+      const uid = req.params.uid;
+      const user = await User.findOne({ uid });
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found." });
+      }
+  
+      const divisionName = user.division;
+  
+      const usersInSameDivision = await User.find({ division: divisionName, uid: { $ne: uid } });
+  
+      if (usersInSameDivision.length === 0) {
+        return res.status(404).json({ message: "No users found in the same division." });
+      }
+  
+      const contactList = await Promise.all(
+        usersInSameDivision.map(async (contactUser) => {
+          const contactChats = await Chat.find({ users: { $all: [user._id, contactUser._id] } });
+          const lastMessageInfo = {
+            sentAt: null,
+            content: null
+          };
+  
+          if (contactChats.length > 0) {
+            const lastMessage = await Message.findOne({ chat: contactChats[0]._id })
+              .sort({ sentAt: -1 })
+              .exec();
+  
+            if (lastMessage) {
+              const sharedKey = contactChats[0].sharedKey;
+              const msg = lastMessage.content;
+              const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
+              const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
+  
+              lastMessageInfo.sentAt = lastMessage.sentAt;
+              lastMessageInfo.content = decryptedMessage;
+            }
+          }
+  
+          return {
+            lastMessage: lastMessageInfo,
+            users: [contactUser], // Exclude the current user and include only the contactUser
+            chatId: contactChats.length > 0 ? contactChats[0]._id : null,
+            sharedKey: contactChats.length > 0 ? contactChats[0].sharedKey : null
+          };
+        })
+      );
+  
+      res.status(200).json(contactList);
+    } catch (error) {
+      console.error('Error while listing contacts in the same division:', error);
+      res.status(500).json({ error: 'Error while listing contacts in the same division' });
+    }
+  },
 
+  //liste des contacts ddans les autres divisions de l'utilisateur
+  async contactsByDivision(req, res) {
+    try {
+      const uid = req.params.uid;
+      const user = await User.findOne({ uid });
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found." });
+      }
+  
+      const divisionName = user.division;
+  
+      const usersInDifferentDivision = await User.find({ division: { $ne: divisionName } });
+  
+      if (usersInDifferentDivision.length === 0) {
+        return res.status(404).json({ message: "No users found in a different division." });
+      }
+  
+      const contactList = await Promise.all(
+        usersInDifferentDivision.map(async (contactUser) => {
+          const contactChats = await Chat.find({
+            users: { $all: [user._id, contactUser._id] },
+            autorised: true // Filter by the authorized field
+          });
+  
+          if (contactChats.length === 0) {
+            return null; // Exclude users without authorized chats
+          }
+  
+          const lastMessageInfo = {
+            sentAt: null,
+            content: null
+          };
+  
+          const lastMessage = await Message.findOne({ chat: contactChats[0]._id })
+            .sort({ sentAt: -1 })
+            .exec();
+  
+          if (lastMessage) {
+            const sharedKey = contactChats[0].sharedKey;
+            const msg = lastMessage.content;
+            const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
+            const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
+  
+            lastMessageInfo.sentAt = lastMessage.sentAt;
+            lastMessageInfo.content = decryptedMessage;
+          }
+  
+          return {
+            lastMessage: lastMessageInfo,
+            users: [contactUser], // Exclude the current user and include only the contactUser
+            chatId: contactChats[0]._id,
+            sharedKey: contactChats[0].sharedKey
+          };
+        })
+      );
+  
+      const filteredContactList = contactList.filter((contact) => contact !== null);
+  
+      res.status(200).json(filteredContactList);
+    } catch (error) {
+      console.error('Error while listing contacts in a different division:', error);
+      res.status(500).json({ error: 'Error while listing contacts in a different division' });
+    }
+  }
+  
+  
+  
+  
+  
 }
+const formatSentAt = (sentAt) => {
+  const currentDate = new Date();
+  const lastMessageDate = new Date(sentAt);
 
+  if (currentDate.toDateString() === lastMessageDate.toDateString()) {
+    // Aujourd'hui : afficher l'heure uniquement
+    const hours = lastMessageDate.getHours();
+    const minutes = lastMessageDate.getMinutes();
+    return `${hours}:${minutes}`;
+  } else if (new Date(currentDate - 24 * 60 * 60 * 1000).toDateString() === lastMessageDate.toDateString()) {
+    // Hier : afficher "Hier"
+    return 'Hier';
+  } else {
+    // Date antérieure à hier : afficher la date sans l'heure
+    const day = lastMessageDate.getDate();
+    const month = lastMessageDate.getMonth() + 1;
+    const year = lastMessageDate.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+};
 // const generateToken = (userId) => {
 //   const token = jwt.sign({ userId }, tokenKey, { expiresIn: '1h' }); // Vous pouvez définir une durée d'expiration appropriée
 //   return token;

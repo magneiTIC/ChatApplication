@@ -10,6 +10,8 @@ router.get("/:uid",ChatCtrl.getChatsByUser)
 router.post("/addMessage/:chatId", ChatCtrl.addMessageToChat);
 router.post("/addMedia/:chatId",uploadFileMiddleware, ChatCtrl.addMediaToChat);
 
-router.post("/createExternalDivisionChat",ChatCtrl.createChatWithExternalAgent)
+router.post("/createExternalDivisionChat",ChatCtrl.createChatWithExternalAgent);
+router.put('/chat/:chatId/blockMessages', ChatCtrl.blockMessagesInChat);
+
 
 module.exports=router;

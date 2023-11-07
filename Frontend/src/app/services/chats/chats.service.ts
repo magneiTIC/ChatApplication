@@ -23,6 +23,15 @@ export class ChatsService {
       )
   }
 
+  blockMessagesInChat(chatId:string){
+    return this.http
+    .post<any>(this.apiUrl + `/chat/${chatId}/blockMessage,`, {"chatId":chatId})
+    .pipe(
+      map((userData: any) => {
+        return userData
+      })
+    )
+  }
 
   getChatsByUser(id: string) {
     return this.http
@@ -31,7 +40,7 @@ export class ChatsService {
         map((userData: any) => {
           return userData
         })
-
+ 
       )
 
   }

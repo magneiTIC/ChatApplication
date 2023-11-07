@@ -72,8 +72,29 @@ export class UsersService implements OnInit {
       )
   }
 
- 
+ listContactsInSameDivision(uid:string){
+  return this.http
+      .get<any>(this.apiUrl + `/chat/contacts/${uid}`)
+      .pipe(
+        map((userData: any) => {
+          return userData
+        })
 
+      )
+
+ }
+contactsByDivision(uid:string){
+
+  return this.http
+  .get<any>(this.apiUrl + `/chat/contactsByDivision/${uid}`)
+  .pipe(
+    map((userData: any) => {
+      return userData
+    })
+
+  )
+
+}
 
   countDirectors() {
     this.http.get<{ numberOfDirectors: number }>(`${this.apiUrl}/admin/count-directors`)
@@ -88,4 +109,6 @@ export class UsersService implements OnInit {
        const numberOfAgents = response.numberOfAgents;
       });
   }
+
+
 }

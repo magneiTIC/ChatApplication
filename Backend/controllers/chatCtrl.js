@@ -50,23 +50,45 @@ module.exports = {
       res.status(500).json({ error: 'Erreur lors de la création de la conversation' });
     }
   },
-  
-  async  createChatWithExternalAgent(req, res) {
+
+  //bloquer une conversation 
+  async blockMessagesInChat(req, res) {
     try {
-      const { emailUserA, emailUserB} = req.body; // Remplacez par les noms de vos champs
+      const { chatId } = req.params; // Vous pouvez passer l'ID de la conversation dans les paramètres de l'URL
+      const chat = await Chat.findById(chatId);
+
+      if (!chat) {
+        return res.status(404).json({ error: 'Conversation non trouvée.' });
+      }
+
+      // Mettez à jour l'attribut `authorized` de la conversation à false
+      chat.autorised = false;
+      await chat.save();
+
+      return res.status(200).json({ message: 'Messages bloqués avec succès dans la conversation.' });
+    } catch (error) {
+      console.log("Erreur lors du blocage des messages dans la conversation", error);
+      res.status(500).json({ error: 'Erreur lors du blocage des messages dans la conversation' });
+    }
+  },
+
+  //creation d'une conversation entre deux agents qui ne sont pas dans la même division
+  async createChatWithExternalAgent(req, res) {
+    try {
+      const { emailUserA, emailUserB } = req.body; // Remplacez par les noms de vos champs
       const userA = await Users.findOne({ email: emailUserA });
       const userB = await Users.findOne({ email: emailUserB });
       console.log(`users: ${emailUserA} ${emailUserB}`)
-  
+
       if (!userA || !userB) {
         return res.status(404).json({ error: 'Un ou plusieurs utilisateurs introuvables.' });
       }
-  
-      const keysA = await EncryptionKey.findOne({userId: userA._id});
-      const keysB = await EncryptionKey.findOne({userId: userB._id});
+
+      const keysA = await EncryptionKey.findOne({ userId: userA._id });
+      const keysB = await EncryptionKey.findOne({ userId: userB._id });
       const sharedkeyA = await sharedKey(keysA.privateKey, keysB.publicKey)
       const sharedkeyB = await sharedKey(keysB.privateKey, keysA.publicKey)
-  
+
       if (sharedkeyA === sharedkeyB) {
         const newChat = new Chat({ users: [userA._id, userB._id], sharedKey: sharedkeyA });
         await newChat.save();
@@ -80,7 +102,7 @@ module.exports = {
       res.status(500).json({ error: 'Erreur lors de la création de la conversation' });
     }
   },
-  
+
 
   //Liste des conversations d'un user
   // async getChatsByUser(req, res) {
@@ -116,7 +138,7 @@ module.exports = {
   //             sentAt: lastMessage ? formatSentAt(lastMessage.sentAt) : null,
   //             content: lastMessage ? decryptedMessage : null, // Utilisez le content du dernier message ou null s'il n'y en a pas
   //           };
-            
+
   //         }
 
   //         return {
@@ -127,7 +149,7 @@ module.exports = {
   //           sharedKey: chat.sharedKey
   //         };
 
-          
+
   //       })
   //     );
 
@@ -141,40 +163,40 @@ module.exports = {
     try {
       const uid = req.params.uid;
       const user = await Users.findOne({ uid });
-  
+
       if (!user) {
         return res.status(404).json({ message: "Utilisateur introuvable." });
       }
-  
+
       // Recherchez les chats où l'utilisateur est membre et utilisez populate pour obtenir le nom du destinataire.
       const chats = await Chat.find({ users: user._id }).populate({
         path: 'users',
         select: 'username uid',
         match: { uid: { $ne: uid } }, // Exclure l'utilisateur actuel
       });
-  
+
       const filteredChats = chats.filter((chat) => chat.users.length > 0); // Supprimer les chats vides
-  
+
       const chatsWithLastMessages = await Promise.all(
         filteredChats.map(async (chat) => {
           const lastMessage = await Message.findOne({ chat: chat._id })
             .sort({ sentAt: -1 })
             .exec();
-  
+
           const sharedKey = chat.sharedKey;
           const lastMessageInfo = {
             sentAt: lastMessage ? formatSentAt(lastMessage.sentAt) : null,
             content: null, // Initialize with null
           };
-  
+
           if (lastMessage) {
             const msg = lastMessage.content;
             const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
             const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
-  
+
             lastMessageInfo.content = decryptedMessage;
           }
-  
+
           return {
             lastMessage: lastMessageInfo,
             users: chat.users,
@@ -183,14 +205,14 @@ module.exports = {
           };
         })
       );
-  
+
       res.status(200).json(chatsWithLastMessages);
     } catch (error) {
       console.log("Erreur d'affichage des conversations d'un user", error);
       res.status(500).json({ error: "Erreur lors de l'affichage des conversations d'un user" });
     }
   },
-  
+
 
   //peupler une conversation
   //   try {
@@ -316,7 +338,7 @@ module.exports = {
       if (!chat) {
         return res.status(404).json({ error: 'Conversation non trouvée' });
       }
-      if (chat.autorised== false ) {
+      if (chat.autorised == false) {
         return res.status(403).json({ error: 'Envoi de messages bloqué dans cette conversation.' });
       }
 
@@ -360,7 +382,7 @@ async function addMessageToChat(chatId, user, content, type) {
     if (!chat) {
       return { error: 'Conversation non trouvée' };
     }
-    if (chat.autorised== false ) {
+    if (chat.autorised == false) {
       return res.status(403).json({ error: 'Envoi de messages bloqué dans cette conversation.' });
     }
 
