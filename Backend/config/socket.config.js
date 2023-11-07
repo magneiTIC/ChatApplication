@@ -29,8 +29,8 @@ module.exports = io => {
           // Envoyez les messages non lus à l'utilisateur.
           messages.forEach((message) => {
             //socket.emit('chat-message', message);
-            console.log("Affichage des messages non lus");
           });
+          console.log("Affichage des messages non lus");
         })
         .catch(err => {
           console.log("Erreur lors du chargement des messages non lus", err);

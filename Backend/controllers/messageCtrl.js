@@ -46,62 +46,61 @@ module.exports = {
   async getMessagesByChat(req, res) {
     try {
       const chatId = req.params.chatId;
+      const offset = parseInt(req.query.offset) || 0; // Pagination offset
+    const limit = parseInt(req.query.limit) || 10;  // Pagination limit
+  
       const messages = await Message.find({ chat: chatId })
-        .sort({ sentAt: 'asc' })
-        .populate('user', 'uid')
-        .exec();
-
-      // Retrieve the chat with the given chatId
+      .sort({ sentAt: 'asc' })
+      .populate('user', 'uid')
+      .skip(offset)
+      .limit(limit)
+      .exec();
+  
       const chat = await Chat.findById(chatId);
-
+  
       if (!chat) {
-        return res.status(404).json('Chat not found');
+        return res.status(404).json({ error: 'Chat not found' });
       }
-
-      const formattedMessages = await Promise.all(messages.map(async (message) => {
+  
+      const decryptedMessages = new Map();
+  
+      for (const message of messages) {
         let messageData = {
           type: message.type,
           user: message.user.uid,
           sentAt: message.sentAt,
           status: message.status,
+          content: message.content, // Initialize with the original content
         };
-
-        //console.log('message content', message.content);
+  
         if (message.type === 'text' || message.type === 'quote') {
-          // Retrieve the sharedKey from the chat
           const sharedKey = chat.sharedKey;
           const msg = message.content;
-
-          // Decrypt the sharedKey using decryptPrivateKey, assuming it returns a valid shared key
-          const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
-          if (decryptedSharedKey) {
-            //console.log('true')
-            //console.log('decrypted shared key', decryptedSharedKey)
+  
+          try {
+            const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
             const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
+  
             if (decryptedMessage) {
-              // console.log('decrypted message', decryptedMessage)
               messageData.content = decryptedMessage;
-
             }
-
+          } catch (error) {
+            console.error('Error decrypting message:', error);
           }
-          // const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
-          //messageData.content = decryptedMessage;
-        } else if (message.type === 'file') {
-          //messageData.content = decryptedMessage;
         }
-
-        console.log('message data', messageData)
-        return messageData;
-
-      }));
-
+  
+        decryptedMessages.set(message._id, messageData);
+      }
+  
+      const formattedMessages = Array.from(decryptedMessages.values());
+  
       res.status(200).json(formattedMessages);
     } catch (error) {
       console.error(error);
-      res.status(500).json("Erreur lors de l'affichage de l'historique d'une conversation");
+      res.status(500).json({ error: "Erreur lors de l'affichage de l'historique d'une conversation" });
     }
   }
+  
 
 
 

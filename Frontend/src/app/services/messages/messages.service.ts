@@ -23,17 +23,16 @@ export class MessagesService {
       )
   }
 
-  getMessagesByChat(chatId: string) {
+  getMessagesByChat(chatId: string, page: number, pageSize: number) {
     return this.http
-      .get<any>(this.apiUrl + '/message/' + chatId)
+      .get<any>(`${this.apiUrl}/message/${chatId}?page=${page}&pageSize=${pageSize}`)
       .pipe(
         map((userData: any) => {
-          return userData
+          return userData;
         })
-
-      )
-
+      );
   }
+  
 
   getLastMessage(chatId: string) {
     return this.http.get<any>(this.apiUrl + 'message/lastMessage/' + chatId);

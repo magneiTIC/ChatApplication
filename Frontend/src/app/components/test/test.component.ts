@@ -50,7 +50,7 @@ export class TestComponent implements OnInit {
         this.chatId = chat.chatId;
         // console.log("chat id dans chat component: " + this.chatId);
         if (this.chatId) {
-          this.messages$ = this.messagesService.getMessagesByChat('' + this.chatId);
+          this.messages$ = this.messagesService.getMessagesByChat('' + this.chatId, 1, 10);
           console.log("selected chat", this.chatId)
 
         }
@@ -151,13 +151,13 @@ export class TestComponent implements OnInit {
     }
   }
   private listenForMessages() {
-    this.socketService.onMessageReceived((message: any) => {
-      // Assurez-vous que vous avez une valeur de chatId correcte avant de demander les messages.
+    this.socketService.onMessageReceived((encryptedMessage: any) => {
       if (this.chatId) {
-        this.messagesService.getMessagesByChat('' + this.chatId).subscribe((messages: any[]) => {
-          // Mise à jour de la liste des messages avec les nouveaux messages reçus via le socket.
-          console.log("listen for messages", messages);
-          this.messages$ = this.messages$ ? this.messages$.pipe(mergeMap(existingMessages => of([...existingMessages, ...messages]))) : of(messages);
+        this.messagesService.getMessagesByChat('' + this.chatId, 1, 10).subscribe((newMessages: any[]) => {
+          console.log("listen for messages", newMessages);
+          this.messages$ = this.messages$ ? this.messages$.pipe(
+            map(existingMessages => [...newMessages, ...existingMessages])
+          ) : of(newMessages);
         });
       }
     });

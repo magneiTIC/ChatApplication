@@ -5,6 +5,7 @@
       <h2 *ngIf="chat.username">{{ chat.username }}</h2>
     </div>
     <mat-divider></mat-divider>
+
     <div class="chat-messages" #messageContainer (scroll)="onScroll($event)">
       <ng-container *ngIf="messages$ | async as messages">
         <ng-container *ngFor="let message of messages; let i = index">
@@ -44,6 +45,8 @@
       </ng-container>
     </div>
 
+  
+    
     <div class="chat-input">
       <label for="file-input" class="file-button">
         <input type="file" id="file-input" style="display: none;" (change)="onFileSelected($event)">

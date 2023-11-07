@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable, map, mergeMap, of, scan, take, tap } from 'rxjs'; // Importez 'Observable' depuis RxJS
 import { ChatsService } from 'src/app/services/chats/chats.service';
@@ -27,7 +27,6 @@ export class ChatComponent implements OnInit {
     private messagesService: MessagesService,
     private socketService: SocketService,
     private authService: AuthService,
-    
 
   ) { // Écoutez l'événement de capture d'écran
     document.addEventListener('keydown', function (event) {
@@ -70,33 +69,25 @@ export class ChatComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
-
-
-
-
     this.chatsService.selectedChat$.subscribe((chat) => {
-      // console.log("Selected chat object:", chat);
       if (chat.chatId !== null && chat.username !== null) {
         this.chat = chat;
         this.chatId = chat.chatId;
         this.sharedKey = chat.sharedKey;
         console.log("sharedKey dans chat component: " + this.sharedKey);
         if (this.chatId) {
-          this.messages$ = this.messagesService.getMessagesByChat('' + this.chatId);
-          console.log("selected chat", this.chatId)
-          this.messages$.forEach((message) => {
-            // Faites quelque chose avec chaque message, par exemple :
-            console.log(message);
+          // Adjust the page and pageSize values as needed
+          this.messages$ = this.messagesService.getMessagesByChat('' + this.chatId, 1, 10);
+          this.messages$.subscribe((messages: any[]) => {
+            // Do something with each message, for example:
+            console.log(messages);
           });
-
         }
       }
     });
     this.getCurrentUserId();
-    this.listenForMessages()
-
-
+    this.listenForMessages();
+    this.loadMessages()
   }
 
   onScroll(event: Event): void {
@@ -147,21 +138,23 @@ export class ChatComponent implements OnInit {
             chats.forEach((chat) => {
               if (chat.chatId === chatId) {
                 targetChat = chat;
-                console.log('target chat',targetChat)
+                console.log('target chat', targetChat)
               }
             });
             if (targetChat) {
               // Ici, vous pouvez utiliser les données du targetChat, par exemple, pour obtenir l'ID du destinataire.
               const targetUserId = targetChat.users[0]._id;
               const sharedKey = targetChat.sharedKey
-              const chatId= targetChat.chatId
+              const chatId = targetChat.chatId
               //console.log(`sharedKey: ${sharedKey}`);
               if (targetUserId) {
                 console.log("message dans targetuserid", message);
                 console.log("id sender", this.currentUserID);
                 // Envoi du message via le socket
-                this.socketService.sendMessage(message, targetUserId, sharedKey,chatId,this.currentUserID,'text');
-                     this.messageControl.reset();
+                this.socketService.sendMessage(message, targetUserId, sharedKey, chatId, this.currentUserID, 'text');
+                this.listenForMessages()
+                this.loadMessages()
+                this.messageControl.reset();
               } else {
                 console.error("Le targetUserId est indéfini, impossible d'envoyer le message.");
               }
@@ -175,21 +168,41 @@ export class ChatComponent implements OnInit {
       });
     }
   }
+  
+
   private listenForMessages() {
-    this.socketService.onMessageReceived((encryptedMessage: any) => 
-    {
-        // Assurez-vous que vous avez une valeur de chatId correcte avant de traiter les messages déchiffrés.
-        if (this.chatId) {
-          this.messagesService.getMessagesByChat('' + this.chatId).subscribe((messages: any[]) => {
-            // Mise à jour de la liste des messages avec les nouveaux messages reçus via le socket.
-            console.log("listen for messages", messages);
-            this.messages$ = this.messages$ ? this.messages$.pipe(mergeMap(existingMessages => of([...existingMessages, this.messages$]))) : of([this.messages$]);
-          });
-        }
-      })
-   
+    this.socketService.onMessageReceived((encryptedMessage: any) => {
+      if (this.chatId) {
+        this.messagesService.getMessagesByChat('' + this.chatId, 1, 10).subscribe((newMessages: any[]) => {
+          console.log("listen for messages", newMessages);
+          this.messages$ = this.messages$ ? this.messages$.pipe(
+            map(existingMessages => [...newMessages, ...existingMessages])
+          ) : of(newMessages);
+          this.scrollToBottom();
+        });
+      }
+    });
   }
   
+  private loadMessages() {
+    this.messagesService.getMessagesByChat('' + this.chatId, 1, 10) // Charger les messages les plus récents
+      .subscribe((messages: any[]) => {
+        this.messages$ = of(messages);
+        // Faites défiler jusqu'au bas de la liste pour voir les derniers messages
+        this.scrollToBottom();
+      });
+  }
+  scrollToBottom(): void {
+    setTimeout(() => {
+      if (this.messageContainer) {
+        const element = this.messageContainer.nativeElement as HTMLElement;
+        element.scrollTop = element.scrollHeight;
+      }
+    }, 0);
+  }
+    
+
+
   markMessagesAsRead(chatId: string) {
     console.log('mark message as read ', chatId);
 
@@ -217,9 +230,9 @@ export class ChatComponent implements OnInit {
             if (targetChat) {
               const targetUserId = targetChat.users[0]._id;
               const sharedKey = targetChat.sharedKey
-              const chatId= targetChat.chatId
+              const chatId = targetChat.chatId
               console.log("chat id wesh :", chatId);
-              
+
               if (targetUserId) {
                 const formData = new FormData();
                 formData.append('chatId', targetChat.chatId);
@@ -227,7 +240,7 @@ export class ChatComponent implements OnInit {
                 formData.append('media', file);
                 formData.append('type', 'file'); // Set the type to 'file'
 
-                this.socketService.sendMessage(file, targetUserId, sharedKey,chatId,this.currentUserID,'file')
+                this.socketService.sendMessage(file, targetUserId, sharedKey, chatId, this.currentUserID, 'file')
               } else {
                 console.error("The targetUserId is undefined, unable to send the file.");
               }
@@ -250,7 +263,7 @@ export class ChatComponent implements OnInit {
       // Appelez la méthode sendFile avec le fichier sélectionné
       this.sendFile(this.selectedFile);
     }
-    
+
 
   }
 
@@ -265,7 +278,7 @@ export class ChatComponent implements OnInit {
       console.error("Une erreur s'est produite : ", error);
     }
   }
-  
+
 
 
 
