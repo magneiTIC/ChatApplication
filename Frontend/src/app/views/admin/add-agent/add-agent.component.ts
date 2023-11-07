@@ -33,7 +33,7 @@ addAgentForm!: FormGroup;
   
 
   onSubmit() {
-    const email= this.addAgentForm.value.email;
+   const email= this.addAgentForm.value.email;
    const division = "Police Judiciaire "
    const profile ='AGENT'
   
@@ -43,27 +43,15 @@ addAgentForm!: FormGroup;
       return;
     } else{console.log('validation correct')}
     if(this.addAgentForm.value.email == this.addAgentForm.value.email1){
-       // Créez un objet avec les données à envoyer à l'API Express
        console.log('email correct')
-     
-    const userData = {
-      email: this.addAgentForm.value.email,
-      division: "Police Judiciaire ",
-      profile:'Agent'
-    };
-   
-    // Utilisez le service AuthService pour envoyer les données
     this.authService.createUser(email,profile,division)
-    // .subscribe(
-    //   (response) => {
-    //     console.log('Inscription de l\'utilisateur commencée avec succès :', response);
-    //     // Gérez la réponse ici, par exemple, affichez un message de confirmation
-    //   },
-    //   (error) => {
-    //     console.error('Erreur lors de la tentative de début d\'inscription :', error);
-    //     // Gérez les erreurs ici
-    //   }
-    // );
+    .subscribe((userData) => {
+      // Vous pouvez traiter les données renvoyées ici
+      console.log('Utilisateur créé avec succès', userData);
+    }, (error) => {
+      console.error('Erreur lors de la création de l\'utilisateur', error);
+      // Gérez les erreurs ici
+    });
     }
    
   }

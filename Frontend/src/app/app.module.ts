@@ -13,7 +13,7 @@ import {MatSelectModule} from "@angular/material/select"
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { MatToolbarModule} from '@angular/material/toolbar'
 import{MatListModule} from '@angular/material/list'
-import{ } from '@angular/material/'
+import{MatDialogModule } from '@angular/material/dialog'
 import{ MatIconModule } from '@angular/material/icon';
 import { LoginComponent } from './views/auth/login/login.component';
 import { RegisterComponent } from './views/auth/register/register.component'
@@ -33,7 +33,7 @@ import { ContactsComponent } from './views/user/contacts/contacts.component';
 import { AddAgentComponent } from './views/admin/add-agent/add-agent.component';
 import { ErrorComponent } from './views/error/error.component';
 import { AuthorisationComponent } from './views/admin/authorisation/authorisation.component';
-
+import { FileViewerDialogComponent } from './components/file-viewer-dialog/file-viewer-dialog.component';
 
 
 const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
@@ -54,6 +54,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     AddAgentComponent,
     ErrorComponent,
     AuthorisationComponent,
+    FileViewerDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -68,6 +69,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     BrowserAnimationsModule,
     MatToolbarModule,
     MatIconModule,
+    MatDialogModule,
     MatListModule,
     MatSelectModule,
     HttpClientModule,

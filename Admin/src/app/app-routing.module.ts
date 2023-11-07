@@ -6,6 +6,7 @@ import { ListDirectorComponent } from './views/list-director/list-director.compo
 import { AddDirectorComponent } from './views/add-director/add-director.component';
 import { AddAgentComponent } from './views/add-agent/add-agent.component';
 import { InfoUserComponent } from './views/info-user/info-user.component';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 const routes: Routes = [
 
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: 'listeAgent', component: ListAgentComponent },
   { path: 'AjoutAgent', component: AddAgentComponent },
 
+  { path: 'side', component: SidebarComponent },
 
 
 ];

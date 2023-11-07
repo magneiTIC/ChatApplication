@@ -191,10 +191,15 @@ module.exports = {
 
           if (lastMessage) {
             const msg = lastMessage.content;
-            const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
-            const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
-
-            lastMessageInfo.content = decryptedMessage;
+  
+            // Conditionally skip decryption for "file" type messages
+            if (lastMessage.type !== "file") {
+              const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
+              const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
+              lastMessageInfo.content = decryptedMessage;
+            } else {
+              lastMessageInfo.content = msg; // No decryption for "file" type
+            }
           }
 
           return {
@@ -372,8 +377,9 @@ module.exports = {
     }
   },
 
-  addMessageToChat,
+  addMessageToChat
 }
+
 
 async function addMessageToChat(chatId, user, content, type) {
   try {
@@ -406,5 +412,47 @@ async function addMessageToChat(chatId, user, content, type) {
   } catch (error) {
     console.error(error);
     return { error: "Erreur lors de l'ajout du message à la conversation" };
+  }
+}
+
+
+async function addMediaToChat(req, res) {
+  try {
+    const chatId = req.params.chatId;
+    const { user, type } = req.body;
+    const media = req.file.path
+    const chat = await Chat.findById(chatId);
+
+    if (!chat) {
+      return res.status(404).json({ error: 'Conversation non trouvée' });
+    }
+
+    const messageData = {
+      user,
+      chat: chatId,
+      type,
+    };
+
+    if (['image', 'video', 'audio', 'file'].includes(type)) {
+
+      if (!media) {
+        console.error("Multer error: File not uploaded");
+        return res.status(500).json({ error: "Erreur lors de l'envoi du média" });
+      }
+
+      // Multer has stored the uploaded file in req.file
+      messageData.content = media;
+    }
+
+    const message = new Message(messageData);
+    await message.save();
+
+    chat.messages.push(message._id);
+    await chat.save();
+
+    res.status(200).json(chat);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
   }
 }

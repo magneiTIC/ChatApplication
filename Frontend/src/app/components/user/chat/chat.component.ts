@@ -6,8 +6,8 @@ import { MessagesService } from 'src/app/services/messages/messages.service';
 import { SocketService } from 'src/app/services/sockets/sockets.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import * as CryptoJS from 'crypto-js';
-
-
+import { MatDialog } from '@angular/material/dialog';
+import { FileViewerDialogComponent } from '../../file-viewer-dialog/file-viewer-dialog.component';
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
@@ -27,6 +27,7 @@ export class ChatComponent implements OnInit {
     private messagesService: MessagesService,
     private socketService: SocketService,
     private authService: AuthService,
+    private dialog:MatDialog,
 
   ) { // Écoutez l'événement de capture d'écran
     document.addEventListener('keydown', function (event) {
@@ -43,10 +44,26 @@ export class ChatComponent implements OnInit {
   messages$: Observable<any[]> = of([]);
   isPopupVisible = false;
   popupFileUrl: string | undefined;
-
+  
+  openFileViewerDialog(fileUrl: string) {
+    this.dialog.open(FileViewerDialogComponent, {
+      data: { fileUrl }, // Passer le contenu du fichier
+      width:'80%',
+      height:'80%'
+    });
+  }
   // openPopup(fileUrl: string) {
   //   this.isPopupVisible = true;
   //   this.popupFileUrl = fileUrl;
+  // }
+
+  // openDialog(fileRelativePath: string): void {
+  //   const dialogRef = this.dialog.open(FileViewerComponent, {
+  //     data: {
+  //       getFullFileUrl: this.getFullFileUrl.bind(this), // Pass the getFullFileUrl function
+  //       fileRelativePath,
+  //     },
+  //   });
   // }
 
   closePopup() {
@@ -184,6 +201,20 @@ export class ChatComponent implements OnInit {
       }
     });
   }
+
+  private listenForFiles() {
+    this.socketService.onFileReceived((encryptedMessage: any) => {
+      if (this.chatId) {
+        this.messagesService.getMessagesByChat('' + this.chatId, 1, 10).subscribe((newMessages: any[]) => {
+          console.log("listen for messages", newMessages);
+          this.messages$ = this.messages$ ? this.messages$.pipe(
+            map(existingMessages => [...newMessages, ...existingMessages])
+          ) : of(newMessages);
+          this.scrollToBottom();
+        });
+      }
+    });
+  }
   
   private loadMessages() {
     this.messagesService.getMessagesByChat('' + this.chatId, 1, 10) // Charger les messages les plus récents
@@ -239,8 +270,15 @@ export class ChatComponent implements OnInit {
                 formData.append('media', file);
                 formData.append('type', 'file'); // Set the type to 'file'
 
-                this.socketService.sendMessage(file, targetUserId, sharedKey, chatId, this.currentUserID, 'file')
-              } else {
+                this.socketService.sendFile(formData, targetUserId);
+
+                this.chatsService.addMediaToChat(targetChat.chatId, this.currentUserID, file, 'file') // Provide 'file' as the type
+                  .subscribe((addedMessage) => {
+                    console.log("Document added to the database:", addedMessage);
+                   this.listenForFiles();
+                    this.messageControl.reset();
+                  });
+                 } else {
                 console.error("The targetUserId is undefined, unable to send the file.");
               }
             } else {

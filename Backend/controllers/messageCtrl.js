@@ -1,10 +1,10 @@
 const Message = require('../models/message');
 const Chat = require('../models/chat')
 const User = require('../models/user')
+const mongoose=require('mongoose')
 const { decryptMessage, decryptPrivateKey } = require('../config/generate-key')
 const encryptionKey = process.env.ENCRYPTION_KEY;
 const ivKey = process.env.IV_KEY;
-const mongoose= require('mongoose')
 module.exports = {
   //Création d'un nouveau message
   // async createMessage(req,res){
@@ -47,19 +47,20 @@ module.exports = {
   async getMessagesByChat(req, res) {
     try {
       const chatId = req.params.chatId;
-
+  
       if (!mongoose.Types.ObjectId.isValid(chatId)) {
         return res.status(400).json({ error: 'Invalid chatId' });
       }
+      
       const offset = parseInt(req.query.offset) || 0; // Pagination offset
-    const limit = parseInt(req.query.limit) || 10;  // Pagination limit
+      const limit = parseInt(req.query.limit) || 10;  // Pagination limit
   
       const messages = await Message.find({ chat: chatId })
-      .sort({ sentAt: 'asc' })
-      .populate('user', 'uid')
-      .skip(offset)
-      .limit(limit)
-      .exec();
+        .sort({ sentAt: 'asc' })
+        .populate('user', 'uid')
+        .skip(offset)
+        .limit(limit)
+        .exec();
   
       const chat = await Chat.findById(chatId);
   
@@ -82,15 +83,17 @@ module.exports = {
           const sharedKey = chat.sharedKey;
           const msg = message.content;
   
-          try {
-            const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
-            const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
+          if (message.type !== 'file') {
+            try {
+              const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
+              const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
   
-            if (decryptedMessage) {
-              messageData.content = decryptedMessage;
+              if (decryptedMessage) {
+                messageData.content = decryptedMessage;
+              }
+            } catch (error) {
+              console.error('Error decrypting message:', error);
             }
-          } catch (error) {
-            console.error('Error decrypting message:', error);
           }
         }
   
@@ -105,7 +108,6 @@ module.exports = {
       res.status(500).json({ error: "Erreur lors de l'affichage de l'historique d'une conversation" });
     }
   }
-  
 
 
 

@@ -13,23 +13,48 @@ export class AuthService {
 
   constructor(private auth: Auth, private http: HttpClient, private socketService: SocketService) { }
 
-  async createUser(email: string, profile: string, division: string) {
-    return this.http.post<any>(`${this.apiUrl}/admin/create-user`, {
-      email,
-      profile,
-      division
-    })
-      .pipe(map(userData => {
-        return userData;
-      }))
-  }
-  // try{
-  //   this.http.post(`${this.apiUrl}/admin/create-user`, {email,profile,division});
-  //   return console.log('creation reussie');
-  // }catch(error){
-  //   console.error("Error creating user", error);
-  // }
 
+
+  createUser(email:string,profile:string,division:string) {
+    console.log('arrivé',email,profile,division);
+   
+      return this.http
+      .post<any>(this.apiUrl+'/admin/create-user',{
+        'email':email,
+        'profile':profile,
+        'division':division
+      }
+      )
+      .pipe(
+        map((userData: any )=>{
+        return userData
+        })
+      )
+
+      
+  }
+
+  // async createUser(email:string,profile:string,division:string) {
+  //   console.log('arrivé',email,profile,division);
+    
+  //   try{
+  //     return this.http
+  //     .post<any>(this.apiUrl+'/admin/create-user',{
+  //       'email':email,
+  //       'profile':profile,
+  //       'division':division
+  //     })
+  //     .pipe(
+  //       map((userData: any )=>{
+  //       return userData
+  //       })
+  //     )
+
+  //     }
+  //     catch(error){
+  //     console.error("Error creating user", error);
+  //   }
+  // }
 
   async isProfileConfigured(email: string) {
     try {

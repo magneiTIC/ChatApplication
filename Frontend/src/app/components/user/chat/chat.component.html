@@ -19,26 +19,27 @@
             <div class="message-bubble" *ngIf="message.type === 'text'">
 
               {{ message.content }}
+              
               <span class="chat-date">
                 {{ message.sentAt | date: 'HH:mm' }}
               </span>
-
+              <span [ngClass]="{'read-indicator': message.status === 'read', 'unread-indicator': message.status === 'unread'}">
+                <mat-icon *ngIf="message.status === 'read'">done</mat-icon>
+                <mat-icon *ngIf="message.status === 'unread'">done_all</mat-icon>
+              </span>
+            </div>
               <div class="message-bubble" *ngIf="message.type === 'file'">
-                <div *ngFor="let message of messages">
-                  <div *ngIf="message.type === 'file'">
-                    <a href="javascript:void(0)" (click)="openPopup(getFullFileUrl(message.content))" target="_blank">
-                      <mat-icon matSuffix>file_present</mat-icon>
-                      Fichier
-                    </a>
-                  </div>
+                <div *ngIf="message.type === 'file'">
+                  <a href="javascript:void(0)"  (click)="openFileViewerDialog(getFullFileUrl(message.content))" >
+                    <mat-icon matSuffix>file_present</mat-icon>
+                    Fichier
+                  </a>
                 </div>
-
-
                 <span class="chat-date">
                   {{ message.sentAt | date: 'HH:mm' }}
                 </span>
               </div>
-            </div>
+
 
           </div>
         </ng-container>
@@ -48,6 +49,13 @@
   
     
     <div class="chat-input">
+
+      <label for="file-input" class="file-button">
+        <input type="file" id="file-input" style="display: none;" (change)="onFileSelected($event)">
+
+        <mat-icon class="icon">image</mat-icon>
+      </label>
+
       <label for="file-input" class="file-button">
         <input type="file" id="file-input" style="display: none;" (change)="onFileSelected($event)">
 

@@ -38,9 +38,9 @@ export class SocketService {
     this.socket.emit('send-message', message, targetUserId,sharedKey,chatId,user,type);
   }
   
-  // sendFile(data: any,targetUserId:string) {
-  //   this.socket.emit('sent-file', data,targetUserId);
-  // }
+  sendFile(data: any,targetUserId:string) {
+    this.socket.emit('send-file', data,targetUserId);
+  }
 
   onMessageReceived(callback: (decryptedMessage: any) => void) {
     this.socket.on('chat-message', (encryptedMessage) => {
@@ -49,12 +49,12 @@ export class SocketService {
       callback(encryptedMessage);
     });
   }
-  // onFileReceived(callback: (data: any) => void) {
-  //   this.socket.on('file-received', (data)=>{
-  //     console.log("fichier reçu", data);
-  //     callback(data)
-  //   });
-  // }
+  onFileReceived(callback: (data: any) => void) {
+    this.socket.on('file-received', (data)=>{
+      console.log("fichier reçu", data);
+      callback(data)
+    });
+  }
 
   markMessagesAsRead(chatId: string) {
     this.socket.emit('mark-messages-as-read', chatId);

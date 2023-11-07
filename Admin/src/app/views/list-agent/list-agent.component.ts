@@ -9,6 +9,7 @@ import { UserService } from 'src/app/services/user/user.service';
 })
 export class ListAgentComponent  implements OnInit{
   ngOnInit(): void {
+    
   }
 
   constructor(

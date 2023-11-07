@@ -28,7 +28,10 @@
               "@angular/material/prebuilt-themes/indigo-pink.css",
                             "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/pdfjs-dist/build/pdf.js"
+
+            ]
             
           },
           "configurations": {
@@ -92,7 +95,10 @@
               "@angular/material/prebuilt-themes/indigo-pink.css",
                             "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/pdfjs-dist/build/pdf.js"
+
+            ]
           }
         }
       }

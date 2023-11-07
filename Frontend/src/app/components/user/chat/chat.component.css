@@ -167,10 +167,7 @@ mat-form-field{
     padding-bottom: 40px;
     margin-left: 5px;
     margin-right: 5px;
-
-    
   }
-
 
 
 
@@ -196,6 +193,26 @@ mat-form-field{
     width: 100%;
     height: 40px;
     resize: none;
+  }
+  .read-indicator {
+    color: green; /* Couleur pour les messages lus */
+  }
+  
+  .unread-indicator {
+    color: gray; /* Couleur pour les messages non lus */
+  }
+  
+  .message-bubble > .unread-indicator{
+    position: absolute;
+    bottom: 2px;
+    right: 8px;
+    font-size: 0.7rem;
+    color: rgba(0,0,0,0.7);
+
+  }
+  mat-icon {
+    
+    margin-left: 5px; /* Espacement entre l'icône et le texte du message */
   }
   
   .icon-button {
@@ -243,9 +260,9 @@ mat-form-field{
     margin-right: 10px;
   }
   
-  .send-button i {
+  .send-button  {
     font-size: 20px;
-    margin-left: 10px;
+    margin-left: 5px;
   }
   
   /* Style pour le focus sur le textarea */

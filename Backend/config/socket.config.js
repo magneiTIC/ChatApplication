@@ -76,6 +76,34 @@ module.exports = io => {
       }
     });
 
+    socket.on('send-file', async (message, targetUserId) => {
+      // Émettez le message à l'utilisateur emetteur, que ce soit en ligne ou hors ligne
+      await socket.emit('file-received', message);
+
+      const targetSocket = userSockets.get(targetUserId);
+      console.log("target socket id", targetSocket ? targetSocket.id : "N/A");
+
+      // Vérifiez si le socket de l'utilisateur cible existe
+      if (targetSocket) {
+        // Émettez le message à l'utilisateur cible
+        try {
+      
+          await socket.to(targetSocket.id).emit('file-received', message)
+          
+          //await targetSocket.emit('chat-message', message);
+          console.log("Message envoyé avec succès à l'utilisateur cible");
+
+          console.log("message ", message)
+        } catch (error) {
+          console.error("Erreur lors de l'émission du message à l'utilisateur cible:", error);
+        }
+      } else {
+        // L'utilisateur cible n'est pas en ligne, vous pouvez gérer cela comme vous le souhaitez
+        await socket.emit('file-received', message);
+        console.log("L'utilisateur cible n'est pas en ligne, vous pouvez prendre des mesures appropriées ici.");
+      }
+    });
+
 
     socket.on('close', (code, reason) => {
       console.log(`La connexion WebSocket a été fermée avec le code ${code} et la raison : ${reason}`);

@@ -14,6 +14,8 @@ export class SideComponent {
   
   constructor(private authService: AuthService, private auth: Auth, private router: Router) { }
 
+  profile =sessionStorage.getItem('profil');
+  
 logout() {
   this.authService.logout();
   this.auth.signOut();
