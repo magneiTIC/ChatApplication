@@ -87,7 +87,7 @@ export class ChatComponent implements OnInit {
     });
     this.getCurrentUserId();
     this.listenForMessages();
-    this.loadMessages()
+    //this.loadMessages()
   }
 
   onScroll(event: Event): void {

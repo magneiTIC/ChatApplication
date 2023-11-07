@@ -50,7 +50,37 @@ module.exports = {
       res.status(500).json({ error: 'Erreur lors de la création de la conversation' });
     }
   },
-
+  
+  async  createChatWithExternalAgent(req, res) {
+    try {
+      const { emailUserA, emailUserB} = req.body; // Remplacez par les noms de vos champs
+      const userA = await Users.findOne({ email: emailUserA });
+      const userB = await Users.findOne({ email: emailUserB });
+      console.log(`users: ${emailUserA} ${emailUserB}`)
+  
+      if (!userA || !userB) {
+        return res.status(404).json({ error: 'Un ou plusieurs utilisateurs introuvables.' });
+      }
+  
+      const keysA = await EncryptionKey.findOne({userId: userA._id});
+      const keysB = await EncryptionKey.findOne({userId: userB._id});
+      const sharedkeyA = await sharedKey(keysA.privateKey, keysB.publicKey)
+      const sharedkeyB = await sharedKey(keysB.privateKey, keysA.publicKey)
+  
+      if (sharedkeyA === sharedkeyB) {
+        const newChat = new Chat({ users: [userA._id, userB._id], sharedKey: sharedkeyA });
+        await newChat.save();
+        console.log("Conversation créée avec succès");
+        return res.status(200).json({ message: "Conversation créée avec succès" });
+      } else {
+        return res.status(400).json({ error: "Échec de génération de la clé partagée." });
+      }
+    } catch (error) {
+      console.log("Erreur lors de la création d'une conversation", error);
+      res.status(500).json({ error: 'Erreur lors de la création de la conversation' });
+    }
+  },
+  
 
   //Liste des conversations d'un user
   // async getChatsByUser(req, res) {
@@ -286,6 +316,9 @@ module.exports = {
       if (!chat) {
         return res.status(404).json({ error: 'Conversation non trouvée' });
       }
+      if (chat.autorised== false ) {
+        return res.status(403).json({ error: 'Envoi de messages bloqué dans cette conversation.' });
+      }
 
       const messageData = {
         user,
@@ -317,7 +350,7 @@ module.exports = {
     }
   },
 
-  addMessageToChat
+  addMessageToChat,
 }
 
 async function addMessageToChat(chatId, user, content, type) {
@@ -326,6 +359,9 @@ async function addMessageToChat(chatId, user, content, type) {
 
     if (!chat) {
       return { error: 'Conversation non trouvée' };
+    }
+    if (chat.autorised== false ) {
+      return res.status(403).json({ error: 'Envoi de messages bloqué dans cette conversation.' });
     }
 
     const messageData = {

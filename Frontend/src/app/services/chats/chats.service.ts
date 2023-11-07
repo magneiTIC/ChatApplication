@@ -12,15 +12,17 @@ export class ChatsService {
 
 
 
-  createChat() {
+   createChatWithExternalAgent(emailUserA:string,emailUserB:string) 
+    {
     return this.http
-      .post<any>(this.apiUrl + '', {})
+      .post<any>(this.apiUrl + `/chat/createExternalDivisionChat`, {"emailUserA": emailUserA,"emailUserB":emailUserB})
       .pipe(
         map((userData: any) => {
           return userData
         })
       )
   }
+
 
   getChatsByUser(id: string) {
     return this.http
