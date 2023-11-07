@@ -4,6 +4,7 @@ const User = require('../models/user')
 const { decryptMessage, decryptPrivateKey } = require('../config/generate-key')
 const encryptionKey = process.env.ENCRYPTION_KEY;
 const ivKey = process.env.IV_KEY;
+const mongoose= require('mongoose')
 module.exports = {
   //Création d'un nouveau message
   // async createMessage(req,res){
@@ -46,6 +47,10 @@ module.exports = {
   async getMessagesByChat(req, res) {
     try {
       const chatId = req.params.chatId;
+
+      if (!mongoose.Types.ObjectId.isValid(chatId)) {
+        return res.status(400).json({ error: 'Invalid chatId' });
+      }
       const offset = parseInt(req.query.offset) || 0; // Pagination offset
     const limit = parseInt(req.query.limit) || 10;  // Pagination limit
   

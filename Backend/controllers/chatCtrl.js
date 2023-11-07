@@ -7,6 +7,7 @@ const EncryptionKey = require("../models/encryption-key");
 const encryptionKey = process.env.ENCRYPTION_KEY;
 const ivKey = process.env.IV_KEY;
 
+
 const formatSentAt = (sentAt) => {
   const currentDate = new Date();
   const lastMessageDate = new Date(sentAt);
@@ -52,59 +53,114 @@ module.exports = {
 
 
   //Liste des conversations d'un user
+  // async getChatsByUser(req, res) {
+  //   try {
+  //     const uid = req.params.uid;
+  //     const user = await Users.findOne({ uid });
+
+  //     if (!user) {
+  //       return res.status(404).json({ message: "Utilisateur introuvable." });
+  //     }
+
+  //     // Recherchez les chats où l'utilisateur est membre et utilisez populate pour obtenir le nom du destinataire.
+  //     const chats = await Chat.find({ users: user._id }).populate({
+  //       path: 'users',
+  //       select: 'username uid',
+  //       match: { uid: { $ne: uid } }, // Exclure l'utilisateur actuel
+  //     });
+
+  //     const filteredChats = chats.filter((chat) => chat.users.length > 0); // Supprimer les chats vides
+
+  //     const chatsWithLastMessages = await Promise.all(
+  //       filteredChats.map(async (chat) => {
+  //         const lastMessage = await Message.findOne({ chat: chat._id })
+  //           .sort({ sentAt: -1 })
+  //           .exec();
+  //         if (lastMessage) {
+  //           const sharedKey = chat.sharedKey;
+  //           const msg = lastMessage.content;
+  //           const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
+  //           const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
+
+  //            lastMessageInfo = {
+  //             sentAt: lastMessage ? formatSentAt(lastMessage.sentAt) : null,
+  //             content: lastMessage ? decryptedMessage : null, // Utilisez le content du dernier message ou null s'il n'y en a pas
+  //           };
+            
+  //         }
+
+  //         return {
+  //           lastMessage: lastMessageInfo,
+  //           //sentAt:lastMessageInfo[1],
+  //           users: chat.users,
+  //           chatId: chat._id,
+  //           sharedKey: chat.sharedKey
+  //         };
+
+          
+  //       })
+  //     );
+
+  //     res.status(200).json(chatsWithLastMessages);
+  //   } catch (error) {
+  //     console.log("Erreur d'affichage des conversations d'un user", error);
+  //     res.status(500).json({ error: "Erreur lors de l'affichage des conversations d'un user" });
+  //   }
+  // },
   async getChatsByUser(req, res) {
     try {
       const uid = req.params.uid;
       const user = await Users.findOne({ uid });
-
+  
       if (!user) {
         return res.status(404).json({ message: "Utilisateur introuvable." });
       }
-
+  
       // Recherchez les chats où l'utilisateur est membre et utilisez populate pour obtenir le nom du destinataire.
       const chats = await Chat.find({ users: user._id }).populate({
         path: 'users',
         select: 'username uid',
         match: { uid: { $ne: uid } }, // Exclure l'utilisateur actuel
       });
-
+  
       const filteredChats = chats.filter((chat) => chat.users.length > 0); // Supprimer les chats vides
-
+  
       const chatsWithLastMessages = await Promise.all(
         filteredChats.map(async (chat) => {
           const lastMessage = await Message.findOne({ chat: chat._id })
             .sort({ sentAt: -1 })
             .exec();
+  
+          const sharedKey = chat.sharedKey;
+          const lastMessageInfo = {
+            sentAt: lastMessage ? formatSentAt(lastMessage.sentAt) : null,
+            content: null, // Initialize with null
+          };
+  
           if (lastMessage) {
-            const sharedKey = chat.sharedKey;
             const msg = lastMessage.content;
             const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
             const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
-
-            const lastMessageInfo = {
-              sentAt: lastMessage ? formatSentAt(lastMessage.sentAt) : null,
-              content: lastMessage ? decryptedMessage : null, // Utilisez le content du dernier message ou null s'il n'y en a pas
-            };
-            return {
-              lastMessage: lastMessageInfo,
-              users: chat.users,
-              chatId: chat._id,
-              sharedKey: chat.sharedKey
-            };
+  
+            lastMessageInfo.content = decryptedMessage;
           }
-
-          
-
-          
+  
+          return {
+            lastMessage: lastMessageInfo,
+            users: chat.users,
+            chatId: chat._id,
+            sharedKey: chat.sharedKey
+          };
         })
       );
-
+  
       res.status(200).json(chatsWithLastMessages);
     } catch (error) {
       console.log("Erreur d'affichage des conversations d'un user", error);
       res.status(500).json({ error: "Erreur lors de l'affichage des conversations d'un user" });
     }
   },
+  
 
   //peupler une conversation
   //   try {
