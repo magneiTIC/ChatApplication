@@ -25,7 +25,7 @@ export class GroupComponent {
   
     ngOnInit(): void {
       this.myChats.subscribe((chats: any) => {
-        console.log('mychats dans groupe',chats);
+        console.log('mychats dans groupe',chats)
         
       });
       this.chatsService.selectedChat$.subscribe((chat) => {
@@ -38,6 +38,13 @@ export class GroupComponent {
         console.log(division);
 
       });
+      this.myChats.subscribe((chats: any) => {
+        console.log('mychats 2',chats);
+
+        this.sortedChats = this.sortChatsByFirstLetter(chats);
+        console.log('sorted',this.sortedChats)
+      });
+
 
     }
     currentUserUid: string = sessionStorage.getItem('uid') || '';

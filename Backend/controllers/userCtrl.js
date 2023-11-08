@@ -210,10 +210,18 @@ module.exports = {
   
       const divisionName = user.division;
   
-      const usersInDifferentDivision = await User.find({ division: { $ne: divisionName } });
+      const contactChats = await Chat.find({
+        users: { $all: [user._id] },
+        autorised: true // Filtrer par le champ "autorised" dans les chats
+      });
+  
+      const usersInDifferentDivision = await User.find({
+        division: { $ne: divisionName },
+        _id: { $in: contactChats.map((chat) => chat.users[0]) } // Utiliser les utilisateurs des chats filtrés
+      });
   
       if (usersInDifferentDivision.length === 0) {
-        return res.status(404).json({ message: "No users found in a different division." });
+        return res.status(404).json({ message: "No authorized users found in a different division." });
       }
   
       const contactList = await Promise.all(
@@ -223,18 +231,16 @@ module.exports = {
             content: null
           };
   
-          const contactChats = await Chat.find({
-            users: { $all: [user._id, contactUser._id] },
-            autorised: true // Filter by the authorized field
-          });
+          // Trouver le chat correspondant à ce contact
+          const contactChat = contactChats.find((chat) => chat.users[1].equals(contactUser._id));
   
-          if (contactChats.length > 0) {
-            const lastMessage = await Message.findOne({ chat: contactChats[0]._id })
+          if (contactChat) {
+            const lastMessage = await Message.findOne({ chat: contactChat._id })
               .sort({ sentAt: -1 })
               .exec();
   
             if (lastMessage) {
-              const sharedKey = contactChats[0].sharedKey;
+              const sharedKey = contactChat.sharedKey;
               const msg = lastMessage.content;
               if (lastMessage.type !== "file") {
                 const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
@@ -251,8 +257,8 @@ module.exports = {
           return {
             lastMessage: lastMessageInfo,
             users: [contactUser], // Exclude the current user and include only the contactUser
-            chatId: contactChats.length > 0 ? contactChats[0]._id : null,
-            sharedKey: contactChats.length > 0 ? contactChats[0].sharedKey : null
+            chatId: contactChat ? contactChat._id : null,
+            sharedKey: contactChat ? contactChat.sharedKey : null
           };
         })
       );
@@ -261,13 +267,10 @@ module.exports = {
   
       res.status(200).json(filteredContactList);
     } catch (error) {
-      console.error('Error while listing contacts in a different division:', error);
-      res.status(500).json({ error: 'Error while listing contacts in a different division' });
+      console.error('Error while listing authorized contacts in a different division:', error);
+      res.status(500).json({ error: 'Error while listing authorized contacts in a different division' });
     }
   }
-  
-  
-  
   
   
 }
