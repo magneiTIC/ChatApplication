@@ -217,12 +217,13 @@ export class ChatComponent implements OnInit {
   }
   
   private loadMessages() {
-    this.messagesService.getMessagesByChat('' + this.chatId, 1, 10) // Charger les messages les plus récents
-      .subscribe((messages: any[]) => {
-        this.messages$ = of(messages);
-        // Faites défiler jusqu'au bas de la liste pour voir les derniers messages
-        this.scrollToBottom();
-      });
+    if (this.chatId) {
+      this.messagesService.getMessagesByChat('' + this.chatId, 1, 10)
+        .subscribe((messages: any[]) => {
+          this.messages$ = of(messages);
+          this.scrollToBottom();
+        });
+    }
   }
   scrollToBottom(): void {
     if (this.messageContainer) {

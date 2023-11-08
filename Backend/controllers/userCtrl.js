@@ -3,7 +3,6 @@ const User = require("../models/user");
 const Chat=require('../models/chat')
 const Message = require("../models/message")
 const { sharedKey, decryptMessage, decryptPrivateKey } = require("../config/generate-key")
-const EncryptionKey = require("../models/encryption-key");
 const encryptionKey = process.env.ENCRYPTION_KEY;
 const ivKey = process.env.IV_KEY;
 
@@ -156,17 +155,18 @@ module.exports = {
       const contactList = await Promise.all(
         usersInSameDivision.map(async (contactUser) => {
           const contactChats = await Chat.find({ users: { $all: [user._id, contactUser._id] } });
-          
-          if (contactChats.length > 0) {
-            const lastMessageInfo = {
-              sentAt: null,
-              content: null
-            };
   
+          // Default message info in case no conversation found
+          const lastMessageInfo = {
+            sentAt: null,
+            content: null
+          };
+  
+          if (contactChats.length > 0) {
             const lastMessage = await Message.findOne({ chat: contactChats[0]._id })
               .sort({ sentAt: -1 })
               .exec();
-            
+  
             if (lastMessage) {
               const sharedKey = contactChats[0].sharedKey;
               const msg = lastMessage.content;
@@ -177,17 +177,17 @@ module.exports = {
               } else {
                 lastMessageInfo.content = msg; // No decryption for "file" type
               }
-              
+  
               lastMessageInfo.sentAt = lastMessage.sentAt;
             }
-            
-            return {
-              lastMessage: lastMessageInfo,
-              users: [contactUser], // Exclude the current user and include only the contactUser
-              chatId: contactChats.length > 0 ? contactChats[0]._id : null,
-              sharedKey: contactChats.length > 0 ? contactChats[0].sharedKey : null
-            };
           }
+  
+          return {
+            lastMessage: lastMessageInfo,
+            users: [contactUser], // Exclude the current user and include only the contactUser
+            chatId: contactChats.length > 0 ? contactChats[0]._id : null,
+            sharedKey: contactChats.length > 0 ? contactChats[0].sharedKey : null
+          };
         })
       );
   
@@ -196,8 +196,7 @@ module.exports = {
       console.error('Error while listing contacts in the same division:', error);
       res.status(500).json({ error: 'Error while listing contacts in the same division' });
     }
-  }, 
-  
+  },
 
   //liste des contacts ddans les autres divisions de l'utilisateur
   async contactsByDivision(req, res) {

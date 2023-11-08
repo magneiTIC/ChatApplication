@@ -23,7 +23,7 @@ export class ChatsService {
       )
   }
 
-  blockMessagesInChat(chatId:string){
+  async blockMessagesInChat(chatId:string){
     return this.http
     .post<any>(this.apiUrl + `/chat/${chatId}/blockMessage,`, {"chatId":chatId})
     .pipe(

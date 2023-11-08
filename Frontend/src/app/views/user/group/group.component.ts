@@ -24,13 +24,18 @@ export class GroupComponent {
     }
   
     ngOnInit(): void {
+      this.myChats.subscribe((chats: any) => {
+        console.log('mychats dans groupe',chats);
+        
+      });
       this.chatsService.selectedChat$.subscribe((chat) => {
         
         this.chatId = chat.chatId;
       });
 
-      this.myChats.subscribe((chat: any) => {
-        console.log(chat);
+      this.divisions.subscribe((division: any) => {
+        this.sortedChats = this.sortChatsByFirstLetter(division);
+        console.log(division);
 
       });
 

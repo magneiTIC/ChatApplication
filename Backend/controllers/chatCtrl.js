@@ -34,6 +34,15 @@ module.exports = {
   async createChat(req, res) {
     try {
       const { idUsers } = req.body
+      // Vérifier si un chat existe déjà avec les mêmes deux utilisateurs
+      const existingChat = await Chat.findOne({
+        users: { $all: idUsers },
+      });
+
+      if (existingChat) {
+        console.log("La conversation existe déjà.");
+        return res.status(200).json({ message: "La conversation existe déjà" });
+      }
       const keysA = await EncryptionKey.findOne({ userId: idUsers[0] })
       const keysB = await EncryptionKey.findOne({ userId: idUsers[1] })
       const sharedkeyA = await sharedKey(keysA.privateKey, keysB.publicKey)
@@ -84,6 +93,16 @@ module.exports = {
         return res.status(404).json({ error: 'Un ou plusieurs utilisateurs introuvables.' });
       }
 
+      // Vérifier si un chat existe déjà avec les mêmes deux utilisateurs
+      const existingChat = await Chat.findOne({
+        users: { $all: [userA._id, userB._id] },
+      });
+
+      if (existingChat) {
+        console.log("La conversation existe déjà.");
+        return res.status(200).json({ message: "La conversation existe déjà" });
+      }
+
       const keysA = await EncryptionKey.findOne({ userId: userA._id });
       const keysB = await EncryptionKey.findOne({ userId: userB._id });
       const sharedkeyA = await sharedKey(keysA.privateKey, keysB.publicKey)
@@ -105,60 +124,6 @@ module.exports = {
 
 
   //Liste des conversations d'un user
-  // async getChatsByUser(req, res) {
-  //   try {
-  //     const uid = req.params.uid;
-  //     const user = await Users.findOne({ uid });
-
-  //     if (!user) {
-  //       return res.status(404).json({ message: "Utilisateur introuvable." });
-  //     }
-
-  //     // Recherchez les chats où l'utilisateur est membre et utilisez populate pour obtenir le nom du destinataire.
-  //     const chats = await Chat.find({ users: user._id }).populate({
-  //       path: 'users',
-  //       select: 'username uid',
-  //       match: { uid: { $ne: uid } }, // Exclure l'utilisateur actuel
-  //     });
-
-  //     const filteredChats = chats.filter((chat) => chat.users.length > 0); // Supprimer les chats vides
-
-  //     const chatsWithLastMessages = await Promise.all(
-  //       filteredChats.map(async (chat) => {
-  //         const lastMessage = await Message.findOne({ chat: chat._id })
-  //           .sort({ sentAt: -1 })
-  //           .exec();
-  //         if (lastMessage) {
-  //           const sharedKey = chat.sharedKey;
-  //           const msg = lastMessage.content;
-  //           const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
-  //           const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
-
-  //            lastMessageInfo = {
-  //             sentAt: lastMessage ? formatSentAt(lastMessage.sentAt) : null,
-  //             content: lastMessage ? decryptedMessage : null, // Utilisez le content du dernier message ou null s'il n'y en a pas
-  //           };
-
-  //         }
-
-  //         return {
-  //           lastMessage: lastMessageInfo,
-  //           //sentAt:lastMessageInfo[1],
-  //           users: chat.users,
-  //           chatId: chat._id,
-  //           sharedKey: chat.sharedKey
-  //         };
-
-
-  //       })
-  //     );
-
-  //     res.status(200).json(chatsWithLastMessages);
-  //   } catch (error) {
-  //     console.log("Erreur d'affichage des conversations d'un user", error);
-  //     res.status(500).json({ error: "Erreur lors de l'affichage des conversations d'un user" });
-  //   }
-  // },
   async getChatsByUser(req, res) {
     try {
       const uid = req.params.uid;
@@ -191,7 +156,7 @@ module.exports = {
 
           if (lastMessage) {
             const msg = lastMessage.content;
-  
+
             // Conditionally skip decryption for "file" type messages
             if (lastMessage.type !== "file") {
               const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
@@ -220,119 +185,6 @@ module.exports = {
 
 
   //peupler une conversation
-  //   try {
-  //     const { chatId, user, content } = req.body;
-  //     const chat = await Chat.findById(chatId);
-
-  //     if (!chat) {
-  //       return res.status(404).json({ error: 'Conversation non trouvée' });
-  //     }
-  //     const message = new Message({
-  //       user,
-  //       content,
-  //       chat: chatId,
-  //     });
-  //     await message.save();
-  //     chat.messages.push(message._id);
-  //     await chat.save();
-
-  //     res.status(200).json(chat);
-  //   } catch (error) {
-  //     res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
-  //   }
-  // },
-  // async addMessageToChat(req, res) {
-  //   try {
-  //     const chatId = req.params.chatId;
-  //     const { user, type, content, media } = req.body;
-  //     const chat = await Chat.findById(chatId);
-
-  //     if (!chat) {
-  //       return res.status(404).json({ error: 'Conversation non trouvée' });
-  //     }
-
-  //     const messageData = {
-  //       user,
-  //       chat: chatId,
-  //       type, // Le type de message (text, image, video, audio, file, quote, etc.)
-  //     };
-
-  //     if (type === 'text' || type === 'quote') {
-  //       // Si le message est de type texte ou quote, enregistrez le contenu du message
-  //       messageData.content = content;
-  //     } else if (type === 'image' || type === 'video' || type === 'audio' || type === 'file') {
-  //       // Si le message est de type image, vidéo, audio ou fichier, enregistrez le contenu du média
-  //       if (media && media.data) {
-  //         const reader = new FileReader();
-  //         reader.onload = async (e) => {
-  //           const arrayBuffer = e.target.result;
-  //           if (arrayBuffer) {
-  //             const bufferData = new Uint8Array(arrayBuffer);
-  //             messageData.media = {
-  //               data: Buffer.from(bufferData), // Convert ArrayBuffer to Buffer
-  //               contentType: media.contentType,
-  //             };
-
-  //             const message = new Message(messageData);
-  //             await message.save();
-
-  //             chat.messages.push(message._id);
-  //             await chat.save();
-
-  //             res.status(200).json(chat);
-  //           } else {
-  //             console.error("Failed to read the Blob data.");
-  //             res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
-  //           }
-  //     }}
-
-  //     const message = new Message(messageData);
-  //     await message.save();
-
-  //     chat.messages.push(message._id);
-  //     await chat.save();
-
-  //     res.status(200).json(chat);
-  //   } }
-  //   catch (error) {
-  //     console.error(error);
-  //     res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
-  //   }
-  // }
-
-
-  // async addMessageToChat(req, res) {
-  //   try {
-  //     const chatId = req.params.chatId;
-  //     const { user, type, content } = req.body;
-  //     const chat = await Chat.findById(chatId);
-
-  //     if (!chat) {
-  //       return res.status(404).json({ error: 'Conversation non trouvée' });
-  //     }
-
-  //     const messageData = {
-  //       user,
-  //       chat: chatId,
-  //       type,
-  //     };
-
-  //     if (type === 'text' || type === 'quote') {
-  //       messageData.content = content;
-  //     } 
-
-  //     const message = new Message(messageData);
-  //     await message.save();
-
-  //     chat.messages.push(message._id);
-  //     await chat.save();
-
-  //     res.status(200).json(chat);
-  //   } catch (error) {
-  //     console.error(error);
-  //     res.status(500).json({ error: "Erreur lors de l'ajout du message à la conversation" });
-  //   }
-  // },
   async addMediaToChat(req, res) {
     try {
       const chatId = req.params.chatId;

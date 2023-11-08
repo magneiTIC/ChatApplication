@@ -44,7 +44,7 @@ export class AuthorisationComponent implements OnInit {
     try {
       if (emailUserA && emailUserB)
       {
-        await this.chatsService.createChatWithExternalAgent(emailUserA,emailUserB)
+        this.chatsService.createChatWithExternalAgent(emailUserA,emailUserB)
         this.alert();
         this.router.navigate(['autorisation']);
         this.authForm.reset()
