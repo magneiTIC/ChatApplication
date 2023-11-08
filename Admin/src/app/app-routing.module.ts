@@ -14,6 +14,8 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'info/:uid', component: InfoUserComponent },
 
+  {path: 'add-agent', component: AddAgentComponent},
+
   
   { path: 'listeDirecteur', component: ListDirectorComponent },
   { path: 'AjoutDirecteur', component: AddDirectorComponent },

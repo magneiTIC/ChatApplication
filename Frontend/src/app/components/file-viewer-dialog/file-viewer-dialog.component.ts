@@ -1,7 +1,6 @@
 import { Component,Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-// import * as pdf from 'pdfjs-dist/build/pdf';
-import * as pdfjslib from 'pdfjs-dist';
+
 
 @Component({
 
