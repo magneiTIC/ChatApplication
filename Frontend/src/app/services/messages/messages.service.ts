@@ -33,6 +33,15 @@ export class MessagesService {
       );
   }
   
+countUnreadMessages(chatId:string,userId : string){
+  return this.http
+      .get<any>(`${this.apiUrl}/message/unread-count/${chatId}/${userId}`)
+      .pipe(
+        map((userData: any) => {
+          return userData;
+        })
+      );
+}
 
   getLastMessage(chatId: string) {
     return this.http.get<any>(this.apiUrl + 'message/lastMessage/' + chatId);

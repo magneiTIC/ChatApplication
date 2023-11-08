@@ -27,7 +27,7 @@ export class ChatComponent implements OnInit {
     private messagesService: MessagesService,
     private socketService: SocketService,
     private authService: AuthService,
-    private dialog:MatDialog,
+    private dialog: MatDialog,
 
   ) { // Écoutez l'événement de capture d'écran
     document.addEventListener('keydown', function (event) {
@@ -44,12 +44,12 @@ export class ChatComponent implements OnInit {
   messages$: Observable<any[]> = of([]);
   isPopupVisible = false;
   popupFileUrl: string | undefined;
-  
+
   openFileViewerDialog(fileUrl: string) {
     this.dialog.open(FileViewerDialogComponent, {
       data: { fileUrl }, // Passer le contenu du fichier
-      width:'80%',
-      height:'80%'
+      width: '80%',
+      height: '80%'
     });
   }
   // openPopup(fileUrl: string) {
@@ -100,14 +100,16 @@ export class ChatComponent implements OnInit {
             console.log(messages);
           });
           this.markMessagesAsRead(this.chatId)
+
         }
       }
     });
     this.getCurrentUserId();
+
+    //this.loadMessages()
     this.listenForMessages();
-    this.loadMessages()
     this.scrollToBottom()
-    
+
   }
 
   onScroll(event: Event): void {
@@ -188,7 +190,7 @@ export class ChatComponent implements OnInit {
       });
     }
   }
-  
+
 
   private listenForMessages() {
     this.socketService.onMessageReceived((encryptedMessage: any) => {
@@ -217,7 +219,7 @@ export class ChatComponent implements OnInit {
       }
     });
   }
-  
+
   private loadMessages() {
     if (this.chatId) {
       this.messagesService.getMessagesByChat('' + this.chatId, 1, 10)
@@ -233,12 +235,12 @@ export class ChatComponent implements OnInit {
       element.scrollTop = element.scrollHeight;
     }
   }
-    
+
 
 
   markMessagesAsRead(chatId: string) {
     console.log('mark message as read ', chatId);
-    this.socketService.markMessagesAsRead(chatId,this.currentUserID);
+    this.socketService.markMessagesAsRead(chatId, this.currentUserID);
   }
 
 
@@ -277,10 +279,10 @@ export class ChatComponent implements OnInit {
                 this.chatsService.addMediaToChat(targetChat.chatId, this.currentUserID, file, 'file') // Provide 'file' as the type
                   .subscribe((addedMessage) => {
                     console.log("Document added to the database:", addedMessage);
-                   this.listenForFiles();
+                    this.listenForFiles();
                     this.messageControl.reset();
                   });
-                 } else {
+              } else {
                 console.error("The targetUserId is undefined, unable to send the file.");
               }
             } else {

@@ -1,7 +1,7 @@
 const Message = require('../models/message');
 const Chat = require('../models/chat')
 const User = require('../models/user')
-const mongoose=require('mongoose')
+const mongoose = require('mongoose')
 const { decryptMessage, decryptPrivateKey } = require('../config/generate-key')
 const encryptionKey = process.env.ENCRYPTION_KEY;
 const ivKey = process.env.IV_KEY;
@@ -47,29 +47,29 @@ module.exports = {
   async getMessagesByChat(req, res) {
     try {
       const chatId = req.params.chatId;
-  
+
       if (!mongoose.Types.ObjectId.isValid(chatId)) {
         return res.status(400).json({ error: 'Invalid chatId' });
       }
-      
+
       const offset = parseInt(req.query.offset) || 0; // Pagination offset
       const limit = parseInt(req.query.limit) || 10;  // Pagination limit
-  
+
       const messages = await Message.find({ chat: chatId })
         .sort({ sentAt: 'asc' })
         .populate('user', 'uid')
         .skip(offset)
         .limit(limit)
         .exec();
-  
+
       const chat = await Chat.findById(chatId);
-  
+
       if (!chat) {
         return res.status(404).json({ error: 'Chat not found' });
       }
-  
+
       const decryptedMessages = new Map();
-  
+
       for (const message of messages) {
         let messageData = {
           type: message.type,
@@ -78,16 +78,16 @@ module.exports = {
           status: message.status,
           content: message.content, // Initialize with the original content
         };
-  
+
         if (message.type === 'text' || message.type === 'quote') {
           const sharedKey = chat.sharedKey;
           const msg = message.content;
-  
+
           if (message.type !== 'file') {
             try {
               const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
               const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
-  
+
               if (decryptedMessage) {
                 messageData.content = decryptedMessage;
               }
@@ -96,20 +96,42 @@ module.exports = {
             }
           }
         }
-  
+
         decryptedMessages.set(message._id, messageData);
       }
-  
+
       const formattedMessages = Array.from(decryptedMessages.values());
-  
+
       res.status(200).json(formattedMessages);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Erreur lors de l'affichage de l'historique d'une conversation" });
     }
+  },
+
+  async countUnreadMessages(req, res) {
+    try {
+      const chatId = req.params.chatId
+      const userId=req.params.userId
+      const user= await User.findById(userId)
+      const chat = await Chat.findById(chatId)
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' })
+      }
+      if (!chat) {
+        return res.status(404).json({ error: 'Chat not found' })
+      }
+      const unreadCount = await Message.countDocuments({
+        chatId: chatId,
+        user: { $ne: userId },
+        status: 'unread',
+      })
+      res.status(200).json({ message : `Nombre de messages non lus dans le chat ${unreadCount}`})
+    }
+    catch (error) {
+      console.error(`erreur lors du décompte du nombre de messages non lus d'un chat`, error)
+    }
   }
-
-
 
 
 }
