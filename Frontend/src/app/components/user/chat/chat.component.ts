@@ -99,6 +99,7 @@ export class ChatComponent implements OnInit {
             // Do something with each message, for example:
             console.log(messages);
           });
+          this.markMessagesAsRead(this.chatId)
         }
       }
     });
@@ -106,6 +107,7 @@ export class ChatComponent implements OnInit {
     this.listenForMessages();
     this.loadMessages()
     this.scrollToBottom()
+    
   }
 
   onScroll(event: Event): void {
@@ -236,8 +238,7 @@ export class ChatComponent implements OnInit {
 
   markMessagesAsRead(chatId: string) {
     console.log('mark message as read ', chatId);
-
-    this.socketService.markMessagesAsRead(chatId);
+    this.socketService.markMessagesAsRead(chatId,this.currentUserID);
   }
 
 

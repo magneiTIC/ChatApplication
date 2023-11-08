@@ -56,15 +56,15 @@ export class SocketService {
     });
   }
 
-  markMessagesAsRead(chatId: string) {
-    this.socket.emit('mark-messages-as-read', chatId);
+  markMessagesAsRead(chatId: string,userId:string) {
+    this.socket.emit('mark-messages-as-read', chatId,userId);
   }
 
   // Ajoutez cette méthode pour initialiser la connexion socket après la connexion réussie de l'utilisateur
   initializeSocketConnection() {
     // Fermez la connexion socket existante s'il y en a une
     if (this.socket) {
-      this.socket.disconnect();
+      this.socket.disconnect(); 
     }
   
     // Réinitialisez la connexion socket avec le nouvel utilisateur

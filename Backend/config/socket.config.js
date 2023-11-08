@@ -1,4 +1,5 @@
 const Message = require('../models/message');
+const Chat = require('../models/chat')
 const userSockets = new Map();
 const mongoose = require('mongoose');
 const { decryptPrivateKey, encryptMessage } = require('../config/generate-key')
@@ -48,8 +49,8 @@ module.exports = io => {
       const encryptedMessageObject = (await encryptMessage(message, decryptedSharedKey))
       console.log("message crypté",encryptedMessageObject.encryptedMessage)
       content=encryptedMessageObject.encryptedMessage
-       await addMessageToChat(chatId,user,content,type)
-      //console.log('message dans la base de données',msg)
+       const msg= await addMessageToChat(chatId,user,content,type)
+      console.log('message dans la base de données',msg)
       await socket.emit('chat-message', encryptedMessageObject.encryptedMessage);
 
       const targetSocket = userSockets.get(targetUserId);
@@ -109,56 +110,37 @@ module.exports = io => {
       console.log(`La connexion WebSocket a été fermée avec le code ${code} et la raison : ${reason}`);
     });
 
-    //Mettez à jour le statut des messages de la discussion sélectionnée comme "read" bgfre3
-    // socket.on('mark-messages-as-read', async (chatId) => {
-    //   try {
-    //     // Supposons que vous ayez une structure de données de message avec un champ "status" pour le suivi de l'état de lecture
-    //     const query = { chat: chatId, status: 'unread' }; // Recherchez les messages non lus (status = 'unread')
-
-    //     const messages = await Message.find(query);
-
-    //     // Marquez les messages comme "lus" dans la base de données
-    //     const updatePromises = messages.map(async (message) => {
-    //       message.status = 'read'; // Marquez le message comme lu (status = 'read')
-    //       await message.save();
-    //     });
-
-    //     await Promise.all(updatePromises);
-
-    //     // Informez le client que les messages ont été marqués comme "lus"
-    //     socket.emit('messages-marked-as-read', chatId);
-    //   } catch (error) {
-    //     // Gérer les erreurs de mise à jour
-    //     console.error("Erreur lors du marquage des messages comme lus :", error);
-    //   }
-    // });
     // Mettez à jour le statut des messages de la discussion sélectionnée comme "read"
-    socket.on('mark-messages-as-read', async (chatId) => {
+    socket.on('mark-messages-as-read', async (chatId, userId) => {
       try {
-        // Vérifiez si chatId est un ObjectId valide
-        if (chatId && mongoose.isValidObjectId(chatId)) {
-          const query = { chat: new mongoose.Types.ObjectId(chatId), status: 'unread' };
-
-          const messages = await Message.find(query);
-
-          // Marquez les messages comme "lus" dans la base de données
-          const updatePromises = messages.map(async (message) => {
-            message.status = 'read'; // Marquez le message comme lu (status = 'read')
-            await message.save();
-          });
-
-          await Promise.all(updatePromises);
-
-          // Informez le client que les messages ont été marqués comme "lus"
-          socket.emit('messages-marked-as-read', chatId);
-        } else {
-          console.log("Invalid chatId or chatId is null.");
+        //Vérifiez si chatId et userId sont des ObjectId valides
+        if (userId && mongoose.isValidObjectId(userId) && chatId && mongoose.isValidObjectId(chatId)){
+        // Recherchez le chat en utilisant l'ID du chat.
+        const chat = await Chat.findById(chatId);
+        if (!chat) {
+         
+        }
+         // Recherchez tous les messages dans le chat dont l'utilisateur n'est pas l'expéditeur
+        // et qui ont le statut 'unread'.
+        const messagesToMarkAsRead = await Message.updateMany(
+          {
+            chat: chat._id,
+            user: { $ne: userId }, // L'utilisateur n'est pas l'expéditeur.
+            status: 'unread',
+          },
+          { $set: { status: 'read' } } // Marquez les messages comme 'read'.
+        );
+    
+        if (messagesToMarkAsRead.nModified > 0) {
+          // Au moins un message a été marqué comme lu.
+          // Vous pouvez émettre un événement pour informer les clients que les messages ont été marqués comme lus.
+           socket.emit('messages-marked-as-read', messagesToMarkAsRead.nModified);
+        }
         }
       } catch (error) {
-        // Gérer les erreurs de mise à jour
         console.error("Erreur lors du marquage des messages comme lus :", error);
+
       }
     });
-
   });
 };

@@ -165,7 +165,7 @@ export class TestComponent implements OnInit {
   markMessagesAsRead(chatId: string) {
     console.log('mark message as read ', chatId);
 
-    this.socketService.markMessagesAsRead(chatId);
+    this.socketService.markMessagesAsRead(chatId,this.currentUserID);
   }
 
 
