@@ -17,6 +17,8 @@ router.post("/:uid/setUserStatus", userCtrl.setUserStatus)
 router.get('/contacts/:uid', userCtrl.listContactsInSameDivision)
 //route pour avoir la liste des contacts des autres divisoons d'un meme utilisateur 
 router.get('/contactsByDivision/:uid',userCtrl.contactsByDivision)
+//route pour avoir les autres divisions 
+router.get('/groups/:uid',userCtrl.getDivisionByUser)
 //route pour récupérer le profil de l'utilisateur
 // router.get("/:uid/checkUserProfile", middleware.checkUserProfile);
 

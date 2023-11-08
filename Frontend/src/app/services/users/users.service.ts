@@ -50,6 +50,16 @@ export class UsersService implements OnInit {
       })
     )
   }
+  getDivisionByUser(uid: string){
+    return this.http
+  .get<any>(this.apiUrl + `/groups/${uid}`)
+  .pipe(
+    map((userData: any) => {
+      return userData
+    })
+
+  )
+  }
 
   getAllUsersInSameDivision() {
     const uid = sessionStorage.getItem('uid');

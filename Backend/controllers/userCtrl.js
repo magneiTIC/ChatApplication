@@ -1,8 +1,8 @@
 const admin = require('firebase-admin');
 const User = require("../models/user");
-const Chat=require('../models/chat')
+const Chat = require('../models/chat')
 const Message = require("../models/message")
-const { sharedKey, decryptMessage, decryptPrivateKey } = require("../config/generate-key")
+const { decryptMessage, decryptPrivateKey } = require("../config/generate-key")
 const encryptionKey = process.env.ENCRYPTION_KEY;
 const ivKey = process.env.IV_KEY;
 
@@ -139,34 +139,34 @@ module.exports = {
     try {
       const uid = req.params.uid;
       const user = await User.findOne({ uid });
-  
+
       if (!user) {
         return res.status(404).json({ message: "User not found." });
       }
-  
+
       const divisionName = user.division;
-  
+
       const usersInSameDivision = await User.find({ division: divisionName, uid: { $ne: uid } });
-  
+
       if (usersInSameDivision.length === 0) {
         return res.status(404).json({ message: "No users found in the same division." });
       }
-  
+
       const contactList = await Promise.all(
         usersInSameDivision.map(async (contactUser) => {
           const contactChats = await Chat.find({ users: { $all: [user._id, contactUser._id] } });
-  
+
           // Default message info in case no conversation found
           const lastMessageInfo = {
             sentAt: null,
             content: null
           };
-  
+
           if (contactChats.length > 0) {
             const lastMessage = await Message.findOne({ chat: contactChats[0]._id })
               .sort({ sentAt: -1 })
               .exec();
-  
+
             if (lastMessage) {
               const sharedKey = contactChats[0].sharedKey;
               const msg = lastMessage.content;
@@ -177,11 +177,11 @@ module.exports = {
               } else {
                 lastMessageInfo.content = msg; // No decryption for "file" type
               }
-  
+
               lastMessageInfo.sentAt = lastMessage.sentAt;
             }
           }
-  
+
           return {
             lastMessage: lastMessageInfo,
             users: [contactUser], // Exclude the current user and include only the contactUser
@@ -190,7 +190,7 @@ module.exports = {
           };
         })
       );
-  
+
       res.status(200).json(contactList);
     } catch (error) {
       console.error('Error while listing contacts in the same division:', error);
@@ -203,42 +203,42 @@ module.exports = {
     try {
       const uid = req.params.uid;
       const user = await User.findOne({ uid });
-  
+
       if (!user) {
         return res.status(404).json({ message: "User not found." });
       }
-  
+
       const divisionName = user.division;
-  
+
       const contactChats = await Chat.find({
         users: { $all: [user._id] },
         autorised: true // Filtrer par le champ "autorised" dans les chats
       });
-  
+
       const usersInDifferentDivision = await User.find({
         division: { $ne: divisionName },
         _id: { $in: contactChats.map((chat) => chat.users[0]) } // Utiliser les utilisateurs des chats filtrés
       });
-  
+
       if (usersInDifferentDivision.length === 0) {
         return res.status(404).json({ message: "No authorized users found in a different division." });
       }
-  
+
       const contactList = await Promise.all(
         usersInDifferentDivision.map(async (contactUser) => {
           let lastMessageInfo = {
             sentAt: null,
             content: null
           };
-  
+
           // Trouver le chat correspondant à ce contact
           const contactChat = contactChats.find((chat) => chat.users[1].equals(contactUser._id));
-  
+
           if (contactChat) {
             const lastMessage = await Message.findOne({ chat: contactChat._id })
               .sort({ sentAt: -1 })
               .exec();
-  
+
             if (lastMessage) {
               const sharedKey = contactChat.sharedKey;
               const msg = lastMessage.content;
@@ -249,11 +249,11 @@ module.exports = {
               } else {
                 lastMessageInfo.content = msg; // No decryption for "file" type
               }
-  
+
               lastMessageInfo.sentAt = lastMessage.sentAt;
             }
           }
-  
+
           return {
             lastMessage: lastMessageInfo,
             users: [contactUser], // Exclude the current user and include only the contactUser
@@ -262,16 +262,38 @@ module.exports = {
           };
         })
       );
-  
+
       const filteredContactList = contactList.filter((contact) => contact !== null);
-  
+
       res.status(200).json(filteredContactList);
     } catch (error) {
       console.error('Error while listing authorized contacts in a different division:', error);
       res.status(500).json({ error: 'Error while listing authorized contacts in a different division' });
     }
-  }
+  },
+//liste des divisions par utilisateur excluant le sien
+  async getDivisionByUser(req, res) {
+    try {
+      const userUID = req.params.uid;
+      const user = await User.findOne({ uid: userUID }).exec();
   
+      if (!user) {
+        return res.status(404).json({ message: "User not found." });
+      }
+  
+      const userDivision = user.division;
+  
+      const divisions = await User.distinct('division').exec();
+  
+      // Exclure la division de l'utilisateur actuel
+      const userDivisions = divisions.filter(division => division !== userDivision);
+  
+      res.json(userDivisions);
+    } catch (error) {
+      console.error('Error while getting divisions by user:', error);
+      res.status(500).json({ error: 'Error while getting divisions by user' });
+    }
+  }
   
 }
 const formatSentAt = (sentAt) => {
