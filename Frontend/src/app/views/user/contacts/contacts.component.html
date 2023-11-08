@@ -25,7 +25,7 @@
                             <img [src]="'assets/images/images-placeholder.png'" alt="Contact 1" class="contact-avatar" />
                             <div class="contact-details">
                                 <p mat-line class="chat-title">
-                                <span class="chat-name">{{ chat.users[0].username }}</span>
+                                <span class="chat-name"  *ngFor="let chat of letter.value">{{ chat.users[0].username }}</span>
                                 </p>
                             </div>
                         </li>

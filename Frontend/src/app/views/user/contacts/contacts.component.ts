@@ -26,18 +26,13 @@ export class ContactsComponent implements OnInit{
     }
   
     ngOnInit(): void {
-      this.chatsService.selectedChat$.subscribe((chat) => {
-        
-
-        
-        this.chatId = chat.chatId;
-      });
-
+    
       this.myChats.subscribe((chats: any) => {
+        console.log(chats)
         this.sortedChats = this.sortChatsByFirstLetter(chats);
+        console.log('sorted',this.sortedChats)
       });
 
-      console.log('users',this.users)
       this.users.subscribe((user: any) => {
         console.log('users',user)
 

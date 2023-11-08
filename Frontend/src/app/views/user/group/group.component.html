@@ -20,15 +20,15 @@
 
 
 
-        <div *ngFor="let letter of sortedDivisions | keyvalue">
+        <div *ngFor="let letter of sortedChats | keyvalue">
           <div class="contact-group">
             <div class="contact-group-header">{{ letter.key }}</div>
             <ul>
-              <li *ngFor="let division of letter.value" class="contact-item">
+              <li *ngFor="let chat of letter.value" class="contact-item">
                 <img [src]="'assets/images/avatar.jpeg'" alt="Contact 1" class="contact-avatar" />
                 <div class="contact-details">
                   <p mat-line class="chat-title">
-                    <span class="contact-name">{{ division }}</span>
+                    <span class="contact-name">{{ chat.users[0].username }}</span>
                   </p>
                 </div>
               </li>

@@ -156,33 +156,38 @@ module.exports = {
       const contactList = await Promise.all(
         usersInSameDivision.map(async (contactUser) => {
           const contactChats = await Chat.find({ users: { $all: [user._id, contactUser._id] } });
-          const lastMessageInfo = {
-            sentAt: null,
-            content: null
-          };
-  
+          
           if (contactChats.length > 0) {
+            const lastMessageInfo = {
+              sentAt: null,
+              content: null
+            };
+  
             const lastMessage = await Message.findOne({ chat: contactChats[0]._id })
               .sort({ sentAt: -1 })
               .exec();
-  
+            
             if (lastMessage) {
               const sharedKey = contactChats[0].sharedKey;
               const msg = lastMessage.content;
-              const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
-              const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
-  
+              if (lastMessage.type !== "file") {
+                const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
+                const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
+                lastMessageInfo.content = decryptedMessage;
+              } else {
+                lastMessageInfo.content = msg; // No decryption for "file" type
+              }
+              
               lastMessageInfo.sentAt = lastMessage.sentAt;
-              lastMessageInfo.content = decryptedMessage;
             }
+            
+            return {
+              lastMessage: lastMessageInfo,
+              users: [contactUser], // Exclude the current user and include only the contactUser
+              chatId: contactChats.length > 0 ? contactChats[0]._id : null,
+              sharedKey: contactChats.length > 0 ? contactChats[0].sharedKey : null
+            };
           }
-  
-          return {
-            lastMessage: lastMessageInfo,
-            users: [contactUser], // Exclude the current user and include only the contactUser
-            chatId: contactChats.length > 0 ? contactChats[0]._id : null,
-            sharedKey: contactChats.length > 0 ? contactChats[0].sharedKey : null
-          };
         })
       );
   
@@ -191,7 +196,8 @@ module.exports = {
       console.error('Error while listing contacts in the same division:', error);
       res.status(500).json({ error: 'Error while listing contacts in the same division' });
     }
-  },
+  }, 
+  
 
   //liste des contacts ddans les autres divisions de l'utilisateur
   async contactsByDivision(req, res) {
@@ -213,39 +219,41 @@ module.exports = {
   
       const contactList = await Promise.all(
         usersInDifferentDivision.map(async (contactUser) => {
+          let lastMessageInfo = {
+            sentAt: null,
+            content: null
+          };
+  
           const contactChats = await Chat.find({
             users: { $all: [user._id, contactUser._id] },
             autorised: true // Filter by the authorized field
           });
   
-          if (contactChats.length === 0) {
-            return null; // Exclude users without authorized chats
-          }
+          if (contactChats.length > 0) {
+            const lastMessage = await Message.findOne({ chat: contactChats[0]._id })
+              .sort({ sentAt: -1 })
+              .exec();
   
-          const lastMessageInfo = {
-            sentAt: null,
-            content: null
-          };
+            if (lastMessage) {
+              const sharedKey = contactChats[0].sharedKey;
+              const msg = lastMessage.content;
+              if (lastMessage.type !== "file") {
+                const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
+                const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
+                lastMessageInfo.content = decryptedMessage;
+              } else {
+                lastMessageInfo.content = msg; // No decryption for "file" type
+              }
   
-          const lastMessage = await Message.findOne({ chat: contactChats[0]._id })
-            .sort({ sentAt: -1 })
-            .exec();
-  
-          if (lastMessage) {
-            const sharedKey = contactChats[0].sharedKey;
-            const msg = lastMessage.content;
-            const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
-            const decryptedMessage = await decryptMessage(msg, decryptedSharedKey, ivKey);
-  
-            lastMessageInfo.sentAt = lastMessage.sentAt;
-            lastMessageInfo.content = decryptedMessage;
+              lastMessageInfo.sentAt = lastMessage.sentAt;
+            }
           }
   
           return {
             lastMessage: lastMessageInfo,
             users: [contactUser], // Exclude the current user and include only the contactUser
-            chatId: contactChats[0]._id,
-            sharedKey: contactChats[0].sharedKey
+            chatId: contactChats.length > 0 ? contactChats[0]._id : null,
+            sharedKey: contactChats.length > 0 ? contactChats[0].sharedKey : null
           };
         })
       );

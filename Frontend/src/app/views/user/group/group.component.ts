@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ChatsService } from 'src/app/services/chats/chats.service';
 import { UsersService } from 'src/app/services/users/users.service';
-type SortedDivisions = { [key: string]: any[] };
+type SortedChats = { [key: string]: any[] };
 
 @Component({
   selector: 'app-group',
@@ -29,12 +29,10 @@ export class GroupComponent {
         this.chatId = chat.chatId;
       });
 
-      this.divisions.subscribe((division: any) => {
-        this.sortedDivisions = this.sortDivisionsByFirstLetter(division);
-        console.log(this.divisions);
+      this.myChats.subscribe((chat: any) => {
+        console.log(chat);
 
       });
-
 
     }
     currentUserUid: string = sessionStorage.getItem('uid') || '';
@@ -42,18 +40,32 @@ export class GroupComponent {
   
     divisions=this.usersService.getAllDivisions() ;
 
+    // users=this.usersService.listContactsInSameDivision(''+this.currentUserUid)
+    // sortedDivisions: SortedDivisions = {};
+    // sortDivisionsByFirstLetter(divisions: any) {
+    //   const sortedDivisions: any = {};
+    //   divisions.forEach((division: any) => {
+    //     console.log(divisions);
+    //     const firstLetter = division.charAt(0).toUpperCase();
+    //     if (!sortedDivisions[firstLetter]) {
+    //       sortedDivisions[firstLetter] = [];
+    //     }
+    //     sortedDivisions[firstLetter].push(division);
+    //   });
+    //   return sortedDivisions;
+    // }
 
-    sortedDivisions: SortedDivisions = {};
-    sortDivisionsByFirstLetter(divisions: any) {
-      const sortedDivisions: any = {};
-      divisions.forEach((division: any) => {
-        console.log(divisions);
-        const firstLetter = division.charAt(0).toUpperCase();
-        if (!sortedDivisions[firstLetter]) {
-          sortedDivisions[firstLetter] = [];
+    sortedChats: SortedChats = {};
+    sortChatsByFirstLetter(chats: any) {
+      const sortedChats: any = {};
+      chats.forEach((chat: any) => {
+        const firstLetter = chat.users[0].username.charAt(0).toUpperCase();
+        if (!sortedChats[firstLetter]) {
+          sortedChats[firstLetter] = [];
         }
-        sortedDivisions[firstLetter].push(division);
+        sortedChats[firstLetter].push(chat);
       });
-      return sortedDivisions;
+      return sortedChats;
     }
+
   }
