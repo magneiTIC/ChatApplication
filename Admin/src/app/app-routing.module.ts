@@ -7,22 +7,23 @@ import { AddDirectorComponent } from './views/add-director/add-director.componen
 import { AddAgentComponent } from './views/add-agent/add-agent.component';
 import { InfoUserComponent } from './views/info-user/info-user.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { AuthGuard } from './Guard/auth.guard';
 
 const routes: Routes = [
 
-  { path: '', pathMatch: 'full', component: ListDirectorComponent },
-  // { path: 'dashboard', component: DashboardComponent },
-  { path: 'info/:uid', component: InfoUserComponent },
+  { path: '', pathMatch: 'full', component: DashboardComponent, canActivate: [AuthGuard], data: { expectedProfile: 'ADMIN' } },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard], data: { expectedProfile: 'ADMIN' } },
+  { path: 'info/:uid', component: InfoUserComponent, canActivate: [AuthGuard], data: { expectedProfile: 'ADMIN' } },
 
-  {path: 'add-agent', component: AddAgentComponent},
+  {path: 'add-agent', component: AddAgentComponent, canActivate: [AuthGuard], data: { expectedProfile: 'ADMIN' }},
 
   
-  { path: 'listeDirecteur', component: ListDirectorComponent },
-  { path: 'AjoutDirecteur', component: AddDirectorComponent },
+  { path: 'listeDirecteur', component: ListDirectorComponent, canActivate: [AuthGuard], data: { expectedProfile: 'ADMIN' } },
+  { path: 'AjoutDirecteur', component: AddDirectorComponent,canActivate: [AuthGuard], data: { expectedProfile: 'ADMIN' } },
 
 
-  { path: 'listeAgent', component: ListAgentComponent },
-  { path: 'AjoutAgent', component: AddAgentComponent },
+  { path: 'listeAgent', component: ListAgentComponent, canActivate: [AuthGuard], data: { expectedProfile: 'ADMIN' } },
+  { path: 'AjoutAgent', component: AddAgentComponent, canActivate: [AuthGuard], data: { expectedProfile: 'ADMIN' } },
 
   { path: 'side', component: SidebarComponent },
 

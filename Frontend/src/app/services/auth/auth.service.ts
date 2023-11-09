@@ -13,11 +13,8 @@ export class AuthService {
 
   constructor(private auth: Auth, private http: HttpClient, private socketService: SocketService) { }
 
-
-
   createUser(email:string,profile:string,division:string) {
     console.log('arrivé',email,profile,division);
-   
       return this.http
       .post<any>(this.apiUrl+'/admin/create-user',{
         'email':email,
@@ -29,9 +26,7 @@ export class AuthService {
         map((userData: any )=>{
         return userData
         })
-      )
-
-      
+      )   
   }
 
   // async createUser(email:string,profile:string,division:string) {
@@ -60,7 +55,7 @@ export class AuthService {
     try {
       const response = await this.http.post<{ isProfileConfigured: boolean, profil: any, division: any } | undefined>(`${this.apiUrl}/users/isProfileConfigured`, { email }).toPromise();
       if (response) {
-        sessionStorage.setItem('profil', response.profil);
+        // sessionStorage.setItem('profil', response.profil);
         sessionStorage.setItem('division', response.division);
         return response.isProfileConfigured;
       } else {
@@ -165,8 +160,10 @@ export class AuthService {
     const userId = sessionStorage.getItem('uid');
     return this.http.get(`${this.apiUrl}/users/${userId}/checkUserProfile`).toPromise()
       .then((response: any) => {
+        console.log("RESPONSE: " + response.profile)
         if (response && response.profile === profile) {
-          sessionStorage.setItem('profile', profile);
+          console.log("RESPONSE: " + response.profile)
+          sessionStorage.setItem('profil', profile);
           return true;
         } else {
           return false;

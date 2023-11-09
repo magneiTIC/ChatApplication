@@ -1,30 +1,40 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Auth, signInWithEmailAndPassword } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  constructor() { }
+  apiUrl = 'http://localhost:3000'
 
-  // async login(email: string, password: string) {
-  //   if (!email || !password) {
-  //     console.error("L'email et le mot de passe sont requis.");
-  //     return null;
-  //   }
-  //   try {
-  //     const userCredentials = await signInWithEmailAndPassword(this.auth, email, password);
-  //     const user = userCredentials.user;
-  //     const idToken = await user.getIdToken();
-  //     console.log("AUTHTOKEN", idToken);
-  //     sessionStorage.setItem('uid', user.uid);
-  //     sessionStorage.setItem('authToken', idToken); 
-  //     if (user.email) sessionStorage.setItem('email', user.email);
-  //     this.setUserStatus('connecté',user.uid);
-  //     return user;
-  //   } catch (error) {
-  //     console.error('Erreur de connexion :', error);
-  //     return null;
-  //   }
-  // }
+  constructor(private auth: Auth, private http: HttpClient) { }
+
+  authenticate(email: string, password: string) {
+    return signInWithEmailAndPassword(this.auth,email, password);
+  }
+ 
+  async hasProfile(profile: string) {
+    const userId = sessionStorage.getItem('uid');
+    return this.http.get(`${this.apiUrl}/users/${userId}/checkUserProfile`).toPromise()
+      .then((response: any) => {
+        if (response && response.profile === profile) {
+          sessionStorage.setItem('profile', profile);
+          return true;
+        } else {
+          return false;
+        }
+      })
+      .catch((error: any) => {
+        console.error('Erreur lors de la vérification du profil :', error);
+        return false;
+      });
+  }
+
+  isUserLoggedIn(): boolean {
+    return !!this.auth.currentUser;
+  }
+
+  addDirector() {}
 }

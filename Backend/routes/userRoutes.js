@@ -1,6 +1,6 @@
 const express = require("express");
 const userCtrl = require("../controllers/userCtrl");
-// const middleware = require("../middleware/middleware");
+const middleware = require("../middleware/middleware");
 const router = express.Router();
 
 // Route pour se connecter en tant que utilisateur
@@ -20,6 +20,6 @@ router.get('/contactsByDivision/:uid',userCtrl.contactsByDivision)
 //route pour avoir les autres divisions 
 router.get('/groups/:uid',userCtrl.getDivisionByUser)
 //route pour récupérer le profil de l'utilisateur
-// router.get("/:uid/checkUserProfile", middleware.checkUserProfile);
+router.get("/:uid/checkUserProfile", middleware.checkUserProfile);
 
 module.exports = router;

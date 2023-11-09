@@ -2,7 +2,7 @@ const Chat = require("../models/chat")
 const Message = require("../models/message")
 const Users = require("../models/user")
 const { uploadFileMiddleware } = require("./upload")
-const { sharedKey, decryptMessage, decryptPrivateKey } = require("../config/generate-key")
+const { sharedKey, decryptMessage, decryptPrivateKey } = require("../config/generate-key0")
 const EncryptionKey = require("../models/encryption-key");
 const encryptionKey = process.env.ENCRYPTION_KEY;
 const ivKey = process.env.IV_KEY;
@@ -232,7 +232,6 @@ module.exports = {
   addMessageToChat
 }
 
-
 async function addMessageToChat(chatId, user, content, type) {
   try {
     const chat = await Chat.findById(chatId);
@@ -266,7 +265,6 @@ async function addMessageToChat(chatId, user, content, type) {
     return { error: "Erreur lors de l'ajout du message à la conversation" };
   }
 }
-
 
 async function addMediaToChat(req, res) {
   try {

@@ -23,11 +23,11 @@ module.exports = {
                 isConfigured: false,
             });
             await user.save();
-            const { publicKey, encryptedPrivateKey } = await getSecretKey() ;
+            const { publicKey, encryptedPrivateKey } = await getSecretKey();
             const encryptionKey = new EncryptionKey({
-                userId: user._id, 
-                privateKey: encryptedPrivateKey, 
-                publicKey: publicKey, 
+                userId: user._id,
+                privateKey: encryptedPrivateKey,
+                publicKey: publicKey,
             });
             await encryptionKey.save();
             const userProfile = user.profile;
@@ -41,8 +41,8 @@ module.exports = {
     async getAgentByUID(req, res) {
         try {
             const uid = req.params.uid;
-            const user = await User.findOne({ uid:uid });
-        
+            const user = await User.findOne({ uid: uid });
+
             if (!user) {
                 return res.status(404).json({ message: "Utilisateur introuvable." });
             } else {
@@ -94,8 +94,6 @@ module.exports = {
         res.json(total)
 
     },
-
-
 
 }
 

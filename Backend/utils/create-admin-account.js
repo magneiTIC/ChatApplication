@@ -25,7 +25,7 @@ async function createAdmin() {
       uid: user.uid, 
     });
     await adminUser.save();
-    console.log('Compte administrateur créé avec succès', user.getToken());
+    console.log('Compte administrateur créé avec succès', user.getIdToken());
   } catch (error) {
     console.error('Erreur lors de la création du compte administrateur', error);
   }

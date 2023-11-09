@@ -20,24 +20,15 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent,  },
 
-  { path: 'add-agent', component: AddAgentComponent , canActivate: [AuthGuard], data: { expectedProfile: 'DIRECTEUR' }},
-  { path: 'autorisation', component: AuthorisationComponent, canActivate: [AuthGuard], data: { expectedProfile: 'DIRECTEUR' }},
+  { path: 'add-agent', component: AddAgentComponent, canActivate: [AuthGuard], data: { expectedProfile1: 'DIRECTEUR' } },
+  { path: 'autorisation', component: AuthorisationComponent, canActivate: [AuthGuard], data: { expectedProfile1: 'DIRECTEUR' } },
 
-
-  // , canActivate: [AuthGuard], data: { expectedProfile: 'DIRECTEUR' }
-
-  { path: 'user/setting', component: UserSettingComponent ,  },
-  { path: 'groups', component: GroupComponent ,  },
-  { path: 'contacts', component: ContactsComponent ,   },
-  { path: 'home', component: HomeComponent ,    },
+  { path: 'user/setting', component: UserSettingComponent, canActivate: [AuthGuard], data: { expectedProfile1: 'DIRECTEUR', expectedProfile2: 'AGENT' } },
+  { path: 'groups', component: GroupComponent, canActivate: [AuthGuard], data: { expectedProfile1: 'DIRECTEUR', expectedProfile2: 'AGENT' } },
+  { path: 'contacts', component: ContactsComponent, canActivate: [AuthGuard], data: { expectedProfile1: 'DIRECTEUR', expectedProfile2: 'AGENT' } },
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard], data: { expectedProfile1: 'DIRECTEUR', expectedProfile2: 'AGENT' } },
 
   { path: 'error', component: ErrorComponent },
-
-  //{ path: 'home/:idChat', component: HomeComponent },
-
-
-
-
 
 ];
 
