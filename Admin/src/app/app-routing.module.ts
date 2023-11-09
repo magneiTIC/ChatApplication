@@ -10,8 +10,8 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 const routes: Routes = [
 
-  { path: '', pathMatch: 'full', component: DashboardComponent },
-  { path: 'dashboard', component: DashboardComponent },
+  { path: '', pathMatch: 'full', component: ListDirectorComponent },
+  // { path: 'dashboard', component: DashboardComponent },
   { path: 'info/:uid', component: InfoUserComponent },
 
   {path: 'add-agent', component: AddAgentComponent},

@@ -26,22 +26,32 @@ export class DiscussionComponent implements OnInit {
   selectChat(chatId: string, username: string,sharedKey:string) {
     this.chatsService.selectedChat(chatId, username,sharedKey);
   }
-
   ngOnInit(): void {
     this.chatsService.selectedChat$.subscribe((chat) => {
       
       this.chatId = chat.chatId;
        console.log("Selected chat ID:", this.chatId);
        console.log("Selected shared key:", this.sharedKey);
+    });
+
+    this.chatsService.getChatsByUser(this.currentUserUid).subscribe((chat) => {
+      
+      
+       console.log("chat", chat);
+       console.log("uid:", this.currentUserUid);
+       
 
     });
+
+    console.log(this.myChats)
   }
   
   messageControl = new FormControl('');
   searchControl = new FormControl('');
 
   currentUserUid: string = sessionStorage.getItem('uid') || '';
-  
+  // unread=this.messagesService.countUnreadMessages('',this.chatId);
+
   // myChats=this.chatsService.getChatsByUser('this.currentUserId')
   myChats=this.chatsService.getChatsByUser(''+this.currentUserUid);
   

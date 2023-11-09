@@ -20,21 +20,46 @@
 
 
 
-        <div *ngFor="let letter of sortedChats | keyvalue">
+        <!-- <div *ngFor="let letter of sortedDivisions | keyvalue">
           <div class="contact-group">
-            <div class="contact-group-header">{{ letter.key }}</div>
             <ul>
-              <li *ngFor="let chat of letter.value" class="contact-item">
-                <img [src]="'assets/images/avatar.jpeg'" alt="Contact 1" class="contact-avatar" />
-                <div class="contact-details">
-                  <p mat-line class="chat-title">
-                    <span class="contact-name" *ngFor="let chat of letter.value">{{ chat.users[0].username }}</span>
-                  </p>
+              <li *ngFor="let division of letter.value" class="contact-item">
+                <ng-container *ngIf="division != div">
+                  <img [src]="'assets/images/avatar.jpeg'" alt="Contact 1" class="contact-avatar" />
+                  <div class="contact-details">
+                    <p mat-line class="chat-title">
+                      <span class="contact-name">{{ division }}</span>
+                    </p>
+                  </div>
+                </ng-container>
+        
+                <div *ngFor="let letterChat of sortedChats | keyvalue">
+                  <ng-container *ngIf="division === chat.users[0].division">
+
+                  <div class="contact-group">
+                    <div class="contact-group-header">{{ letterChat.key }}</div>
+                    <ul>
+                      <li *ngFor="let chat of letterChat.value" class="contact-item">
+                          <img [src]="'assets/images/avatar.jpeg'" alt="Contact 1" class="contact-avatar" />
+                          <div class="contact-details">
+                            <p mat-line class="chat-title">
+                              <span class="contact-name">{{ chat.users[0].username }}</span>
+                            </p>
+                          </div>
+                      </li>
+                    </ul>
+                  </div>
+                </ng-container>
+
                 </div>
               </li>
             </ul>
           </div>
-        </div>
+        </div> -->
+        
+
+
+
       </div>
     </div>
     <app-chat></app-chat>

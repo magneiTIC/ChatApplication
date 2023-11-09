@@ -15,21 +15,21 @@ import { AuthorisationComponent } from './views/admin/authorisation/authorisatio
 const routes: Routes = [
 
   { path: '', pathMatch: 'full', component: LoginComponent },
-  { path: 'test', component: TestComponent },
+  // { path: 'test', component: TestComponent },
 
   { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
+  { path: 'register', component: RegisterComponent,  },
 
-  { path: 'add-agent', component: AddAgentComponent },
-  { path: 'autorisation', component: AuthorisationComponent },
+  { path: 'add-agent', component: AddAgentComponent , canActivate: [AuthGuard], data: { expectedProfile: 'DIRECTEUR' }},
+  { path: 'autorisation', component: AuthorisationComponent, canActivate: [AuthGuard], data: { expectedProfile: 'DIRECTEUR' }},
 
 
-  // , canActivate: [AuthGuard], data: { expectedRole: 'DIRECTEUR' }
+  // , canActivate: [AuthGuard], data: { expectedProfile: 'DIRECTEUR' }
 
-  { path: 'user/setting', component: UserSettingComponent },
-  { path: 'groups', component: GroupComponent },
-  { path: 'contacts', component: ContactsComponent },
-  { path: 'home', component: HomeComponent,  },
+  { path: 'user/setting', component: UserSettingComponent ,  },
+  { path: 'groups', component: GroupComponent ,  },
+  { path: 'contacts', component: ContactsComponent ,   },
+  { path: 'home', component: HomeComponent ,    },
 
   { path: 'error', component: ErrorComponent },
 

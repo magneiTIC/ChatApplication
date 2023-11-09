@@ -3,6 +3,8 @@ import { Observable } from 'rxjs';
 import { ChatsService } from 'src/app/services/chats/chats.service';
 import { UsersService } from 'src/app/services/users/users.service';
 type SortedChats = { [key: string]: any[] };
+type SortedDivisions = { [key: string]: any[] };
+
 
 @Component({
   selector: 'app-group',
@@ -34,10 +36,10 @@ export class GroupComponent {
       });
 
       this.divisions.subscribe((division: any) => {
-        this.sortedChats = this.sortChatsByFirstLetter(division);
-        console.log(division);
+        this.sortedDivisions = this.sortDivisionsByFirstLetter(division);
 
       });
+
       this.myChats.subscribe((chats: any) => {
         console.log('mychats 2',chats);
 
@@ -45,27 +47,27 @@ export class GroupComponent {
         console.log('sorted',this.sortedChats)
       });
 
-
     }
+    div=sessionStorage.getItem('division')
     currentUserUid: string = sessionStorage.getItem('uid') || '';
     myChats=this.usersService.contactsByDivision(''+this.currentUserUid);
   
     divisions=this.usersService.getAllDivisions() ;
 
-    // users=this.usersService.listContactsInSameDivision(''+this.currentUserUid)
-    // sortedDivisions: SortedDivisions = {};
-    // sortDivisionsByFirstLetter(divisions: any) {
-    //   const sortedDivisions: any = {};
-    //   divisions.forEach((division: any) => {
-    //     console.log(divisions);
-    //     const firstLetter = division.charAt(0).toUpperCase();
-    //     if (!sortedDivisions[firstLetter]) {
-    //       sortedDivisions[firstLetter] = [];
-    //     }
-    //     sortedDivisions[firstLetter].push(division);
-    //   });
-    //   return sortedDivisions;
-    // }
+    users=this.usersService.listContactsInSameDivision(''+this.currentUserUid)
+    sortedDivisions: SortedDivisions = {};
+    sortDivisionsByFirstLetter(divisions: any) {
+      const sortedDivisions: any = {};
+      divisions.forEach((division: any) => {
+        console.log(divisions);
+        const firstLetter = division.charAt(0).toUpperCase();
+        if (!sortedDivisions[firstLetter]) {
+          sortedDivisions[firstLetter] = [];
+        }
+        sortedDivisions[firstLetter].push(division);
+      });
+      return sortedDivisions;
+    }
 
     sortedChats: SortedChats = {};
     sortChatsByFirstLetter(chats: any) {

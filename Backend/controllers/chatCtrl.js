@@ -241,7 +241,6 @@ async function addMessageToChat(chatId, user, content, type) {
       return { error: 'Conversation non trouvée' };
     }
     if (chat.autorised == false) {
-      console.log("autorisation de chat:",chat.autorised)
       return ({ error: 'Envoi de messages bloqué dans cette conversation.' });
     }
 

@@ -126,7 +126,7 @@ module.exports = {
         user: { $ne: userId },
         status: 'unread',
       })
-      res.status(200).json({ message : `Nombre de messages non lus dans le chat ${unreadCount}`})
+      res.status(200).json(unreadCount)
     }
     catch (error) {
       console.error(`erreur lors du décompte du nombre de messages non lus d'un chat`, error)

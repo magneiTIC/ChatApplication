@@ -23,7 +23,6 @@ import { provideAuth,getAuth } from '@angular/fire/auth';
 import { HttpClientModule } from '@angular/common/http';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { ChatComponent } from './components/user/chat/chat.component';
-import { ContactComponent } from './components/user/contact/contact.component';
 import { SideComponent } from './components/user/side/side.component';
 import { UserSettingComponent } from './views/user/user-setting/user-setting.component';
 import { HomeComponent } from './views/user/home/home.component';
@@ -45,7 +44,6 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     LoginComponent,
     RegisterComponent,
     ChatComponent,
-    ContactComponent,
     SideComponent,
     UserSettingComponent,
     DiscussionComponent,

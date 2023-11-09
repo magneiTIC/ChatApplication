@@ -1,3 +1,18 @@
+
+.unread-badge {
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  width: 15px; /* Largeur de la bulle */
+  height: 15px; /* Hauteur de la bulle */
+  font-size: 9px;
+  text-align: center;
+  line-height: 14px; /* Centre le texte verticalement */
+  /* position: absolute; */
+  top: 0; /* Ajustez la position verticale selon vos besoins */
+  right: 0; /* Ajustez la position horizontale selon vos besoins */
+}
+
 .chat-app {
     display: flex;
     height: 100vh;

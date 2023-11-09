@@ -23,20 +23,38 @@
               <span class="chat-date">
                 {{ message.sentAt | date: 'HH:mm' }}
               </span>
-              <span [ngClass]="{'read-indicator': message.status === 'read', 'unread-indicator': message.status === 'unread'}">
-                <mat-icon *ngIf="message.status === 'read'">done</mat-icon>
-                <mat-icon *ngIf="message.status === 'unread'">done_all</mat-icon>
+              <span *ngIf=" message.user == currentUserUid">
+                <mat-icon class="indicator" [ngClass]="{'read-indicator': message.status === 'read'}" *ngIf="message.status === 'read' " >done_all</mat-icon>
+                <!-- <mat-icon [ngClass]="{'unread-indicator': message.status === 'received'}" *ngIf="message.status === 'received'">done_all</mat-icon> -->
+                <mat-icon class="indicator" [ngClass]="{'unread-indicator': message.status === 'unread'}"  *ngIf="message.status === 'unread'"   >done</mat-icon>
               </span>
             </div>
               <div class="message-bubble" *ngIf="message.type === 'file'">
                 <div *ngIf="message.type === 'file'">
-                  <a href="javascript:void(0)"  (click)="openFileViewerDialog(getFullFileUrl(message.content))" >
+                  <a href="javascript:void(0)"  (click)="openPopup(getFullFileUrl(message.content))" >
                     <mat-icon matSuffix>file_present</mat-icon>
                     Fichier
                   </a>
+                  <!--  [src]="getFullFileUrl(message.content)" 
+                  src="../../../../assets/images/police.png"
+                  -->
+
+
+
+                 
+
+
+
+
+                  
                 </div>
                 <span class="chat-date">
                   {{ message.sentAt | date: 'HH:mm' }}
+                </span>
+                <span *ngIf=" message.user == currentUserUid">
+                  <mat-icon [ngClass]="{'read-indicator': message.status === 'read'}" *ngIf="message.status === 'read' " class="icon">done_all</mat-icon>
+                  <!-- <mat-icon [ngClass]="{'unread-indicator': message.status === 'received'}" *ngIf="message.status === 'received'">done_all</mat-icon> -->
+                  <mat-icon [ngClass]="{'unread-indicator': message.status === 'unread'}"  *ngIf="message.status === 'unread'">done</mat-icon>
                 </span>
               </div>
 
@@ -50,11 +68,11 @@
     
     <div class="chat-input">
 
-      <label for="file-input" class="file-button">
+      <!-- <label for="file-input" class="file-button">
         <input type="file" id="file-input" style="display: none;" (change)="onFileSelected($event)">
 
         <mat-icon class="icon">image</mat-icon>
-      </label>
+      </label> -->
 
       <label for="file-input" class="file-button">
         <input type="file" id="file-input" style="display: none;" (change)="onFileSelected($event)">

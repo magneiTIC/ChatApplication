@@ -105,9 +105,8 @@ export class ChatComponent implements OnInit {
       }
     });
     this.getCurrentUserId();
-
-    //this.loadMessages()
-    this.listenForMessages();
+    // this.listenForMessages();
+    // this.loadMessages()
     this.scrollToBottom()
 
   }
@@ -174,7 +173,7 @@ export class ChatComponent implements OnInit {
                 console.log("id sender", this.currentUserID);
                 // Envoi du message via le socket
                 this.socketService.sendMessage(message, targetUserId, sharedKey, chatId, this.currentUserID, 'text');
-                //this.listenForMessages()
+                this.listenForMessages()
                 //this.loadMessages()
                 this.messageControl.reset();
               } else {

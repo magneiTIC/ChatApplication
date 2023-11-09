@@ -21,7 +21,6 @@ logout() {
   this.auth.signOut();
   this.alert();
   this.router.navigate(['login']);
-
 }
 
 alert() {
