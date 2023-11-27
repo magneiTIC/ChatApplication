@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from 'src/app/services/user/user.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add-director',
@@ -41,10 +42,27 @@ export class AddDirectorComponent implements OnInit {
       const profile ='DIRECTEUR'
      
       // Utilisez le service AuthService pour envoyer les données
-      this.userService.createUser(email,division,profile)
-      
+      this.userService.createUser(email,profile,division)
+      .subscribe((userData) => {
+        // Vous pouvez traiter les données renvoyées ici
+        console.log('Utilisateur créé avec succès', userData);
+      }, (error) => {
+        console.error('Erreur lors de la création de l\'utilisateur', error);
+        // Gérez les erreurs ici
+      });
       }
+      this.alert();
+      this.router.navigate(['AjoutDirecteur']);
+      this.addDirectorForm.reset()
      
+    }
+    alert() {
+      Swal.fire({
+        icon: 'success',
+        title: 'Création réussie !',
+        showConfirmButton: false,
+        timer: 1000,
+      });
     }
 
 }

@@ -15,9 +15,7 @@
                       </mat-autocomplete>
             </div>
         </div>
-        <!-- <ul class="contact-list"  *ngFor="let chat of myChats | async" > -->
-        <!-- <ul class="contact-list"  *ngFor="let message of messages | async" > -->
-        <ul class="contact-list" *ngFor="let chat of myChats | async">
+         <ul class="contact-list" *ngFor="let chat of myChats | async">
 
             <li class="contact-item" (click)="selectChat(chat.chatId, chat.users[0].username,chat.sharedKey)">
                 <img [src]="'assets/images/images-placeholder.png'" alt="Contact 1" class="contact-avatar" />
@@ -29,7 +27,7 @@
                         <span class="chat-date">
                             {{chat.lastMessage.sentAt}}
                         </span>
-                        <span class="unread-badge">3</span>
+                        <span class="unread-badge" *ngIf="chat.lastMessage.unreadMessages !=0 && currentUserUid!=chat.users[0].uid ">{{chat.lastMessage.unreadMessages}}</span>
 
                     </p>
                     <p mat-line>

@@ -131,7 +131,29 @@ module.exports = {
     catch (error) {
       console.error(`erreur lors du décompte du nombre de messages non lus d'un chat`, error)
     }
+  },
+  countUnreadMessages
+
+}
+async function countUnreadMessages(chatId, userId) {
+  try {
+    
+    const user= await User.findById(userId)
+    const chat = await Chat.findById(chatId)
+    if (!user) {
+      return ({ error: 'User not found' })
+    }
+    if (!chat) {
+      return ({ error: 'Chat not found' })
+    }
+    const unreadCount = await Message.countDocuments({
+      chatId: chatId,
+      user: { $ne: userId },
+      status: 'unread',
+    })
+    return (unreadCount)
   }
-
-
+  catch (error) {
+    console.error(`erreur lors du décompte du nombre de messages non lus d'un chat`, error)
+  }
 }

@@ -23,11 +23,11 @@
               <span class="chat-date">
                 {{ message.sentAt | date: 'HH:mm' }}
               </span>
-              <span *ngIf=" message.user == currentUserUid">
+              <!-- <span *ngIf=" message.user == currentUserUid">
                 <mat-icon class="indicator" [ngClass]="{'read-indicator': message.status === 'read'}" *ngIf="message.status === 'read' " >done_all</mat-icon>
-                <!-- <mat-icon [ngClass]="{'unread-indicator': message.status === 'received'}" *ngIf="message.status === 'received'">done_all</mat-icon> -->
+                <mat-icon [ngClass]="{'unread-indicator': message.status === 'received'}" *ngIf="message.status === 'received'">done_all</mat-icon>
                 <mat-icon class="indicator" [ngClass]="{'unread-indicator': message.status === 'unread'}"  *ngIf="message.status === 'unread'"   >done</mat-icon>
-              </span>
+              </span> -->
             </div>
               <div class="message-bubble" *ngIf="message.type === 'file'">
                 <div *ngIf="message.type === 'file'">
@@ -40,9 +40,7 @@
                   -->
 
 
-
-                 
-
+      
 
 
 
@@ -51,11 +49,11 @@
                 <span class="chat-date">
                   {{ message.sentAt | date: 'HH:mm' }}
                 </span>
-                <span *ngIf=" message.user == currentUserUid">
+                <!-- <span *ngIf=" message.user == currentUserUid">
                   <mat-icon [ngClass]="{'read-indicator': message.status === 'read'}" *ngIf="message.status === 'read' " class="icon">done_all</mat-icon>
-                  <!-- <mat-icon [ngClass]="{'unread-indicator': message.status === 'received'}" *ngIf="message.status === 'received'">done_all</mat-icon> -->
+                  <mat-icon [ngClass]="{'unread-indicator': message.status === 'received'}" *ngIf="message.status === 'received'">done_all</mat-icon>
                   <mat-icon [ngClass]="{'unread-indicator': message.status === 'unread'}"  *ngIf="message.status === 'unread'">done</mat-icon>
-                </span>
+                </span> -->
               </div>
 
 

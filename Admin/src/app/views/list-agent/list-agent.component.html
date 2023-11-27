@@ -7,8 +7,14 @@
           <div class="col-sm-12">
             <div class="card">
               <div class="card-body">
-                <h4 class="card-title">Liste des agents </h4>
-                <div class="table-responsive">
+                <div class="d-sm-flex justify-content-between align-items-start">
+                  <div>
+                    <h4 class="card-title">Liste des agents </h4>
+                  </div>
+                  <div>
+                    <button type="button"[routerLink]="['/AjoutAgent']" class="btn btn-inverse-primary btn-fw"><i class="mdi mdi-account-plus"></i>  Ajouter</button> 
+                  </div>
+                </div>                <div class="table-responsive">
                   <table class="table table-hover">
                     <thead>
                       <tr>

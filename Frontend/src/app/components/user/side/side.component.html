@@ -25,7 +25,7 @@
                         <mat-icon matSuffix>group</mat-icon>
                     </a>
                 </li>
-                <li class="nav-item" *ngIf profile = 'DIRECTEUR' >
+                <li class="nav-item" *ngIf="profile == 'DIRECTEUR' " >
                     <a routerLink="/add-agent" class="icon nav-link   rounded-0" aria-current="page">
                         <mat-icon matSuffix>person_add</mat-icon>
                     </a>

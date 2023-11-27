@@ -14,14 +14,25 @@ export class UserService {
 
   apiUrl = 'http://localhost:3000'
   
-  async createUser(email:string,profile:string,division:string) {
-    try { 
-      this.http.post(`${this.apiUrl}/admin/create-user`, {email,profile,division});
-      return console.log('creation reussie');
-    } catch(error) {
-      console.error("Error creating user", error);
-    }
+  createUser(email:string,profile:string,division:string) {
+    console.log('arrivé',email,profile,division);
+   
+      return this.http
+      .post<any>(this.apiUrl+'/admin/create-user',{
+        'email':email,
+        'profile':profile,
+        'division':division
+      }
+      )
+      .pipe(
+        map((userData: any )=>{
+        return userData
+        })
+      )
+
+      
   }
+
   getAgent(uid:string) {
 
     return this.http

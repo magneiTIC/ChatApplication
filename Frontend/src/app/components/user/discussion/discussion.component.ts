@@ -13,6 +13,7 @@ export class DiscussionComponent implements OnInit {
   @ViewChild('endOfChat' )endOfChat!: ElementRef ;
   chatId: string | null | undefined;
   sharedKey: string | null | undefined;
+  nombre: number | null | undefined;
   
   // selectedChatId: string | null = null;
   constructor( 
@@ -26,35 +27,44 @@ export class DiscussionComponent implements OnInit {
   selectChat(chatId: string, username: string,sharedKey:string) {
     this.chatsService.selectedChat(chatId, username,sharedKey);
   }
+
   ngOnInit(): void {
+
+
     this.chatsService.selectedChat$.subscribe((chat) => {
-      
       this.chatId = chat.chatId;
+
        console.log("Selected chat ID:", this.chatId);
        console.log("Selected shared key:", this.sharedKey);
     });
 
+    
     this.chatsService.getChatsByUser(this.currentUserUid).subscribe((chat) => {
-      
-      
+      if(this.chatId != null){
+      this.unread(chat.chatId);
+  
+      }
        console.log("chat", chat);
        console.log("uid:", this.currentUserUid);
        
 
     });
-
     console.log(this.myChats)
+  }
+
+
+  unread(chatId:string){
+    const unread=this.messagesService.countUnreadMessages(chatId,this.currentUserUid);
+    return unread
   }
   
   messageControl = new FormControl('');
   searchControl = new FormControl('');
 
   currentUserUid: string = sessionStorage.getItem('uid') || '';
-  // unread=this.messagesService.countUnreadMessages('',this.chatId);
 
   // myChats=this.chatsService.getChatsByUser('this.currentUserId')
   myChats=this.chatsService.getChatsByUser(''+this.currentUserUid);
-  
   
 
   users=this.usersService.getAllUsersInSameDivision() ;

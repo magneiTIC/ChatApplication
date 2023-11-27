@@ -10,41 +10,47 @@ import Swal from 'sweetalert2';
   styleUrls: ['./authorisation.component.css']
 })
 export class AuthorisationComponent implements OnInit {
- authForm!: FormGroup;
-    validationError: boolean = false;
-    connexionError: boolean = false;
-  
-    constructor(
-      private formBuilder: FormBuilder,
-      private router: Router,
-      private authService: AuthService,
-      private chatsService: ChatsService
-    ) { }
-  
-  
-  
-    ngOnInit(): void {
-      this.authForm = this.formBuilder.group({
-        emailUserA: ['', [Validators.required, Validators.email]],
-        emailUserB: ['', [Validators.required, Validators.email]],
-  
-      });
+  authForm!: FormGroup;
+  validationError: boolean = false;
+  connexionError: boolean = false;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private authService: AuthService,
+    private chatsService: ChatsService
+  ) { }
+
+
+
+  ngOnInit(): void {
+    this.authForm = this.formBuilder.group({
+      emailUserA: ['', [Validators.required, Validators.email]],
+      emailUserB: ['', [Validators.required, Validators.email]],
+
+    });
+  }
+
+
+
+
+  async onSubmit() {
+    if (this.authForm.invalid) {
+      this.validationError = true;
+      return;
     }
-  
-  
-    
-  
-    async onSubmit() {
-      if (this.authForm.invalid) {
-        this.validationError=true;
-        return;
-    }
-    const emailUserA=this.authForm.value.emailUserA
-    const emailUserB=this.authForm.value.emailUserB
+    const emailUserA = this.authForm.value.emailUserA
+    const emailUserB = this.authForm.value.emailUserB
     try {
-      if (emailUserA && emailUserB)
-      {
-        this.chatsService.createChatWithExternalAgent(emailUserA,emailUserB)
+      if (emailUserA && emailUserB) {
+        this.chatsService.createChatWithExternalAgent(emailUserA, emailUserB)
+          .subscribe((userData) => {
+            // Vous pouvez traiter les données renvoyées ici
+            console.log('Utilisateur créé avec succès', userData);
+          }, (error) => {
+            console.error('Erreur lors de la création de l\'utilisateur', error);
+            // Gérez les erreurs ici
+          });
         this.alert();
         this.router.navigate(['autorisation']);
         this.authForm.reset()
@@ -53,12 +59,12 @@ export class AuthorisationComponent implements OnInit {
       else {
         console.log("création bi dialoul")
       }
-    } 
+    }
     catch (error) {
       console.error("Erreur lors de la création d'une conversation avec l'utilisateur d'une autre division")
     }
 
-    
+
   }
   alert() {
     Swal.fire({

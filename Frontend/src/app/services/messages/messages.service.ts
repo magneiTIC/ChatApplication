@@ -33,7 +33,7 @@ export class MessagesService {
       );
   }
   
-countUnreadMessages(chatId:string,userId : string){
+countUnreadMessages(chatId:string|null,userId : string){
   return this.http
       .get<any>(`${this.apiUrl}/message/unread-count/${chatId}/${userId}`)
       .pipe(

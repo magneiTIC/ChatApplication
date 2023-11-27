@@ -20,43 +20,53 @@
 
 
 
-        <!-- <div *ngFor="let letter of sortedDivisions | keyvalue">
+        <div *ngFor="let letter of sortedDivisions | keyvalue">
           <div class="contact-group">
             <ul>
               <li *ngFor="let division of letter.value" class="contact-item">
-                <ng-container *ngIf="division != div">
+                <!-- <ng-container *ngIf="division != div">
                   <img [src]="'assets/images/avatar.jpeg'" alt="Contact 1" class="contact-avatar" />
                   <div class="contact-details">
                     <p mat-line class="chat-title">
                       <span class="contact-name">{{ division }}</span>
                     </p>
                   </div>
-                </ng-container>
-        
-                <div *ngFor="let letterChat of sortedChats | keyvalue">
-                  <ng-container *ngIf="division === chat.users[0].division">
+                </ng-container> -->
 
-                  <div class="contact-group">
-                    <div class="contact-group-header">{{ letterChat.key }}</div>
-                    <ul>
-                      <li *ngFor="let chat of letterChat.value" class="contact-item">
-                          <img [src]="'assets/images/avatar.jpeg'" alt="Contact 1" class="contact-avatar" />
-                          <div class="contact-details">
-                            <p mat-line class="chat-title">
-                              <span class="contact-name">{{ chat.users[0].username }}</span>
-                            </p>
-                          </div>
-                      </li>
-                    </ul>
-                  </div>
-                </ng-container>
+                <div *ngFor="let letterChat of sortedChats | keyvalue">
+                  <ng-container *ngFor="let chat1 of letterChat.value">
+                    <ng-container *ngIf="division === chat1.users[0].division">
+                      <div>
+                        <p mat-line>
+                          <span style="font-weight: bold; text-align: right;" class="">{{ chat1.users[0].division }}</span>
+                        </p>
+                      </div>
+                      <!-- <img [src]="'assets/images/avatar.jpeg'" alt="Contact 1" class="contact-avatar" /> -->
+
+
+                      <div class="contact-group">
+                        <div class="contact-group-header" style="font-weight: bold;" >{{ letterChat.key }}</div>
+                        <ul>
+                          <li *ngFor="let chat of letterChat.value" class="contact-item">
+                            <img [src]="'assets/images/images-placeholder.png'" alt="Contact 1"
+                              class="contact-avatar" />
+                            <div class="contact-details">
+                              <p mat-line class="chat-title">
+                                <span class="contact-name">{{ chat.users[0].username }}</span>
+                              </p>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+                    </ng-container>
+                  </ng-container>
 
                 </div>
               </li>
             </ul>
           </div>
-        </div> -->
-        
+        </div>
+
 
 
 

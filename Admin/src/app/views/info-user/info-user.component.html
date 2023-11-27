@@ -21,22 +21,18 @@
                                                 <div class="col-sm-12 grid-margin stretch-card">
                                                     <div class="card card-rounded">
                                                         <div class="card-body card-rounded">
-                                                            <h4 class="card-title  card-title-dash">Informations
-                                                                concernant
-                                                                {{user.username}}</h4>
+                                                            <h4 class="card-title  card-title-dash">Informations                                                               </h4>
                                                             <div class="list align-items-center border-bottom py-2">
                                                                 <div class="wrapper w-100">
                                                                     <p class="mb-2 font-weight-medium">
-                                                                        Username
+                                                                        Nom d'utilisateur
                                                                     </p>
                                                                     <div
                                                                         class="d-flex justify-content-between align-items-center">
                                                                         <div class="d-flex align-items-center">
                                                                             <i
                                                                                 class="mdi mdi-calendar text-muted me-1"></i>
-                                                                            <p class="mb-0 text-small text-muted">Mar
-                                                                                14,
-                                                                                2019</p>
+                                                                            <p class="mb-0 text-small text-muted"> {{user.username}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -141,6 +137,21 @@
                                                                                 {{user.disconnectionTime | date:
                                                                                 'dd/MM/yyyy
                                                                                 HH:mm'}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="list align-items-center border-bottom py-2">
+                                                                <div class="wrapper w-100">
+                                                                    <p class="mb-2 font-weight-medium">
+                                                                        Appareil de connexion
+                                                                    </p>
+                                                                    <div
+                                                                        class="d-flex justify-content-between align-items-center">
+                                                                        <div class="d-flex align-items-center"  *ngFor="let device of user.devices  ">
+                                                                           
+                                                                            <p class="mb-0 text-small text-muted">
+                                                                                {{device.timestamp | date:'dd/MM/yyyy HH:mm'}} {{device.userAgent}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>

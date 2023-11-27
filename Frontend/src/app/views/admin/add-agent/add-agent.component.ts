@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add-agent',
@@ -34,7 +35,7 @@ addAgentForm!: FormGroup;
 
   onSubmit() {
    const email= this.addAgentForm.value.email;
-   const division = "Police Judiciaire "
+   const division = sessionStorage.getItem('division')
    const profile ='AGENT'
   
     if (this.addAgentForm.invalid)  {
@@ -44,7 +45,7 @@ addAgentForm!: FormGroup;
     } else{console.log('validation correct')}
     if(this.addAgentForm.value.email == this.addAgentForm.value.email1){
        console.log('email correct')
-    this.authService.createUser(email,profile,division)
+    this.authService.createUser(email,profile,''+division)
     .subscribe((userData) => {
       // Vous pouvez traiter les données renvoyées ici
       console.log('Utilisateur créé avec succès', userData);
@@ -53,7 +54,18 @@ addAgentForm!: FormGroup;
       // Gérez les erreurs ici
     });
     }
+    this.alert();
+    this.router.navigate(['add-agent']);
+    this.addAgentForm.reset()
    
+  }
+  alert() {
+    Swal.fire({
+      icon: 'success',
+      title: 'Création réussie !',
+      showConfirmButton: false,
+      timer: 1000,
+    });
   }
 }
 

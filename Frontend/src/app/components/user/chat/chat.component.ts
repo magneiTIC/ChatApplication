@@ -174,7 +174,7 @@ export class ChatComponent implements OnInit {
                 // Envoi du message via le socket
                 this.socketService.sendMessage(message, targetUserId, sharedKey, chatId, this.currentUserID, 'text');
                 this.listenForMessages()
-                //this.loadMessages()
+                // this.loadMessages()
                 this.messageControl.reset();
               } else {
                 console.error("Le targetUserId est indéfini, impossible d'envoyer le message.");
@@ -194,7 +194,8 @@ export class ChatComponent implements OnInit {
   private listenForMessages() {
     this.socketService.onMessageReceived((encryptedMessage: any) => {
       if (this.chatId) {
-        this.messagesService.getMessagesByChat('' + this.chatId, 1, 10).subscribe((newMessages: any[]) => {
+        this.messagesService.getMessagesByChat('' + this.chatId, 1, 10)
+        .subscribe((newMessages: any[]) => {
           console.log("listen for messages", newMessages);
           this.messages$ = this.messages$ ? this.messages$.pipe(
             map(existingMessages => [...newMessages, ...existingMessages])
@@ -226,6 +227,7 @@ export class ChatComponent implements OnInit {
           this.messages$ = of(messages);
           this.scrollToBottom();
         });
+        
     }
   }
   scrollToBottom(): void {

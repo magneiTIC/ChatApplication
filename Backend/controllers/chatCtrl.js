@@ -2,11 +2,11 @@ const Chat = require("../models/chat")
 const Message = require("../models/message")
 const Users = require("../models/user")
 const { uploadFileMiddleware } = require("./upload")
-const { sharedKey, decryptMessage, decryptPrivateKey } = require("../config/generate-key0")
+const { sharedKey, decryptMessage, decryptPrivateKey } = require("../config/generate-key")
 const EncryptionKey = require("../models/encryption-key");
 const encryptionKey = process.env.ENCRYPTION_KEY;
 const ivKey = process.env.IV_KEY;
-
+const {countUnreadMessages} =require ("./messageCtrl")
 
 const formatSentAt = (sentAt) => {
   const currentDate = new Date();
@@ -128,35 +128,36 @@ module.exports = {
     try {
       const uid = req.params.uid;
       const user = await Users.findOne({ uid });
-
+  
       if (!user) {
         return res.status(404).json({ message: "Utilisateur introuvable." });
       }
-
+  
       // Recherchez les chats où l'utilisateur est membre et utilisez populate pour obtenir le nom du destinataire.
       const chats = await Chat.find({ users: user._id }).populate({
         path: 'users',
         select: 'username uid',
         match: { uid: { $ne: uid } }, // Exclure l'utilisateur actuel
       });
-
+  
       const filteredChats = chats.filter((chat) => chat.users.length > 0); // Supprimer les chats vides
-
+  
       const chatsWithLastMessages = await Promise.all(
         filteredChats.map(async (chat) => {
           const lastMessage = await Message.findOne({ chat: chat._id })
             .sort({ sentAt: -1 })
             .exec();
-
+  
           const sharedKey = chat.sharedKey;
           const lastMessageInfo = {
             sentAt: lastMessage ? formatSentAt(lastMessage.sentAt) : null,
             content: null, // Initialize with null
+            unreadMessages: 0, // Initialize with 0 unread messages
           };
-
+  
           if (lastMessage) {
             const msg = lastMessage.content;
-
+  
             // Conditionally skip decryption for "file" type messages
             if (lastMessage.type !== "file") {
               const decryptedSharedKey = (await decryptPrivateKey(sharedKey, encryptionKey, ivKey)).toString();
@@ -166,22 +167,27 @@ module.exports = {
               lastMessageInfo.content = msg; // No decryption for "file" type
             }
           }
-
+  
+          // Calcul du nombre de messages non lus
+          const unreadMessages = await countUnreadMessages(chat._id,user._id)
+          lastMessageInfo.unreadMessages = unreadMessages;
+  
           return {
             lastMessage: lastMessageInfo,
             users: chat.users,
             chatId: chat._id,
-            sharedKey: chat.sharedKey
+            sharedKey: chat.sharedKey,
           };
         })
       );
-
+  
       res.status(200).json(chatsWithLastMessages);
     } catch (error) {
       console.log("Erreur d'affichage des conversations d'un user", error);
       res.status(500).json({ error: "Erreur lors de l'affichage des conversations d'un user" });
     }
-  },
+  }
+  ,
 
 
   //peupler une conversation
